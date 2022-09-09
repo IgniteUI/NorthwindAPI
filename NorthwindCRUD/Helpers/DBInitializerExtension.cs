@@ -8,15 +8,8 @@
 
             using var scope = app.ApplicationServices.CreateScope();
             var services = scope.ServiceProvider;
-            try
-            {
-                var context = services.GetRequiredService<DataContext>();
-                DBSeeder.Seed(context);
-            }
-            catch (Exception ex)
-            {
-                //TODO log error
-            }
+            var context = services.GetRequiredService<DataContext>();
+            DBSeeder.Seed(context);
 
             return app;
         }

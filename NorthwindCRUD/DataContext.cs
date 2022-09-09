@@ -1,5 +1,4 @@
-﻿
-namespace NorthwindCRUD
+﻿namespace NorthwindCRUD
 {
     using Microsoft.EntityFrameworkCore;
     using NorthwindCRUD.Models.DbModels;
@@ -36,6 +35,5 @@ namespace NorthwindCRUD
                .HasOne(o => o.ShipAddress)
                .WithMany(a => a.Orders);
         }
-
     }
 }

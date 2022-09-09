@@ -12,70 +12,112 @@
     {
         private readonly OrderService orderService;
         private readonly IMapper mapper;
+        private readonly ILogger logger;
 
-        public OrderController(OrderService orderService, IMapper mapper)
+        public OrderController(OrderService orderService, IMapper mapper, ILogger logger)
         {
             this.orderService = orderService;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         [HttpGet]
         public ActionResult<OrderInputModel[]> GetAll()
         {
-            var orders = this.orderService.GetAll();
-            return Ok(this.mapper.Map<OrderDb[], OrderInputModel[]>(orders));
+            try
+            {
+                var orders = this.orderService.GetAll();
+                return Ok(this.mapper.Map<OrderDb[], OrderInputModel[]>(orders));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
         }
-
+        
         [HttpGet("{id}")]
         public ActionResult<OrderInputModel> GetById(int id)
         {
-            var order = this.orderService.GetById(id);
-
-            if (order != null)
+            try
             {
-                return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
-            }
+                var order = this.orderService.GetById(id);
 
-            return NotFound();
+                if (order != null)
+                {
+                    return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                }
+
+                return NotFound();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpPost]
         public ActionResult<OrderInputModel> Create(OrderInputModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var mappedModel = this.mapper.Map<OrderInputModel, OrderDb>(model);
-                var order = this.orderService.Create(mappedModel);
-                return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
-            }
+                if (ModelState.IsValid)
+                {
+                    var mappedModel = this.mapper.Map<OrderInputModel, OrderDb>(model);
+                    var order = this.orderService.Create(mappedModel);
+                    return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                }
 
-            return BadRequest(ModelState);
+                return BadRequest(ModelState);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpPut]
         public ActionResult<OrderInputModel> Update(OrderInputModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var mappedModel = this.mapper.Map<OrderInputModel, OrderDb>(model);
-                var order = this.orderService.Update(mappedModel);
-                return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
-            }
+                if (ModelState.IsValid)
+                {
+                    var mappedModel = this.mapper.Map<OrderInputModel, OrderDb>(model);
+                    var order = this.orderService.Update(mappedModel);
+                    return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                }
 
-            return BadRequest(ModelState);
+                return BadRequest(ModelState);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpDelete("{id}")]
         public ActionResult<OrderInputModel> Delete(int id)
         {
-            var order = this.orderService.Delete(id);
-
-            if (order != null)
+            try
             {
-                return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
-            }
+                var order = this.orderService.Delete(id);
 
-            return NotFound();
+                if (order != null)
+                {
+                    return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                }
+
+                return NotFound();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
         }
     }
 }

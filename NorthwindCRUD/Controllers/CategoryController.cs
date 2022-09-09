@@ -12,70 +12,113 @@ namespace NorthwindCRUD.Controllers
     {
         private readonly CategoryService categoryService;
         private readonly IMapper mapper;
+        private readonly ILogger logger;
 
-        public CategoryController(CategoryService categoryService, IMapper mapper)
+        public CategoryController(CategoryService categoryService, IMapper mapper, ILogger logger)
         {
             this.categoryService = categoryService;
-            this.mapper = mapper;   
+            this.mapper = mapper;
+            this.logger = logger;   
         }
 
         [HttpGet]
         public ActionResult<CategoryInputModel[]> GetAll()
         {
-            var categories = this.categoryService.GetAll();
-            return Ok(this.mapper.Map<CategoryDb[], CategoryInputModel[]>(categories));
+            try
+            {
+                var categories = this.categoryService.GetAll();
+                return Ok(this.mapper.Map<CategoryDb[], CategoryInputModel[]>(categories));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+            
         }
 
         [HttpGet("{id}")]
         public ActionResult<CategoryInputModel> GetById(int id)
         {
-            var category = this.categoryService.GetById(id);
-
-            if (category != null)
+            try
             {
-                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
-            }
+                var category = this.categoryService.GetById(id);
 
-            return NotFound();
+                if (category != null)
+                {
+                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                }
+
+                return NotFound();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpPost]
         public ActionResult<CategoryInputModel> Create(CategoryInputModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
-                var category = this.categoryService.Create(mappedModel);
-                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
-            }
+                if (ModelState.IsValid)
+                {
+                    var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
+                    var category = this.categoryService.Create(mappedModel);
+                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                }
 
-            return BadRequest(ModelState);
+                return BadRequest(ModelState);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpPut]
         public ActionResult<CategoryInputModel> Update(CategoryInputModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
-                var category = this.categoryService.Update(mappedModel);
-                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
-            }
+                if (ModelState.IsValid)
+                {
+                    var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
+                    var category = this.categoryService.Update(mappedModel);
+                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                }
 
-            return BadRequest(ModelState);
+                return BadRequest(ModelState);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpDelete("{id}")]
         public ActionResult<CategoryInputModel> Delete(int id)
         {
-            var category = this.categoryService.Delete(id);
-
-            if (category != null)
+            try
             {
-                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
-            }
+                var category = this.categoryService.Delete(id);
 
-            return NotFound();
+                if (category != null)
+                {
+                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                }
+
+                return NotFound();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
         }
     }
 }
