@@ -24,14 +24,20 @@
         public ActionResult<CustomerInputModel[]> GetAll()
         {
             var customers = this.customerService.GetAll();
-            return this.mapper.Map<CustomerDb[], CustomerInputModel[]>(customers);
+            return Ok(this.mapper.Map<CustomerDb[], CustomerInputModel[]>(customers));
         }
 
         [HttpGet("{id}")]
         public ActionResult<CustomerInputModel> GetById(string id)
         {
             var customer = this.customerService.GetById(id);
-            return this.mapper.Map<CustomerDb, CustomerInputModel>(customer);
+
+            if (customer != null)
+            {
+                return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+            }
+
+            return NotFound();
         }
 
         [HttpPost]
@@ -41,25 +47,36 @@
             {
                 var mappedModel = this.mapper.Map<CustomerInputModel, CustomerDb>(model);
                 var customer = this.customerService.Create(mappedModel);
-                return this.mapper.Map<CustomerDb, CustomerInputModel>(customer);
+                return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
             }
 
-            return null;
+            return BadRequest(ModelState);
         }
 
         [HttpPut]
         public ActionResult<CustomerInputModel> Update(CustomerInputModel model)
         {
-            var mappedModel = this.mapper.Map<CustomerInputModel, CustomerDb>(model);
-            var customer = this.customerService.Update(mappedModel);
-            return this.mapper.Map<CustomerDb, CustomerInputModel>(customer);
+            if (ModelState.IsValid)
+            {
+                var mappedModel = this.mapper.Map<CustomerInputModel, CustomerDb>(model);
+                var customer = this.customerService.Update(mappedModel);
+                return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+            }
+
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("{id}")]
         public ActionResult<CustomerInputModel> Delete(string id)
         {
             var customer = this.customerService.Delete(id);
-            return this.mapper.Map<CustomerDb, CustomerInputModel>(customer);
+
+            if (customer != null)
+            {
+                return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+            }
+
+            return NotFound();
         }
     }
 }

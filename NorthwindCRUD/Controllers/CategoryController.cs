@@ -23,14 +23,20 @@ namespace NorthwindCRUD.Controllers
         public ActionResult<CategoryInputModel[]> GetAll()
         {
             var categories = this.categoryService.GetAll();
-            return this.mapper.Map<CategoryDb[], CategoryInputModel[]>(categories);
+            return Ok(this.mapper.Map<CategoryDb[], CategoryInputModel[]>(categories));
         }
 
         [HttpGet("{id}")]
         public ActionResult<CategoryInputModel> GetById(int id)
         {
             var category = this.categoryService.GetById(id);
-            return this.mapper.Map<CategoryDb, CategoryInputModel>(category); ;
+
+            if (category != null)
+            {
+                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+            }
+
+            return NotFound();
         }
 
         [HttpPost]
@@ -40,25 +46,36 @@ namespace NorthwindCRUD.Controllers
             {
                 var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
                 var category = this.categoryService.Create(mappedModel);
-                return this.mapper.Map<CategoryDb, CategoryInputModel>(category);
+                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
             }
 
-            return null;
+            return BadRequest(ModelState);
         }
 
         [HttpPut]
         public ActionResult<CategoryInputModel> Update(CategoryInputModel model)
         {
-            var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
-            var category = this.categoryService.Update(mappedModel);
-            return this.mapper.Map<CategoryDb, CategoryInputModel>(category);
+            if (ModelState.IsValid)
+            {
+                var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
+                var category = this.categoryService.Update(mappedModel);
+                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+            }
+
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("{id}")]
         public ActionResult<CategoryInputModel> Delete(int id)
         {
             var category = this.categoryService.Delete(id);
-            return this.mapper.Map<CategoryDb, CategoryInputModel>(category);
+
+            if (category != null)
+            {
+                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+            }
+
+            return NotFound();
         }
     }
 }

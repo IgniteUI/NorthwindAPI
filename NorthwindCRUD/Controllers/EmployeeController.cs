@@ -24,14 +24,20 @@
         public ActionResult<EmployeeInputModel[]> GetAll()
         {
             var employees = this.employeeService.GetAll();
-            return this.mapper.Map<EmployeeDb[], EmployeeInputModel[]>(employees);
+            return Ok(this.mapper.Map<EmployeeDb[], EmployeeInputModel[]>(employees));
         }
 
         [HttpGet("{id}")]
         public ActionResult<EmployeeInputModel> GetById(int id)
         {
             var employee = this.employeeService.GetById(id);
-            return this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee);
+
+            if (employee != null)
+            {
+                return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+            }
+
+            return NotFound();
         }
         
         [HttpPost]
@@ -41,25 +47,38 @@
             {
                 var mappedModel = this.mapper.Map<EmployeeInputModel, EmployeeDb>(model);
                 var employee = this.employeeService.Create(mappedModel);
-                return this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee);
+                return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
             }
 
-            return null;
+            return BadRequest(ModelState);
         }
 
         [HttpPut]
         public ActionResult<EmployeeInputModel> Update(EmployeeInputModel model)
         {
-            var mappedModel = this.mapper.Map<EmployeeInputModel, EmployeeDb>(model);
-            var employee = this.employeeService.Update(mappedModel);
-            return this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee);
+            if (ModelState.IsValid)
+            {
+                var mappedModel = this.mapper.Map<EmployeeInputModel, EmployeeDb>(model);
+                var employee = this.employeeService.Update(mappedModel);
+                return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+            }
+
+            return BadRequest(ModelState);
+
+            
         }
 
         [HttpDelete("{id}")]
         public ActionResult<EmployeeInputModel> Delete(int id)
         {
             var employee = this.employeeService.Delete(id);
-            return this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee);
+
+            if (employee != null)
+            {
+                return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+            }
+
+            return NotFound();
         }
     }
 }
