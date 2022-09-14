@@ -11,9 +11,12 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-); ;
+builder.Services.AddControllers(options => 
+                    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true)
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -22,7 +25,13 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.AllowAnyOrigin();
+                          policy.WithOrigins("http://localhost:7244", "http://localhost:4200")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+
+                          policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
                       });
 });
 

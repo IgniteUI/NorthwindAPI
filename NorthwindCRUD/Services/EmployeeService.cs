@@ -1,6 +1,7 @@
 ﻿namespace NorthwindCRUD.Services
 {
     using Microsoft.EntityFrameworkCore;
+    using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
 
     public class EmployeeService
@@ -28,6 +29,24 @@
 
         public EmployeeDb Create(EmployeeDb model)
         {
+            var id = IdGenerator.CreateDigitsId();
+            var existWithId = this.GetById(id);
+            while (existWithId != null)
+            {
+                id = IdGenerator.CreateDigitsId();
+                existWithId = this.GetById(id);
+            }
+            model.EmployeeId = id;
+
+            PropertyHelper<EmployeeDb>.MakePropertiesEmptyIfNull(model);
+
+            if (model.Address == null)
+            {
+                var emptyAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == "");
+                model.Address = emptyAddress;
+                model.AddressId = emptyAddress.AddressId;
+            }
+
             var employeeEntity = this.dataContext.Employees.Add(model);
             this.dataContext.SaveChanges();
 
@@ -36,31 +55,38 @@
 
         public EmployeeDb Update(EmployeeDb model)
         {
-            var employeeEntity = this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId);
+            var employeeEntity = this.dataContext.Employees
+                .Include(c => c.Address)
+                .FirstOrDefault(e => e.EmployeeId == model.EmployeeId);
+
             if (employeeEntity != null)
             {
-                employeeEntity.LastName = model.LastName;
-                employeeEntity.FirstName = model.FirstName;
-                employeeEntity.Title = model.Title;
-                employeeEntity.TitleOfCourtesy = model.TitleOfCourtesy;
-                employeeEntity.BirthDate = model.BirthDate;
-                employeeEntity.HireDate = model.HireDate;
-                employeeEntity.Notes = model.Notes;
-                employeeEntity.AvatarUrl = model.AvatarUrl;
-                var newAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == model.Address.Street);
-                if (newAddress != null)
+                employeeEntity.LastName = model.LastName != null ? model.LastName : employeeEntity.LastName;
+                employeeEntity.FirstName = model.FirstName != null ? model.FirstName : employeeEntity.FirstName;
+                employeeEntity.Title = model.Title != null ? model.Title : employeeEntity.Title;
+                employeeEntity.TitleOfCourtesy = model.TitleOfCourtesy != null ? model.TitleOfCourtesy : employeeEntity.TitleOfCourtesy;
+                employeeEntity.BirthDate = model.BirthDate != null ? model.BirthDate : employeeEntity.BirthDate;
+                employeeEntity.HireDate = model.HireDate != null ? model.HireDate : employeeEntity.HireDate;
+                employeeEntity.Notes = model.Notes != null ? model.Notes : employeeEntity.Notes;
+                employeeEntity.AvatarUrl = model.AvatarUrl != null ? model.AvatarUrl : employeeEntity.AvatarUrl;
+
+                if (model.Address != null)
                 {
-                    employeeEntity.Address.City = model.Address.City;
-                    employeeEntity.Address.Region = model.Address.Region;
-                    employeeEntity.Address.PostalCode = model.Address.PostalCode;
-                    employeeEntity.Address.Country = model.Address.Country;
-                    employeeEntity.Address.Phone = model.Address.Phone;
-                }
-                else
-                {
-                    var employeeNewAddress = this.dataContext.Addresses.Add(model.Address);
-                    employeeEntity.Address = employeeNewAddress.Entity;
-                    employeeEntity.AddressId = employeeNewAddress.Entity.AddressId;
+                    var newAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == model.Address.Street);
+                    if (newAddress != null)
+                    {
+                        employeeEntity.Address.City = model.Address.City != null ? model.Address.City : employeeEntity.Address.City;
+                        employeeEntity.Address.Region = model.Address.Region != null ? model.Address.Region : employeeEntity.Address.Region;
+                        employeeEntity.Address.PostalCode = model.Address.PostalCode != null ? model.Address.PostalCode : employeeEntity.Address.PostalCode;
+                        employeeEntity.Address.Country = model.Address.Country != null ? model.Address.Country : employeeEntity.Address.Country;
+                        employeeEntity.Address.Phone = model.Address.Phone != null ? model.Address.Phone : employeeEntity.Address.Phone;
+                    }
+                    else
+                    {
+                        var employeeNewAddress = this.dataContext.Addresses.Add(model.Address);
+                        employeeEntity.Address = employeeNewAddress.Entity;
+                        employeeEntity.AddressId = employeeNewAddress.Entity.AddressId;
+                    }
                 }
 
                 this.dataContext.SaveChanges();
@@ -71,7 +97,7 @@
 
         public EmployeeDb Delete(int id)
         {
-            var employeeEntity = this.dataContext.Employees.FirstOrDefault(c => c.EmployeeId == id);
+            var employeeEntity = this.GetById(id);
             if (employeeEntity != null)
             {
                 this.dataContext.Employees.Remove(employeeEntity);

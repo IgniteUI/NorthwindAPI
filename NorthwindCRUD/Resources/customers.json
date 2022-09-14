@@ -1272,5 +1272,19 @@
       "country": "Poland",
       "phone": "(26) 642-7012"
     }
+  },
+  {
+    "customerID": "KLLZA",
+    "companyName": "Wolski  Zajazd",
+    "contactName": "Zbyszek Piestrzeniewicz",
+    "contactTitle": "Owner",
+    "address": {
+      "street": "",
+      "city": "",
+      "region": "",
+      "postalCode": "",
+      "country": "",
+      "phone": ""
+    }
   }
 ]

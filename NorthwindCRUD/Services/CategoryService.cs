@@ -1,5 +1,6 @@
 ﻿namespace NorthwindCRUD.Services
 {
+    using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
 
     public class CategoryService
@@ -23,6 +24,17 @@
 
         public CategoryDb Create(CategoryDb model)
         {
+            var id = IdGenerator.CreateDigitsId();
+            var existWithId = this.GetById(id);
+            while (existWithId != null)
+            {
+                id = IdGenerator.CreateDigitsId();
+                existWithId = this.GetById(id);
+            }
+            model.CategoryId = id;
+
+            PropertyHelper<CategoryDb>.MakePropertiesEmptyIfNull(model);
+
             var categoryEntity = this.dataContext.Categories.Add(model);
             this.dataContext.SaveChanges();
 
@@ -34,8 +46,8 @@
             var categoryEntity = this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId);
             if (categoryEntity != null)
             {
-                categoryEntity.Description = model.Description;
-                categoryEntity.Name = model.Name;
+                categoryEntity.Description = model.Description != null ? model.Description : categoryEntity.Description;
+                categoryEntity.Name = model.Name != null ? model.Name : categoryEntity.Name;
 
                 this.dataContext.SaveChanges();
             }
@@ -45,7 +57,7 @@
 
         public CategoryDb Delete(int id)
         {
-            var categoryEntity = this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == id);
+            var categoryEntity = this.GetById(id);
             if (categoryEntity != null)
             {
                 this.dataContext.Categories.Remove(categoryEntity);
