@@ -6,6 +6,7 @@ using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -15,6 +16,16 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 ); ;
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin();
+                      });
+});
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionString"));
@@ -39,6 +50,8 @@ builder.Services.AddTransient<EmployeeService>();
 builder.Services.AddTransient<OrderService>();
 
 var app = builder.Build();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 if (app.Environment.IsDevelopment())
 {
