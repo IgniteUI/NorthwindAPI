@@ -6,7 +6,7 @@ using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var AllowAnyOriginPolicy = "_allowAnyOrigin";
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -22,17 +22,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("http://localhost:7244", "http://localhost:4200")
-                            .AllowAnyMethod()
-                            .AllowAnyHeader();
-
-                          policy.AllowAnyOrigin()
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-                      });
+    options.AddPolicy(name: AllowAnyOriginPolicy,
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
 });
 
 builder.Services.AddDbContext<DataContext>(options =>
@@ -60,7 +56,13 @@ builder.Services.AddTransient<OrderService>();
 
 var app = builder.Build();
 
-app.UseCors(MyAllowSpecificOrigins);
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors(AllowAnyOriginPolicy);
+
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
@@ -68,10 +70,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseSeedDB();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 
