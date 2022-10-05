@@ -1,4 +1,7 @@
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using AutoMapper;
+using GraphQL.AspNet.Configuration.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NorthwindCRUD;
@@ -19,6 +22,7 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddGraphQL();
 
 builder.Services.AddCors(options =>
 {
@@ -65,6 +69,8 @@ app.UseRouting();
 app.UseCors(AllowAnyOriginPolicy);
 
 app.UseAuthorization();
+
+app.UseGraphQL();
 
 if (app.Environment.IsDevelopment())
 {
