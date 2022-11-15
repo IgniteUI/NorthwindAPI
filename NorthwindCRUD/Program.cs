@@ -1,5 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using GraphQL.AspNet.Configuration.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -109,6 +112,8 @@ builder.Services.AddTransient<AuthService>();
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseRouting();
 
@@ -116,6 +121,8 @@ app.UseCors(AllowAnyOriginPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseGraphQL();
 
 if (app.Environment.IsDevelopment())
 {
