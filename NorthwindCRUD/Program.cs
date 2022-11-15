@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using GraphQL.AspNet.Configuration.Mvc;
 using Microsoft.AspNetCore.Mvc;

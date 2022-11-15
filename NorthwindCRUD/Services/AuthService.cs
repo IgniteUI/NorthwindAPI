@@ -32,7 +32,6 @@
             return user != null;
         }
 
-
         public UserDb GetById(string id)
         {
             return this.dataContext.Users.FirstOrDefault(c => c.UserId == id);
@@ -85,7 +84,6 @@
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            //var jwtToken = tokenHandler.WriteToken(token);
             return tokenHandler.WriteToken(token);
         }
     }
