@@ -35,9 +35,19 @@ builder.Services.AddCors(options =>
                     });
 });
 
+var dbProvider = builder.Configuration.GetConnectionString("Provider");
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionString"));
+
+    if (dbProvider == "SqlServer")
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnectionString"));
+    }
+    else if (dbProvider == "InMemory")
+    {
+        options.UseInMemoryDatabase(databaseName: builder.Configuration.GetConnectionString("InMemoryDBConnectionString"));
+    }
 });
 
 var serviceProvider = builder.Services.BuildServiceProvider();
@@ -76,7 +86,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseSeedDB();
+
+    if (dbProvider != "InMemory")
+    {
+        app.UseSeedDB();
+    }
 }
 
 app.MapControllers();
