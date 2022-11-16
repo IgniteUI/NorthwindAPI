@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using GraphQL.AspNet.Configuration.Mvc;
@@ -69,6 +69,9 @@ builder.Services.AddTransient<EmployeeService>();
 builder.Services.AddTransient<OrderService>();
 
 var app = builder.Build();
+
+// Necessary to detect if it's behind a load balancer, for example changing protocol, port or hostname
+app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();
 app.UseDefaultFiles();
