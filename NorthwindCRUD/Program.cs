@@ -1,9 +1,8 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using AutoMapper;
+﻿using AutoMapper;
 using GraphQL.AspNet.Configuration.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using NorthwindCRUD;
 using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Services;
@@ -35,13 +34,28 @@ builder.Services.AddCors(options =>
                     });
 });
 
+var dbProvider = builder.Configuration.GetConnectionString("Provider");
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionString"));
+
+    if (dbProvider == "SqlServer")
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnectionString"));
+    }
+    else if (dbProvider == "InMemory")
+    {
+        options.ConfigureWarnings(warnOpts => {
+            // InMemory doesn't support transactions and we're ok with it
+            warnOpts.Ignore(InMemoryEventId.TransactionIgnoredWarning);
+        });
+
+        options.UseInMemoryDatabase(databaseName: builder.Configuration.GetConnectionString("InMemoryDBConnectionString"));
+    }
 });
 
 var serviceProvider = builder.Services.BuildServiceProvider();
-var logger = serviceProvider.GetService<ILogger<ControllerBase>>();
+var logger = serviceProvider.GetRequiredService<ILogger<ControllerBase>>();
 builder.Services.AddSingleton(typeof(ILogger), logger);
 
 var config = new MapperConfiguration(cfg =>
@@ -60,6 +74,9 @@ builder.Services.AddTransient<OrderService>();
 
 var app = builder.Build();
 
+// Necessary to detect if it's behind a load balancer, for example changing protocol, port or hostname
+app.UseForwardedHeaders();
+
 app.UseHttpsRedirection();
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -72,12 +89,9 @@ app.UseAuthorization();
 
 app.UseGraphQL();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseSeedDB();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseSeedDB();
 
 app.MapControllers();
 
