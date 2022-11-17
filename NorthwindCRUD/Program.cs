@@ -10,6 +10,7 @@ using NorthwindCRUD;
 using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Services;
 using System.Text;
+using NorthwindCRUD.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 var AllowAnyOriginPolicy = "_allowAnyOrigin";
@@ -36,20 +37,8 @@ builder.Services.AddSwaggerGen(option =>
         BearerFormat = "JWT",
         Scheme = "bearer"
     });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[]{}
-        }
-    });
+    
+    option.OperationFilter<AuthResponsesOperationFilter>();
 });
 
 builder.Services.AddCors(options =>
