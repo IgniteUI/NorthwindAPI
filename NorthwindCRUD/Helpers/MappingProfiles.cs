@@ -13,6 +13,8 @@
             CreateMap<EmployeeInputModel, EmployeeDb>().ReverseMap();
             CreateMap<OrderInputModel, OrderDb>().ReverseMap();
             CreateMap<AddressInputModel, AddressDb>().ReverseMap();
+            CreateMap<LoginInputModel, UserDb>().ReverseMap();
+            CreateMap<RegisterInputModel, UserDb>().ReverseMap();
         }
     }
 }

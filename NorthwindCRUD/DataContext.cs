@@ -16,6 +16,7 @@
         public DbSet<CustomerDb> Customers { get; set; }
         public DbSet<EmployeeDb> Employees { get; set; }
         public DbSet<OrderDb> Orders { get; set; }
+        public DbSet<UserDb> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

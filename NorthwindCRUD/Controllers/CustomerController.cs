@@ -1,6 +1,7 @@
 ﻿namespace NorthwindCRUD.Controllers
 {
     using AutoMapper;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.InputModels;
@@ -22,6 +23,7 @@
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult<CustomerInputModel[]> GetAll()
         {
             try
@@ -37,6 +39,7 @@
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public ActionResult<CustomerInputModel> GetById(string id)
         {
             try
@@ -58,6 +61,7 @@
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult<CustomerInputModel> Create(CustomerInputModel model)
         {
             try
@@ -79,6 +83,7 @@
         }
 
         [HttpPut]
+        [Authorize]
         public ActionResult<CustomerInputModel> Update(CustomerInputModel model)
         {
             try
@@ -100,6 +105,7 @@
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult<CustomerInputModel> Delete(string id)
         {
             try

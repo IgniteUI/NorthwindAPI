@@ -1,6 +1,7 @@
 namespace NorthwindCRUD.Controllers
 {
     using AutoMapper;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.InputModels;
@@ -22,6 +23,7 @@ namespace NorthwindCRUD.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult<CategoryInputModel[]> GetAll()
         {
             try
@@ -38,6 +40,7 @@ namespace NorthwindCRUD.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public ActionResult<CategoryInputModel> GetById(int id)
         {
             try
@@ -59,6 +62,7 @@ namespace NorthwindCRUD.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult<CategoryInputModel> Create(CategoryInputModel model)
         {
             try
@@ -80,6 +84,7 @@ namespace NorthwindCRUD.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public ActionResult<CategoryInputModel> Update(CategoryInputModel model)
         {
             try
@@ -101,6 +106,7 @@ namespace NorthwindCRUD.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult<CategoryInputModel> Delete(int id)
         {
             try
