@@ -112,13 +112,7 @@ namespace NorthwindCRUD.Controllers
             try
             {
                 var category = this.categoryService.Delete(id);
-
-                if (category != null)
-                {
-                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
             }
             catch (Exception error)
             {

@@ -111,13 +111,7 @@
             try
             {
                 var customer = this.customerService.Delete(id);
-
-                if (customer != null)
-                {
-                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
             }
             catch (Exception error)
             {

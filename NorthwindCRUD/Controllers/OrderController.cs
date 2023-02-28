@@ -111,13 +111,7 @@
             try
             {
                 var order = this.orderService.Delete(id);
-
-                if (order != null)
-                {
-                    return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
             }
             catch (Exception error)
             {

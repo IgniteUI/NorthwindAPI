@@ -111,13 +111,7 @@
             try
             {
                 var employee = this.employeeService.Delete(id);
-
-                if (employee != null)
-                {
-                    return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
             }
             catch (Exception error)
             {
