@@ -3,7 +3,6 @@
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using NorthwindCRUD.Models.Contracts;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
