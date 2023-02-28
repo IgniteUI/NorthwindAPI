@@ -46,7 +46,6 @@ namespace NorthwindCRUD.Controllers
             try
             {
                 var category = this.categoryService.GetById(id);
-
                 if (category != null)
                 {
                     return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
@@ -93,7 +92,13 @@ namespace NorthwindCRUD.Controllers
                 {
                     var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
                     var category = this.categoryService.Update(mappedModel);
-                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+
+                    if (category != null)
+                    {
+                        return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                    }
+
+                    return NotFound();
                 }
 
                 return BadRequest(ModelState);
@@ -112,7 +117,12 @@ namespace NorthwindCRUD.Controllers
             try
             {
                 var category = this.categoryService.Delete(id);
-                return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                if (category != null)
+                {
+                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                }
+
+                return NotFound();
             }
             catch (Exception error)
             {

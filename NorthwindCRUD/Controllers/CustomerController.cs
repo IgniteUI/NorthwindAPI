@@ -3,6 +3,7 @@
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using NorthwindCRUD.Models.Contracts;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
@@ -92,7 +93,13 @@
                 {
                     var mappedModel = this.mapper.Map<CustomerInputModel, CustomerDb>(model);
                     var customer = this.customerService.Update(mappedModel);
-                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+
+                    if (customer != null)
+                    {
+                        return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                    }
+
+                    return NotFound();
                 }
 
                 return BadRequest(ModelState);
@@ -111,7 +118,12 @@
             try
             {
                 var customer = this.customerService.Delete(id);
-                return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                if (customer != null)
+                {
+                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                }
+
+                return NotFound();
             }
             catch (Exception error)
             {

@@ -3,6 +3,7 @@
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using NorthwindCRUD.Models.Contracts;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
@@ -111,7 +112,13 @@
             try
             {
                 var employee = this.employeeService.Delete(id);
-                return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+
+                if (employee != null)
+                {
+                    return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+                }
+
+                return NotFound();
             }
             catch (Exception error)
             {
