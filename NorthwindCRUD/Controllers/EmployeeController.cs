@@ -92,7 +92,13 @@
                 {
                     var mappedModel = this.mapper.Map<EmployeeInputModel, EmployeeDb>(model);
                     var employee = this.employeeService.Update(mappedModel);
-                    return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+
+                    if (employee != null)
+                    {
+                        return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+                    }
+
+                    return NotFound();
                 }
 
                 return BadRequest(ModelState);

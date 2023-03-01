@@ -92,7 +92,12 @@
                 {
                     var mappedModel = this.mapper.Map<OrderInputModel, OrderDb>(model);
                     var order = this.orderService.Update(mappedModel);
-                    return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                    if (order != null)
+                    {
+                        return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                    }
+
+                    return NotFound();
                 }
 
                 return BadRequest(ModelState);
@@ -111,7 +116,6 @@
             try
             {
                 var order = this.orderService.Delete(id);
-
                 if (order != null)
                 {
                     return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
