@@ -8,6 +8,7 @@ https://data-northwind.indigo.design/swagger/index.html
 - PUT accepts the whole entity, even the "id"
 - DELETE methods need to map the id, like id=customerId
 - DELETE methods return a copy of the deleted entity
+- Role-based auth support - [blog](https://www.infragistics.com/community/blogs/b/infragistics/posts/create-role-based-web-api-with-asp-net-core)
 - In order to create a Bearer token, use the POST -> `/Auth/Register` with the example request body:
 ```
 {
