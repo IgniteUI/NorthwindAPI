@@ -4,7 +4,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class CategoryDb : ICategory
+    public class CategoryDb : ICategory, ICategoryDetail
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -14,5 +14,9 @@
         public string Description { get; set; }
 
         public string Name { get; set; }
+
+        public string Picture { get; set; }
+
+        public ICollection<ProductDb> Products { get; set; } = new List<ProductDb>();
     }
 }

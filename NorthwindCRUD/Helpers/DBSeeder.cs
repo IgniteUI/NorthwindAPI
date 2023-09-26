@@ -1,5 +1,6 @@
 ﻿namespace NorthwindCRUD.Helpers
 {
+    using Microsoft.AspNetCore.JsonPatch.Internal;
     using Microsoft.EntityFrameworkCore;
     using Newtonsoft.Json;
     using NorthwindCRUD.Models.DbModels;
@@ -70,8 +71,81 @@
                         {
                             dbContext.Addresses.Add(order.ShipAddress);
                         }
+
+                        if (!dbContext.OrderDetails.Any(o => o.OrderId == order.OrderId))
+                        {
+                            var orderDetailsData = order.Details.ToList();
+
+                            orderDetailsData.ForEach(o => 
+                            { 
+                               o.OrderId = order.OrderId;
+                            });
+
+                            dbContext.OrderDetails.AddRange(order.Details);
+                        }
+
                         dbContext.Orders.Add(order);
                     }
+                    dbContext.SaveChanges();
+                }
+
+                //Seed Products
+                if (!dbContext.Products.Any())
+                {
+                    var productsData = File.ReadAllText("./Resources/products.json");
+                    var parsedProducts = JsonConvert.DeserializeObject<ProductDb[]>(productsData);
+
+                    dbContext.Products.AddRange(parsedProducts);
+                    dbContext.SaveChanges();
+                }
+
+                //Seed Regions
+                if (!dbContext.Products.Any())
+                {
+                    var productsData = File.ReadAllText("./Resources/products.json");
+                    var parsedProducts = JsonConvert.DeserializeObject<ProductDb[]>(productsData);
+
+                    dbContext.Products.AddRange(parsedProducts);
+                    dbContext.SaveChanges();
+                }
+
+                //Seed Shippers
+                if (!dbContext.Shippers.Any())
+                {
+                    var shippersData = File.ReadAllText("./Resources/shippers.json");
+                    var parsedShippers = JsonConvert.DeserializeObject<ShipperDb[]>(shippersData);
+
+                    dbContext.Shippers.AddRange(parsedShippers);
+                    dbContext.SaveChanges();
+                }
+
+                //Seed Suppliers
+                if (!dbContext.Suppliers.Any())
+                {
+                    var suppliersData = File.ReadAllText("./Resources/suppliers.json");
+                    var parsedSuppliers = JsonConvert.DeserializeObject<SupplierDb[]>(suppliersData);
+
+                    dbContext.Suppliers.AddRange(parsedSuppliers);
+                    dbContext.SaveChanges();
+                }
+
+                //Seed Territories
+                if (!dbContext.Territories.Any())
+                {
+                    var territoriesData = File.ReadAllText("./Resources/territories.json");
+                    var parsedTerritories = JsonConvert.DeserializeObject<TerritoryDb[]>(territoriesData);
+
+                    dbContext.Territories.AddRange(parsedTerritories);
+                    dbContext.SaveChanges();
+                }
+
+                //Seed EmployeesTeritories
+                if (!dbContext.EmployeesTerritories.Any())
+                {
+                    var employeesTerritoriesData = File.ReadAllText("./Resources/employees-territories.json");
+                    var parsedEmployeesTerritories = JsonConvert.DeserializeObject<EmployeeTerritoryDb[]>(employeesTerritoriesData);
+
+                    dbContext.EmployeesTerritories.AddRange(parsedEmployeesTerritories);
                     dbContext.SaveChanges();
                 }
 

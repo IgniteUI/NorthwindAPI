@@ -1,8 +1,10 @@
 ﻿namespace NorthwindCRUD.Services
 {
+    using Microsoft.CodeAnalysis;
     using Microsoft.EntityFrameworkCore;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
+    using NorthwindCRUD.Models.Dtos;
 
     public class OrderService
     {
@@ -24,6 +26,7 @@
         {
             return this.dataContext.Orders
                 .Include(c => c.ShipAddress)
+                .Include(c => c.Details)
                 .FirstOrDefault(c => c.OrderId == id);
         }
 

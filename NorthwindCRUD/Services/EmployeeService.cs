@@ -27,6 +27,13 @@
                 .FirstOrDefault(c => c.EmployeeId == id);
         }
 
+        public EmployeeDb[] GetEmployeesByReportsTo(int id)
+        {
+            return this.dataContext.Employees
+                .Where(c => c.ReportsTo == id)
+                .ToArray();
+        }
+
         public EmployeeDb Create(EmployeeDb model)
         {
             var id = IdGenerator.CreateDigitsId();

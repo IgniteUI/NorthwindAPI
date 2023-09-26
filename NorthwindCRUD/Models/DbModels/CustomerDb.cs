@@ -19,5 +19,7 @@
         public string AddressId { get; set; }
 
         public AddressDb Address { get; set; }
+
+        public ICollection<OrderDb> Orders { get; set; }
     }
 }

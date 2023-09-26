@@ -1,0 +1,80 @@
+﻿namespace NorthwindCRUD.Services
+{
+    using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
+    using NorthwindCRUD.Helpers;
+    using NorthwindCRUD.Models.DbModels;
+    using NorthwindCRUD.Models.Dtos;
+
+    public class TerritoryService
+    {
+
+        private readonly IMapper mapper;
+        private readonly DataContext dataContext;
+
+        public TerritoryService(IMapper mapper, DataContext dataContext)
+        {
+            this.mapper = mapper;
+            this.dataContext = dataContext;
+        }
+
+        public TerritoryDb[] GetAll()
+        {
+            return this.dataContext.Territories.ToArray();
+        }
+
+        public TerritoryDb GetById(string id)
+        {
+
+            return this.dataContext.Territories
+                .AsNoTracking()
+                .Include(t => t.EmployeesTerritories)
+                .ThenInclude(t => t.Employee)
+                .FirstOrDefault(t => t.TerritoryId == id);
+        }
+
+        public TerritoryDb Create(TerritoryDb model)
+        {
+            var id = IdGenerator.CreateDigitsId().ToString();
+            var existWithId = this.GetById(id);
+            while (existWithId != null)
+            {
+                id = IdGenerator.CreateDigitsId().ToString();
+                existWithId = this.GetById(id);
+            }
+            model.TerritoryId = id;
+
+            PropertyHelper<TerritoryDb>.MakePropertiesEmptyIfNull(model);
+
+            var territoryEntity = this.dataContext.Territories.Add(model);
+            this.dataContext.SaveChanges();
+
+            return territoryEntity.Entity;
+        }
+
+        public TerritoryDb Update(TerritoryDb model)
+        {
+            var territoryEntity = this.dataContext.Territories.FirstOrDefault(p => p.TerritoryId == model.TerritoryId);
+            if (territoryEntity != null)
+            {
+                territoryEntity.TerritoryDescription = model.TerritoryDescription != null ? model.TerritoryDescription : territoryEntity.TerritoryDescription;
+
+                this.dataContext.SaveChanges();
+            }
+
+            return territoryEntity;
+        }
+
+        public TerritoryDb Delete(string id)
+        {
+            var territoryEntity = this.GetById(id);
+            if (territoryEntity != null)
+            {
+                this.dataContext.Territories.Remove(territoryEntity);
+                this.dataContext.SaveChanges();
+            }
+
+            return territoryEntity;
+        }
+    }
+}

@@ -4,6 +4,7 @@
     using GraphQL.AspNet.Attributes;
     using GraphQL.AspNet.Controllers;
     using NorthwindCRUD.Models.DbModels;
+    using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
 
@@ -22,49 +23,49 @@
         }
 
         [Query]
-        public EmployeeInputModel[] GetAll()
+        public EmployeeDto[] GetAll()
         {
             var employees = this.employeeService.GetAll();
-            return this.mapper.Map<EmployeeDb[], EmployeeInputModel[]>(employees);
+            return this.mapper.Map<EmployeeDb[], EmployeeDto[]>(employees);
         }
 
         [Query]
-        public EmployeeInputModel GetById(int id)
+        public EmployeeDto GetById(int id)
         {
             var employee = this.employeeService.GetById(id);
 
             if (employee != null)
             {
-                return this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee);
+                return this.mapper.Map<EmployeeDb, EmployeeDto>(employee);
             }
 
             return null;
         }
         
         [Mutation]
-        public EmployeeInputModel Create(EmployeeInputModel model)
+        public EmployeeDto Create(EmployeeDto model)
         {
-            var mappedModel = this.mapper.Map<EmployeeInputModel, EmployeeDb>(model);
+            var mappedModel = this.mapper.Map<EmployeeDto, EmployeeDb>(model);
             var employee = this.employeeService.Create(mappedModel);
-            return this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee);
+            return this.mapper.Map<EmployeeDb, EmployeeDto>(employee);
         }
 
         [Mutation]
-        public EmployeeInputModel Update(EmployeeInputModel model)
+        public EmployeeDto Update(EmployeeDto model)
         {
-            var mappedModel = this.mapper.Map<EmployeeInputModel, EmployeeDb>(model);
+            var mappedModel = this.mapper.Map<EmployeeDto, EmployeeDb>(model);
             var employee = this.employeeService.Update(mappedModel);
-            return this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee);
+            return this.mapper.Map<EmployeeDb, EmployeeDto>(employee);
         }
 
         [Mutation]
-        public EmployeeInputModel Delete(int id)
+        public EmployeeDto Delete(int id)
         {
             var employee = this.employeeService.Delete(id);
 
             if (employee != null)
             {
-                return this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee);
+                return this.mapper.Map<EmployeeDb, EmployeeDto>(employee);
             }
 
             return null;

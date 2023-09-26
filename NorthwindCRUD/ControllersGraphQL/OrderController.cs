@@ -4,6 +4,7 @@
     using GraphQL.AspNet.Attributes;
     using GraphQL.AspNet.Controllers;
     using NorthwindCRUD.Models.DbModels;
+    using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
 
@@ -22,49 +23,49 @@
         }
 
         [Query]
-        public OrderInputModel[] GetAll()
+        public OrderDto[] GetAll()
         {
             var orders = this.orderService.GetAll();
-            return this.mapper.Map<OrderDb[], OrderInputModel[]>(orders);
+            return this.mapper.Map<OrderDb[], OrderDto[]>(orders);
         }
         
         [Query]
-        public OrderInputModel GetById(int id)
+        public OrderDto GetById(int id)
         {
             var order = this.orderService.GetById(id);
 
             if (order != null)
             {
-                return this.mapper.Map<OrderDb, OrderInputModel>(order);
+                return this.mapper.Map<OrderDb, OrderDto>(order);
             }
 
             return null;
         }
 
         [Mutation]
-        public OrderInputModel Create(OrderInputModel model)
+        public OrderDto Create(OrderDto model)
         {
-            var mappedModel = this.mapper.Map<OrderInputModel, OrderDb>(model);
+            var mappedModel = this.mapper.Map<OrderDto, OrderDb>(model);
             var order = this.orderService.Create(mappedModel);
-            return this.mapper.Map<OrderDb, OrderInputModel>(order);
+            return this.mapper.Map<OrderDb, OrderDto>(order);
         }
 
         [Mutation]
-        public OrderInputModel Update(OrderInputModel model)
+        public OrderDto Update(OrderDto model)
         {
-            var mappedModel = this.mapper.Map<OrderInputModel, OrderDb>(model);
+            var mappedModel = this.mapper.Map<OrderDto, OrderDb>(model);
             var order = this.orderService.Update(mappedModel);
-            return this.mapper.Map<OrderDb, OrderInputModel>(order);
+            return this.mapper.Map<OrderDb, OrderDto>(order);
         }
 
         [Mutation]
-        public OrderInputModel Delete(int id)
+        public OrderDto Delete(int id)
         {
             var order = this.orderService.Delete(id);
 
             if (order != null)
             {
-                return this.mapper.Map<OrderDb, OrderInputModel>(order);
+                return this.mapper.Map<OrderDb, OrderDto>(order);
             }
 
             return null;

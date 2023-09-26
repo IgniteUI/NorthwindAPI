@@ -1,15 +1,13 @@
 ﻿using NorthwindCRUD.Models.Contracts;
 
-namespace NorthwindCRUD.Models.InputModels
+namespace NorthwindCRUD.Models.Dtos
 {
-    public class CategoryInputModel : ICategory
+    public class CategoryDto : ICategory
     {
         public int CategoryId { get; set; }
 
         public string Description { get; set; }
 
         public string Name { get; set; }
-
-        public string Picture { get; set; }
     }
 }

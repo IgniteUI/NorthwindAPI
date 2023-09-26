@@ -4,32 +4,55 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
+    using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
 
     [ApiController]
     [Route("[controller]")]
-    public class OrderController : ControllerBase
+    public class RegionsController : ControllerBase
     {
-        private readonly OrderService orderService;
+        private readonly RegionService regionService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public OrderController(OrderService orderService, IMapper mapper, ILogger logger)
+        public RegionsController(RegionService regionService, IMapper mapper, ILogger logger)
         {
-            this.orderService = orderService;
+            this.regionService = regionService;
             this.mapper = mapper;
             this.logger = logger;
         }
 
         [HttpGet]
         [Authorize]
-        public ActionResult<OrderInputModel[]> GetAll()
+        public ActionResult<RegionDto[]> GetAll()
         {
             try
             {
-                var orders = this.orderService.GetAll();
-                return Ok(this.mapper.Map<OrderDb[], OrderInputModel[]>(orders));
+                var regions = this.regionService.GetAll();
+                return Ok(this.mapper.Map<RegionDb[], RegionDto[]>(regions));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+
+        }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public ActionResult<RegionDto> GetById(int id)
+        {
+            try
+            {
+                var region = this.regionService.GetById(id);
+                if (region != null)
+                {
+                    return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
+                }
+
+                return NotFound();
             }
             catch (Exception error)
             {
@@ -37,18 +60,17 @@
                 return StatusCode(500);
             }
         }
-        
-        [HttpGet("{id}")]
+
+        [HttpGet("{id}/Territory")]
         [Authorize]
-        public ActionResult<OrderInputModel> GetById(int id)
+        public ActionResult<CustomerDto> GetTerritoryByRegionId(int id)
         {
             try
             {
-                var order = this.orderService.GetById(id);
-
-                if (order != null)
+                var region = this.regionService.GetById(id);
+                if (region != null)
                 {
-                    return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                    return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(region.Territories.ToArray()));
                 }
 
                 return NotFound();
@@ -62,15 +84,15 @@
 
         [HttpPost]
         [Authorize]
-        public ActionResult<OrderInputModel> Create(OrderInputModel model)
+        public ActionResult<RegionDto> Create(RegionDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<OrderInputModel, OrderDb>(model);
-                    var order = this.orderService.Create(mappedModel);
-                    return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                    var mappedModel = this.mapper.Map<RegionDto, RegionDb>(model);
+                    var Region = this.regionService.Create(mappedModel);
+                    return Ok(this.mapper.Map<RegionDb, RegionDto>(Region));
                 }
 
                 return BadRequest(ModelState);
@@ -84,17 +106,18 @@
 
         [HttpPut]
         [Authorize]
-        public ActionResult<OrderInputModel> Update(OrderInputModel model)
+        public ActionResult<RegionDto> Update(RegionDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<OrderInputModel, OrderDb>(model);
-                    var order = this.orderService.Update(mappedModel);
-                    if (order != null)
+                    var mappedModel = this.mapper.Map<RegionDto, RegionDb>(model);
+                    var region = this.regionService.Update(mappedModel);
+
+                    if (region != null)
                     {
-                        return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                        return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
                     }
 
                     return NotFound();
@@ -111,14 +134,14 @@
 
         [HttpDelete("{id}")]
         [Authorize]
-        public ActionResult<OrderInputModel> Delete(int id)
+        public ActionResult<RegionDto> Delete(int id)
         {
             try
             {
-                var order = this.orderService.Delete(id);
-                if (order != null)
+                var region = this.regionService.Delete(id);
+                if (region != null)
                 {
-                    return Ok(this.mapper.Map<OrderDb, OrderInputModel>(order));
+                    return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
                 }
 
                 return NotFound();

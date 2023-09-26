@@ -4,51 +4,52 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
+    using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
 
     [ApiController]
     [Route("[controller]")]
-    public class EmployeeController : Controller
+    public class ShippersController : ControllerBase
     {
-        private readonly EmployeeService employeeService;
+        private readonly ShipperService ShipperService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public EmployeeController(EmployeeService employeeService, IMapper mapper, ILogger logger)
+        public ShippersController(ShipperService ShipperService, IMapper mapper, ILogger logger)
         {
-            this.employeeService = employeeService;
+            this.ShipperService = ShipperService;
             this.mapper = mapper;
             this.logger = logger;
         }
 
         [HttpGet]
         [Authorize]
-        public ActionResult<EmployeeInputModel[]> GetAll()
+        public ActionResult<ShipperDto[]> GetAll()
         {
             try
             {
-                var employees = this.employeeService.GetAll();
-                return Ok(this.mapper.Map<EmployeeDb[], EmployeeInputModel[]>(employees));
+                var Shippers = this.ShipperService.GetAll();
+                return Ok(this.mapper.Map<ShipperDb[], ShipperDto[]>(Shippers));
             }
             catch (Exception error)
             {
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
+
         }
 
         [HttpGet("{id}")]
         [Authorize]
-        public ActionResult<EmployeeInputModel> GetById(int id)
+        public ActionResult<ShipperDto> GetById(int id)
         {
             try
             {
-                var employee = this.employeeService.GetById(id);
-
-                if (employee != null)
+                var category = this.ShipperService.GetById(id);
+                if (category != null)
                 {
-                    return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+                    return Ok(this.mapper.Map<ShipperDb, ShipperDto>(category));
                 }
 
                 return NotFound();
@@ -59,18 +60,39 @@
                 return StatusCode(500);
             }
         }
-        
+
+        [HttpGet("{id}/Orders")]
+        [Authorize]
+        public ActionResult<OrderDto[]> GetOrdersByShipperId(int id)
+        {
+            try
+            {
+                var shipper = this.ShipperService.GetById(id);
+                if (shipper != null)
+                {
+                    return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(shipper.Orders.ToArray()));
+                }
+
+                return NotFound();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpPost]
         [Authorize]
-        public ActionResult<EmployeeInputModel> Create(EmployeeInputModel model)
+        public ActionResult<ShipperDto> Create(ShipperDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<EmployeeInputModel, EmployeeDb>(model);
-                    var employee = this.employeeService.Create(mappedModel);
-                    return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+                    var mappedModel = this.mapper.Map<ShipperDto, ShipperDb>(model);
+                    var shipper = this.ShipperService.Create(mappedModel);
+                    return Ok(this.mapper.Map<ShipperDb, ShipperDto>(shipper));
                 }
 
                 return BadRequest(ModelState);
@@ -84,18 +106,18 @@
 
         [HttpPut]
         [Authorize]
-        public ActionResult<EmployeeInputModel> Update(EmployeeInputModel model)
+        public ActionResult<ShipperDto> Update(ShipperDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<EmployeeInputModel, EmployeeDb>(model);
-                    var employee = this.employeeService.Update(mappedModel);
+                    var mappedModel = this.mapper.Map<ShipperDto, ShipperDb>(model);
+                    var shipper = this.ShipperService.Update(mappedModel);
 
-                    if (employee != null)
+                    if (shipper != null)
                     {
-                        return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+                        return Ok(this.mapper.Map<ShipperDb, ShipperDto>(shipper));
                     }
 
                     return NotFound();
@@ -112,15 +134,14 @@
 
         [HttpDelete("{id}")]
         [Authorize]
-        public ActionResult<EmployeeInputModel> Delete(int id)
+        public ActionResult<ShipperDto> Delete(int id)
         {
             try
             {
-                var employee = this.employeeService.Delete(id);
-
-                if (employee != null)
+                var shipper = this.ShipperService.Delete(id);
+                if (shipper != null)
                 {
-                    return Ok(this.mapper.Map<EmployeeDb, EmployeeInputModel>(employee));
+                    return Ok(this.mapper.Map<ShipperDb, ShipperDto>(shipper));
                 }
 
                 return NotFound();

@@ -1,9 +1,9 @@
-﻿namespace NorthwindCRUD.Models.InputModels
+﻿namespace NorthwindCRUD.Models.Dtos
 {
     using NorthwindCRUD.Models.Contracts;
     using System.ComponentModel.DataAnnotations;
 
-    public class CustomerInputModel : ICustomer
+    public class CustomerDto : ICustomer
     {
         public string CustomerId { get; set; }
 
@@ -14,6 +14,6 @@
 
         public string ContactTitle { get; set; }
 
-        public AddressInputModel Address { get; set; }
+        public AddressDto Address { get; set; }
     }
 }
