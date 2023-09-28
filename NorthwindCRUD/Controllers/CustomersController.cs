@@ -69,7 +69,7 @@
                 var customer = this.customerService.GetById(id);
                 if (customer != null)
                 {
-                    return Ok(this.mapper.Map<OrderDb[], OrderDto>(customer.Orders.ToArray()));
+                    return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(customer.Orders.ToArray()));
                 }
 
                 return NotFound();

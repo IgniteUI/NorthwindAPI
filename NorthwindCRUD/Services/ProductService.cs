@@ -22,6 +22,11 @@
             return this.dataContext.Products.ToArray();
         }
 
+        public ProductDb[] GetAllByCategoryId(int id)
+        {
+            return this.dataContext.Products.Where(p => p.CategoryId == id).ToArray();
+        }
+
         public ProductDb GetById(int id)
         {
             return this.dataContext.Products.FirstOrDefault(p => p.ProductId == id);
