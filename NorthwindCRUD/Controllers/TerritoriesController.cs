@@ -13,12 +13,14 @@
     public class TerritoriesController : ControllerBase
     {
         private readonly TerritoryService territoryService;
+        private readonly RegionService regionService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public TerritoriesController(TerritoryService territoryService, IMapper mapper, ILogger logger)
+        public TerritoriesController(TerritoryService territoryService, RegionService regionService, IMapper mapper, ILogger logger)
         {
             this.territoryService = territoryService;
+            this.regionService = regionService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -94,7 +96,7 @@
                 var territory = this.territoryService.GetById(id);
                 if (territory != null)
                 {
-                    var region = territory.Region;
+                    var region = this.regionService.GetById(territory.RegionId);
 
                     return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
                 }

@@ -22,6 +22,7 @@
             CreateMap<AddressDto, AddressDb>().ReverseMap();
             CreateMap<LoginDto, UserDb>().ReverseMap();
             CreateMap<RegisterDto, UserDb>().ReverseMap();
+            CreateMap<EmployeeDb, EmployeeDto>().ReverseMap();
         }
     }
 }

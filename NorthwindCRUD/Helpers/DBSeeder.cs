@@ -100,12 +100,12 @@
                 }
 
                 //Seed Regions
-                if (!dbContext.Products.Any())
+                if (!dbContext.Regions.Any())
                 {
-                    var productsData = File.ReadAllText("./Resources/products.json");
-                    var parsedProducts = JsonConvert.DeserializeObject<ProductDb[]>(productsData);
+                    var productsData = File.ReadAllText("./Resources/regions.json");
+                    var parsedRegions = JsonConvert.DeserializeObject<RegionDb[]>(productsData);
 
-                    dbContext.Products.AddRange(parsedProducts);
+                    dbContext.Regions.AddRange(parsedRegions);
                     dbContext.SaveChanges();
                 }
 
