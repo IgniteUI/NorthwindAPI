@@ -60,6 +60,7 @@
             }
         }
 
+        // TODO Add additional data in order to support this endpoint
         [HttpGet("{id}/Superior")]
         [Authorize]
         public ActionResult<EmployeeDto> GetSuperiorById(int id)
@@ -111,7 +112,7 @@
                 var employee = this.employeeService.GetById(id);
                 if (employee != null)
                 {
-                    return Ok(this.mapper.Map<OrderDb[], OrderDto>(employee.Orders.ToArray()));
+                    return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(employee.Orders.ToArray()));
                 }
 
                 return NotFound();
