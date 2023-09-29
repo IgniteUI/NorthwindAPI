@@ -1,6 +1,7 @@
 ﻿namespace NorthwindCRUD.Services
 {
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
@@ -24,7 +25,9 @@
 
         public SupplierDb GetById(int id)
         {
-            return this.dataContext.Suppliers.FirstOrDefault(p => p.SupplierId == id);
+            return this.dataContext.Suppliers
+                .Include(s => s.Products)
+                .FirstOrDefault(p => p.SupplierId == id);
         }
 
         public SupplierDb Create(SupplierDb model)

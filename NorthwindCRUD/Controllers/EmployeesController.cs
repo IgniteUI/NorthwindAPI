@@ -90,7 +90,7 @@
 
         [HttpGet("{id}/Subordinates")]
         [Authorize]
-        public ActionResult<ProductDto[]> GetSubordinatesById(int id)
+        public ActionResult<EmployeeDto[]> GetSubordinatesById(int id)
         {
             try
             {

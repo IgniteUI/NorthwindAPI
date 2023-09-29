@@ -1,6 +1,7 @@
 ﻿namespace NorthwindCRUD.Services
 {
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
@@ -24,7 +25,9 @@
 
         public ShipperDb GetById(int id)
         {
-            return this.dataContext.Shippers.FirstOrDefault(p => p.ShipperId == id);
+            return this.dataContext.Shippers
+                .Include(c => c.Orders)
+                .FirstOrDefault(p => p.ShipperId == id);
         }
 
         public ShipperDb Create(ShipperDb model)
