@@ -60,7 +60,6 @@
             }
         }
 
-        // TODO Add additional data in order to support this endpoint
         [HttpGet("{id}/Superior")]
         [Authorize]
         public ActionResult<EmployeeDto> GetSuperiorById(int id)
