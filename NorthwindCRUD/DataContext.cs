@@ -45,13 +45,22 @@
                 .HasOne(c => c.Address)
                 .WithMany(a => a.Customers);
 
-            modelBuilder.Entity<EmployeeDb>()
-               .HasOne(e => e.Address)
-               .WithMany(a => a.Employees);
 
             modelBuilder.Entity<OrderDb>()
                .HasOne(o => o.ShipAddress)
                .WithMany(a => a.Orders);
+
+            modelBuilder.Entity<OrderDb>()
+                .HasOne(o => o.Customer)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OrderDb>()
+                .HasOne(o => o.Employee)
+                .WithMany(e => e.Orders)
+                .HasForeignKey(o => o.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OrderDb>()
               .HasOne(o => o.Shipper)
@@ -64,6 +73,10 @@
             modelBuilder.Entity<OrderDetailDb>()
                 .HasOne(o => o.Order)
                 .WithMany(o => o.Details);
+
+            modelBuilder.Entity<EmployeeDb>()
+               .HasOne(e => e.Address)
+               .WithMany(a => a.Employees);
 
             modelBuilder.Entity<TerritoryDb>()
                 .HasOne(t => t.Region)

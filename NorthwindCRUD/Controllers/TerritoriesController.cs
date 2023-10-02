@@ -14,13 +14,15 @@
     {
         private readonly TerritoryService territoryService;
         private readonly RegionService regionService;
+        private readonly EmployeeTerritoryService employeeTerritoryService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public TerritoriesController(TerritoryService territoryService, RegionService regionService, IMapper mapper, ILogger logger)
+        public TerritoriesController(TerritoryService territoryService, EmployeeTerritoryService employeeTerritoryService, RegionService regionService, IMapper mapper, ILogger logger)
         {
             this.territoryService = territoryService;
             this.regionService = regionService;
+            this.employeeTerritoryService = employeeTerritoryService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -69,12 +71,10 @@
         {
             try
             {
-                var territory = this.territoryService.GetById(id);
+                var employees = this.employeeTerritoryService.GetEmployeesByTerritoryId(id);
 
-                if (territory != null)
+                if (employees != null)
                 {
-                    var employees = territory.EmployeesTerritories.Select(et => et.Employee).ToArray();
-
                     return Ok(this.mapper.Map<EmployeeDb[], EmployeeDto[]>(employees));
                 }
 

@@ -15,6 +15,10 @@
             var transaction = dbContext.Database.BeginTransaction(System.Data.IsolationLevel.Serializable);
             try
             {
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
+                {
+                    dbContext.Database.ExecuteSqlRaw("EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'");
+                }
                 // Seed Categories
                 if (!dbContext.Categories.Any())
                 {
@@ -131,7 +135,6 @@
                 {
                     var shippersData = File.ReadAllText("./Resources/shippers.json");
                     var parsedShippers = JsonConvert.DeserializeObject<ShipperDb[]>(shippersData);
-
                     foreach (var shipper in parsedShippers)
                     {
                         var matchingOrders = dbContext.Orders.Where(o => o.ShipperId == shipper.ShipperId).ToList();
@@ -171,6 +174,11 @@
                 }
 
                 transaction.Commit();
+
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
+                {
+                    dbContext.Database.ExecuteSqlRaw("EXEC sp_MSforeachtable 'ALTER TABLE ? CHECK CONSTRAINT ALL'");
+                }
             }
             catch (Exception error)
             {

@@ -26,5 +26,7 @@
         public string Notes { get; set; }
 
         public string AvatarUrl { get; set; }
+
+        public int ReportsTo { get; set; }
     }
 }

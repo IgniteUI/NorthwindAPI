@@ -13,12 +13,20 @@
     public class OrdersController : ControllerBase
     {
         private readonly OrderService orderService;
+        private readonly EmployeeService employeeService;
+        private readonly CustomerService customerService;
+        private readonly ShipperService shipperService;
+        private readonly ProductService productService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public OrdersController(OrderService orderService, IMapper mapper, ILogger logger)
+        public OrdersController(OrderService orderService, EmployeeService employeeService, CustomerService customerService, ShipperService shipperService, ProductService productService, IMapper mapper, ILogger logger)
         {
             this.orderService = orderService;
+            this.employeeService = employeeService;
+            this.customerService = customerService;
+            this.shipperService = shipperService;
+            this.productService = productService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -91,11 +99,11 @@
                 var order = this.orderService.GetById(id);
                 if (order != null)
                 {
-                    var customer = order.Customer;
+                    var customer = this.customerService.GetById(order.CustomerId);
 
                     if (customer != null)
                     {
-                        return Ok(this.mapper.Map<CustomerDb, CustomerDto>(customer));
+                        return this.mapper.Map<CustomerDb, CustomerDto>(customer);
                     }
                 }
 
@@ -117,8 +125,7 @@
                 var order = this.orderService.GetById(id);
                 if (order != null)
                 {
-                    var employee = order.Employee;
-
+                    var employee = this.employeeService.GetById(order.EmployeeId);
                     if (employee != null)
                     {
                         return Ok(this.mapper.Map<EmployeeDb, EmployeeDto>(employee));
@@ -143,7 +150,7 @@
                 var order = this.orderService.GetById(id);
                 if (order != null)
                 {
-                    var shipper = order.Shipper;
+                    var shipper = this.shipperService.GetById(order.ShipVia);
 
                     if (shipper != null)
                     {
@@ -170,9 +177,14 @@
                 var order = this.orderService.GetById(id);
                 if (order != null)
                 {
-                    var products = order.Details.Select(o => o.Product).ToArray();
+                    var productIds = order.Details.Select(o => o.ProductId).ToArray();
+                    var products = this.productService.GetProductsByIds(productIds);
 
-                    return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
+                    if (products != null)
+                    {
+                        var productDtos = this.mapper.Map<ProductDb[], ProductDto[]>(products);
+                        return Ok(productDtos);
+                    }
                 }
 
                 return NotFound();

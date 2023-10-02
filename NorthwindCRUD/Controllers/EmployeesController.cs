@@ -12,12 +12,16 @@
     public class EmployeesController : Controller
     {
         private readonly EmployeeService employeeService;
+        private readonly EmployeeTerritoryService employeeTerritoryService;
+        private readonly OrderService ordersService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public EmployeesController(EmployeeService employeeService, IMapper mapper, ILogger logger)
+        public EmployeesController(EmployeeService employeeService, EmployeeTerritoryService employeeTerritoryService, OrderService ordersService, IMapper mapper, ILogger logger)
         {
             this.employeeService = employeeService;
+            this.employeeTerritoryService = employeeTerritoryService;
+            this.ordersService = ordersService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -108,10 +112,10 @@
         {
             try
             {
-                var employee = this.employeeService.GetById(id);
-                if (employee != null)
+                var orders = this.ordersService.GetOrdersByEmployeeId(id);
+                if (orders != null)
                 {
-                    return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(employee.Orders.ToArray()));
+                    return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
                 }
 
                 return NotFound();
@@ -129,12 +133,32 @@
         {
             try
             {
-                var employee = this.employeeService.GetById(id);
-                if (employee != null)
+                var teritories = this.employeeTerritoryService.GetTeritoriesByEmployeeId(id);
+                if (teritories != null)
                 {
-                    var teritories = employee.EmployeesTerritories.Select(et => et.Territory).ToArray();
-
                     return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(teritories));
+                }
+
+                return NotFound();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost("Teritory")]
+        [Authorize]
+        public ActionResult<EmployeeTerritoryDto> AddTerritoryToEmployee(EmployeeTerritoryDto model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var mappedModel = this.mapper.Map<EmployeeTerritoryDto, EmployeeTerritoryDb>(model);
+                    var employeeTerrirtory = this.employeeTerritoryService.AddTerritoryToEmployee(mappedModel);
+                    return Ok(this.mapper.Map<EmployeeTerritoryDb, EmployeeTerritoryDto>(employeeTerrirtory));
                 }
 
                 return NotFound();

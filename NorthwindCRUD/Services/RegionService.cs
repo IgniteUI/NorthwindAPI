@@ -25,9 +25,7 @@
 
         public RegionDb GetById(int id)
         {
-            return this.dataContext.Regions
-                .Include(c => c.Territories)
-                .FirstOrDefault(p => p.RegionId == id);
+            return this.dataContext.Regions.FirstOrDefault(p => p.RegionId == id);
         }
 
         public RegionDb Create(RegionDb model)

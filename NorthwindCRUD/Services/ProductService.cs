@@ -22,14 +22,26 @@
             return this.dataContext.Products.ToArray();
         }
 
+        public ProductDb GetById(int id)
+        {
+            return this.dataContext.Products.FirstOrDefault(p => p.ProductId == id);
+        }
+
         public ProductDb[] GetAllByCategoryId(int id)
         {
             return this.dataContext.Products.Where(p => p.CategoryId == id).ToArray();
         }
 
-        public ProductDb GetById(int id)
+        public ProductDb[] GetAllBySupplierId(int id)
         {
-            return this.dataContext.Products.FirstOrDefault(p => p.ProductId == id);
+            return this.dataContext.Products.Where(p => p.SupplierId == id).ToArray();
+        }
+
+        public ProductDb[] GetProductsByIds(int[] productIds)
+        {
+            return this.dataContext.Products
+                .Where(p => productIds.Contains(p.ProductId))
+                .ToArray();
         }
 
         public ProductDb Create(ProductDb model)

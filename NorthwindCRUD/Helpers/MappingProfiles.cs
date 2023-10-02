@@ -23,6 +23,7 @@
             CreateMap<LoginDto, UserDb>().ReverseMap();
             CreateMap<RegisterDto, UserDb>().ReverseMap();
             CreateMap<EmployeeDb, EmployeeDto>().ReverseMap();
+            CreateMap<EmployeeTerritoryDto, EmployeeTerritoryDb>().ReverseMap();
         }
     }
 }

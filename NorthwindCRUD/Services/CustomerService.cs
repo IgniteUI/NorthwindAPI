@@ -25,7 +25,6 @@ namespace NorthwindCRUD.Services
         {
             return this.dataContext.Customers
                 .Include(c => c.Address)
-                .Include(c => c.Orders.Where(o => o.CustomerId == id))
                 .FirstOrDefault(c => c.CustomerId == id);
         }
 

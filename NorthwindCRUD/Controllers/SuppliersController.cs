@@ -13,12 +13,14 @@
     public class SuppliersController : ControllerBase
     {
         private readonly SupplierService supplierService;
+        private readonly ProductService productService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public SuppliersController(SupplierService SupplierService, IMapper mapper, ILogger logger)
+        public SuppliersController(SupplierService supplierService, ProductService productService, IMapper mapper, ILogger logger)
         {
-            this.supplierService = SupplierService;
+            this.supplierService = supplierService;
+            this.productService = productService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -67,10 +69,10 @@
         {
             try
             {
-                var supplier = this.supplierService.GetById(id);
-                if (supplier != null)
+                var products = this.productService.GetAllBySupplierId(id);
+                if (products != null)
                 {
-                    return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(supplier.Products.ToArray()));
+                    return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
                 }
 
                 return NotFound();
