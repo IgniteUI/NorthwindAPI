@@ -12,12 +12,14 @@
     public class CustomersController : Controller
     {
         private readonly CustomerService customerService;
+        private readonly OrderService orderService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public CustomersController(CustomerService customerService, IMapper mapper, ILogger logger)
+        public CustomersController(CustomerService customerService, OrderService orderService, IMapper mapper, ILogger logger)
         {
             this.customerService = customerService;
+            this.orderService = orderService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -66,13 +68,8 @@
         {
             try
             {
-                var customer = this.customerService.GetById(id);
-                if (customer != null)
-                {
-                    return Ok(this.mapper.Map<OrderDb[], OrderDto>(customer.Orders.ToArray()));
-                }
-
-                return NotFound();
+                var orders = this.orderService.GetOrdersByCustomerId(id);
+                return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
             }
             catch (Exception error)
             {

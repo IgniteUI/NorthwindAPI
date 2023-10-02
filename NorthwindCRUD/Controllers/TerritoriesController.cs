@@ -13,12 +13,16 @@
     public class TerritoriesController : ControllerBase
     {
         private readonly TerritoryService territoryService;
+        private readonly RegionService regionService;
+        private readonly EmployeeTerritoryService employeeTerritoryService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public TerritoriesController(TerritoryService territoryService, IMapper mapper, ILogger logger)
+        public TerritoriesController(TerritoryService territoryService, EmployeeTerritoryService employeeTerritoryService, RegionService regionService, IMapper mapper, ILogger logger)
         {
             this.territoryService = territoryService;
+            this.regionService = regionService;
+            this.employeeTerritoryService = employeeTerritoryService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -67,16 +71,8 @@
         {
             try
             {
-                var territory = this.territoryService.GetById(id);
-
-                if (territory != null)
-                {
-                    var employees = territory.EmployeesTerritories.Select(et => et.Employee).ToArray();
-
-                    return Ok(this.mapper.Map<EmployeeDb[], EmployeeDto[]>(employees));
-                }
-
-                return NotFound();
+                var employees = this.employeeTerritoryService.GetEmployeesByTerritoryId(id);
+                return Ok(this.mapper.Map<EmployeeDb[], EmployeeDto[]>(employees));
             }
             catch (Exception error)
             {
@@ -94,9 +90,13 @@
                 var territory = this.territoryService.GetById(id);
                 if (territory != null)
                 {
-                    var region = territory.Region;
+                    var region = this.regionService.GetById(territory.RegionId);
 
-                    return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
+                    if (region != null)
+                    {
+                        return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
+                    }
+ 
                 }
 
                 return NotFound();

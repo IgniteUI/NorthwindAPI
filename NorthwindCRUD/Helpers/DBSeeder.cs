@@ -15,6 +15,10 @@
             var transaction = dbContext.Database.BeginTransaction(System.Data.IsolationLevel.Serializable);
             try
             {
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
+                {
+                    dbContext.Database.ExecuteSqlRaw("EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'");
+                }
                 // Seed Categories
                 if (!dbContext.Categories.Any())
                 {
@@ -99,13 +103,30 @@
                     dbContext.SaveChanges();
                 }
 
-                //Seed Regions
-                if (!dbContext.Products.Any())
+                //Seed Territories
+                if (!dbContext.Territories.Any())
                 {
-                    var productsData = File.ReadAllText("./Resources/products.json");
-                    var parsedProducts = JsonConvert.DeserializeObject<ProductDb[]>(productsData);
+                    var territoriesData = File.ReadAllText("./Resources/territories.json");
+                    var parsedTerritories = JsonConvert.DeserializeObject<TerritoryDb[]>(territoriesData);
 
-                    dbContext.Products.AddRange(parsedProducts);
+                    dbContext.Territories.AddRange(parsedTerritories);
+                    dbContext.SaveChanges();
+                }
+
+                //Seed Regions
+                if (!dbContext.Regions.Any())
+                {
+                    var productsData = File.ReadAllText("./Resources/regions.json");
+                    var parsedRegions = JsonConvert.DeserializeObject<RegionDb[]>(productsData);
+
+
+                    foreach (var region in parsedRegions)
+                    {
+                        var matchingTerritories = dbContext.Territories.Where(t => t.RegionId == region.RegionId).ToList();
+                        region.Territories = matchingTerritories;
+
+                        dbContext.Regions.Add(region);
+                    }
                     dbContext.SaveChanges();
                 }
 
@@ -114,8 +135,14 @@
                 {
                     var shippersData = File.ReadAllText("./Resources/shippers.json");
                     var parsedShippers = JsonConvert.DeserializeObject<ShipperDb[]>(shippersData);
+                    foreach (var shipper in parsedShippers)
+                    {
+                        var matchingOrders = dbContext.Orders.Where(o => o.ShipperId == shipper.ShipperId).ToList();
+                        shipper.Orders = matchingOrders;
 
-                    dbContext.Shippers.AddRange(parsedShippers);
+                        dbContext.Shippers.Add(shipper);
+                    }
+
                     dbContext.SaveChanges();
                 }
 
@@ -125,17 +152,14 @@
                     var suppliersData = File.ReadAllText("./Resources/suppliers.json");
                     var parsedSuppliers = JsonConvert.DeserializeObject<SupplierDb[]>(suppliersData);
 
-                    dbContext.Suppliers.AddRange(parsedSuppliers);
-                    dbContext.SaveChanges();
-                }
+                    foreach (var supplier in parsedSuppliers)
+                    {
+                        var matchingProducts = dbContext.Products.Where(p => p.SupplierId == supplier.SupplierId).ToList();
+                        supplier.Products = matchingProducts;
 
-                //Seed Territories
-                if (!dbContext.Territories.Any())
-                {
-                    var territoriesData = File.ReadAllText("./Resources/territories.json");
-                    var parsedTerritories = JsonConvert.DeserializeObject<TerritoryDb[]>(territoriesData);
+                        dbContext.Suppliers.Add(supplier);
+                    }
 
-                    dbContext.Territories.AddRange(parsedTerritories);
                     dbContext.SaveChanges();
                 }
 
@@ -150,6 +174,11 @@
                 }
 
                 transaction.Commit();
+
+                if (dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer")
+                {
+                    dbContext.Database.ExecuteSqlRaw("EXEC sp_MSforeachtable 'ALTER TABLE ? CHECK CONSTRAINT ALL'");
+                }
             }
             catch (Exception error)
             {

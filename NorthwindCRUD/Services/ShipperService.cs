@@ -1,6 +1,7 @@
 ﻿namespace NorthwindCRUD.Services
 {
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;

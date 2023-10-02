@@ -27,6 +27,23 @@
             return this.dataContext.Products.FirstOrDefault(p => p.ProductId == id);
         }
 
+        public ProductDb[] GetAllByCategoryId(int id)
+        {
+            return this.dataContext.Products.Where(p => p.CategoryId == id).ToArray();
+        }
+
+        public ProductDb[] GetAllBySupplierId(int id)
+        {
+            return this.dataContext.Products.Where(p => p.SupplierId == id).ToArray();
+        }
+
+        public ProductDb[] GetProductsByIds(int[] productIds)
+        {
+            return this.dataContext.Products
+                .Where(p => productIds.Contains(p.ProductId))
+                .ToArray();
+        }
+
         public ProductDb Create(ProductDb model)
         {
             var id = IdGenerator.CreateDigitsId();

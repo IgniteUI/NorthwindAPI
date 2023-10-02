@@ -12,13 +12,15 @@
     [Route("[controller]")]
     public class ShippersController : ControllerBase
     {
-        private readonly ShipperService ShipperService;
+        private readonly ShipperService shipperService;
+        private readonly OrderService orderService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public ShippersController(ShipperService ShipperService, IMapper mapper, ILogger logger)
+        public ShippersController(ShipperService shipperService, OrderService orderService, IMapper mapper, ILogger logger)
         {
-            this.ShipperService = ShipperService;
+            this.shipperService = shipperService;
+            this.orderService = orderService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -29,8 +31,8 @@
         {
             try
             {
-                var Shippers = this.ShipperService.GetAll();
-                return Ok(this.mapper.Map<ShipperDb[], ShipperDto[]>(Shippers));
+                var shippers = this.shipperService.GetAll();
+                return Ok(this.mapper.Map<ShipperDb[], ShipperDto[]>(shippers));
             }
             catch (Exception error)
             {
@@ -46,7 +48,7 @@
         {
             try
             {
-                var category = this.ShipperService.GetById(id);
+                var category = this.shipperService.GetById(id);
                 if (category != null)
                 {
                     return Ok(this.mapper.Map<ShipperDb, ShipperDto>(category));
@@ -67,13 +69,8 @@
         {
             try
             {
-                var shipper = this.ShipperService.GetById(id);
-                if (shipper != null)
-                {
-                    return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(shipper.Orders.ToArray()));
-                }
-
-                return NotFound();
+                var orders = this.orderService.GetOrdersByShipperId(id);
+                return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
             }
             catch (Exception error)
             {
@@ -91,7 +88,7 @@
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<ShipperDto, ShipperDb>(model);
-                    var shipper = this.ShipperService.Create(mappedModel);
+                    var shipper = this.shipperService.Create(mappedModel);
                     return Ok(this.mapper.Map<ShipperDb, ShipperDto>(shipper));
                 }
 
@@ -113,7 +110,7 @@
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<ShipperDto, ShipperDb>(model);
-                    var shipper = this.ShipperService.Update(mappedModel);
+                    var shipper = this.shipperService.Update(mappedModel);
 
                     if (shipper != null)
                     {
@@ -138,7 +135,7 @@
         {
             try
             {
-                var shipper = this.ShipperService.Delete(id);
+                var shipper = this.shipperService.Delete(id);
                 if (shipper != null)
                 {
                     return Ok(this.mapper.Map<ShipperDb, ShipperDto>(shipper));

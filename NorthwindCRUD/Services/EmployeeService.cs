@@ -22,9 +22,7 @@
 
         public EmployeeDb GetById(int id)
         {
-            return this.dataContext.Employees
-                .Include(c => c.Address)
-                .FirstOrDefault(c => c.EmployeeId == id);
+            return this.dataContext.Employees.FirstOrDefault(c => c.EmployeeId == id);
         }
 
         public EmployeeDb[] GetEmployeesByReportsTo(int id)

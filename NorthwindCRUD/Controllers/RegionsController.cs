@@ -13,12 +13,14 @@
     public class RegionsController : ControllerBase
     {
         private readonly RegionService regionService;
+        private readonly TerritoryService territoryService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public RegionsController(RegionService regionService, IMapper mapper, ILogger logger)
+        public RegionsController(RegionService regionService, TerritoryService territoryService, IMapper mapper, ILogger logger)
         {
             this.regionService = regionService;
+            this.territoryService = territoryService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -61,7 +63,7 @@
             }
         }
 
-        [HttpGet("{id}/Territory")]
+        [HttpGet("{id}/Territories")]
         [Authorize]
         public ActionResult<CustomerDto> GetTerritoryByRegionId(int id)
         {
@@ -70,7 +72,8 @@
                 var region = this.regionService.GetById(id);
                 if (region != null)
                 {
-                    return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(region.Territories.ToArray()));
+                    var territories = this.territoryService.GetTerritoriesByRegionId(id);
+                    return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(territories));
                 }
 
                 return NotFound();

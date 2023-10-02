@@ -25,13 +25,14 @@
 
         public TerritoryDb GetById(string id)
         {
-
-            return this.dataContext.Territories
-                .AsNoTracking()
-                .Include(t => t.EmployeesTerritories)
-                .ThenInclude(t => t.Employee)
-                .FirstOrDefault(t => t.TerritoryId == id);
+            return this.dataContext.Territories.FirstOrDefault(t => t.TerritoryId == id);
         }
+
+
+        public TerritoryDb[] GetTerritoriesByRegionId(int id)
+        {
+            return this.dataContext.Territories.Where(t => t.RegionId == id).ToArray();
+        } 
 
         public TerritoryDb Create(TerritoryDb model)
         {

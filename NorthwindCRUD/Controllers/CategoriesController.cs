@@ -12,19 +12,21 @@ namespace NorthwindCRUD.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly CategoryService categoryService;
+        private readonly ProductService productService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public CategoriesController(CategoryService categoryService, IMapper mapper, ILogger logger)
+        public CategoriesController(CategoryService categoryService, ProductService productService, IMapper mapper, ILogger logger)
         {
             this.categoryService = categoryService;
+            this.productService = productService;
             this.mapper = mapper;
             this.logger = logger;   
         }
 
         [HttpGet]
         [Authorize]
-        public ActionResult<Models.Dtos.CategoryDto[]> GetAll()
+        public ActionResult<CategoryDto[]> GetAll()
         {
             try
             {
@@ -88,13 +90,8 @@ namespace NorthwindCRUD.Controllers
         {
             try
             {
-                var category = this.categoryService.GetById(id);
-                if (category != null)
-                {
-                    return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(category.Products.ToArray()));
-                }
-
-                return NotFound();
+                var products = this.productService.GetAllByCategoryId(id);
+                return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
             }
             catch (Exception error)
             {

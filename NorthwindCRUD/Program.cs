@@ -117,6 +117,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<DBSeeder>();
 builder.Services.AddTransient<CategoryService>();
 builder.Services.AddTransient<CustomerService>();
+builder.Services.AddTransient<EmployeeTerritoryService>();
 builder.Services.AddTransient<EmployeeService>();
 builder.Services.AddTransient<OrderService>();
 builder.Services.AddTransient<AuthService>();

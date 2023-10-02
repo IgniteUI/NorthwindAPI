@@ -13,12 +13,18 @@ namespace NorthwindCRUD.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly ProductService productService;
+        private readonly CategoryService categoryService;
+        private readonly OrderService orderService;
+        private readonly SupplierService supplierService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public ProductsController(ProductService productService, IMapper mapper, ILogger logger)
+        public ProductsController(ProductService productService, CategoryService categoryService, OrderService orderService, SupplierService supplierService, IMapper mapper, ILogger logger)
         {
             this.productService = productService;
+            this.categoryService = categoryService;
+            this.orderService = orderService;
+            this.supplierService = supplierService;
             this.mapper = mapper;
             this.logger = logger;   
         }
@@ -70,7 +76,7 @@ namespace NorthwindCRUD.Controllers
                 var product = this.productService.GetById(id);
                 if (product != null)
                 {
-                    var category = product.Category;
+                    var category = this.categoryService.GetById(product.CategoryId);
 
                     if (category != null)
                     {
@@ -96,7 +102,8 @@ namespace NorthwindCRUD.Controllers
                 var product = this.productService.GetById(id);
                 if (product != null)
                 {
-                    return Ok(this.mapper.Map<OrderDetailDb[], OrderDetailDto>(product.Details.ToArray()));
+                    var orderDetails = this.orderService.GetOrderDetailsByProductId(id);
+                    return Ok(this.mapper.Map<OrderDetailDb[], OrderDetailDto[]>(orderDetails));
                 }
 
                 return NotFound();
@@ -117,7 +124,7 @@ namespace NorthwindCRUD.Controllers
                 var product = this.productService.GetById(id);
                 if (product != null)
                 {
-                    var supplier = product.Supplier;
+                    var supplier = this.supplierService.GetById(product.SupplierId);
 
                     if (supplier != null)
                     {

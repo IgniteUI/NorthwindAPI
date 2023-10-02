@@ -15,6 +15,13 @@
             this.dataContext = dataContext;
         }
 
+        private IQueryable<OrderDb> GetOrdersQuery()
+        {
+            return this.dataContext.Orders
+                .Include(c => c.ShipAddress)
+                .Include(c => c.Details);
+        }
+
         public OrderDb[] GetAll()
         {
             return this.dataContext.Orders
@@ -24,11 +31,45 @@
 
         public OrderDb GetById(int id)
         {
-            return this.dataContext.Orders
-                .Include(c => c.ShipAddress)
-                .Include(c => c.Details)
+            return GetOrdersQuery()
                 .FirstOrDefault(c => c.OrderId == id);
         }
+
+        public OrderDb[] GetOrdersByCustomerId(string id)
+        {
+            return GetOrdersQuery()
+                .Where(o => o.CustomerId == id)
+                .ToArray();
+        }
+
+        public OrderDb[] GetOrdersByEmployeeId(int id)
+        {
+            return GetOrdersQuery()
+                .Where(o => o.EmployeeId == id)
+                .ToArray();
+        }
+
+        public OrderDb[] GetOrdersByShipperId(int id)
+        {
+            return GetOrdersQuery()
+                .Where(o => o.ShipVia == id)
+                .ToArray();
+        }
+
+        public OrderDetailDb[] GetOrderDetailsByProductId(int id)
+        {
+            var ordersWithMatchingProduct = this.dataContext.Orders
+                .Include(o => o.Details)
+                .Where(o => o.Details.Any(d => d.ProductId == id))
+                .ToList();
+
+            var orderDetails = ordersWithMatchingProduct
+                .SelectMany(o => o.Details)
+                .ToArray();
+
+            return orderDetails;
+        }
+
 
         public OrderDb Create(OrderDb model)
         {
