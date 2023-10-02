@@ -1,9 +1,9 @@
 ﻿namespace NorthwindCRUD.Services
 {
     using AutoMapper;
+    using NorthwindCRUD.Exceptions;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.Dtos;
 
     public class ProductService
     {
@@ -46,6 +46,16 @@
 
         public ProductDb Create(ProductDb model)
         {
+            if(this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
+            {
+                throw new InvalidEntityIdException(nameof(model.Category), model.CategoryId.ToString());
+            }
+
+            if (this.dataContext.Suppliers.FirstOrDefault(c => c.SupplierId == model.SupplierId) == null)
+            {
+                throw new InvalidEntityIdException(nameof(model.Supplier), model.SupplierId.ToString());
+            }
+
             var id = IdGenerator.CreateDigitsId();
             var existWithId = this.GetById(id);
             while (existWithId != null)

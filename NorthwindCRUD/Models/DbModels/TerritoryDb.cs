@@ -10,9 +10,9 @@ namespace NorthwindCRUD.Models.DbModels
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string TerritoryId { get; set; }
 
-        public int RegionId { get; set; }
+        public int? RegionId { get; set; }
 
-        public RegionDb Region { get; set; }
+        public RegionDb? Region { get; set; }
 
         public string TerritoryDescription { get; set; }
 

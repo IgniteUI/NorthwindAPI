@@ -4,9 +4,9 @@
     {
         int ProductId { get; set; }
 
-        int SupplierId { get; set; }
+        int? SupplierId { get; set; }
 
-        int CategoryId { get; set; }
+        int? CategoryId { get; set; }
 
         string QuantityPerUnit { get; set; }
 

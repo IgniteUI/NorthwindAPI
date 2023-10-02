@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace NorthwindCRUD.Models.DbModels
+﻿namespace NorthwindCRUD.Models.DbModels
 {
     public class OrderDetailDb
     {

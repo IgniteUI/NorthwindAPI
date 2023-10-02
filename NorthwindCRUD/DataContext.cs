@@ -1,7 +1,6 @@
 ﻿namespace NorthwindCRUD
 {
     using Microsoft.EntityFrameworkCore;
-    using NorthwindCRUD.Models.Contracts;
     using NorthwindCRUD.Models.DbModels;
 
     public class DataContext :  DbContext
@@ -35,35 +34,40 @@
 
             modelBuilder.Entity<ProductDb>()
                 .HasOne(p => p.Category)
-                .WithMany(c => c.Products);
+                .WithMany(c => c.Products)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<ProductDb>()
                .HasOne(p => p.Supplier)
-               .WithMany(c => c.Products);
+               .WithMany(c => c.Products)
+               .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<CustomerDb>()
                 .HasOne(c => c.Address)
-                .WithMany(a => a.Customers);
+                .WithMany(a => a.Customers)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<OrderDb>()
                 .HasOne(o => o.ShipAddress)
-                .WithMany(a => a.Orders);
+                .WithMany(a => a.Orders)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<OrderDb>()
                 .HasOne(o => o.Customer)
                 .WithMany(c => c.Orders)
                 .HasForeignKey(o => o.CustomerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<OrderDb>()
                 .HasOne(o => o.Employee)
                 .WithMany(e => e.Orders)
                 .HasForeignKey(o => o.EmployeeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<OrderDb>()
                 .HasOne(o => o.Shipper)
-                .WithMany(s => s.Orders);
+                .WithMany(s => s.Orders)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<OrderDetailDb>()
                 .HasOne(od => od.Product)
@@ -75,11 +79,13 @@
 
             modelBuilder.Entity<EmployeeDb>()
                 .HasOne(e => e.Address)
-                .WithMany(a => a.Employees);
+                .WithMany(a => a.Employees)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<TerritoryDb>()
                 .HasOne(t => t.Region)
-                .WithMany(r => r.Territories);
+                .WithMany(r => r.Territories)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<EmployeeTerritoryDb>()
                 .HasOne(et => et.Employee)

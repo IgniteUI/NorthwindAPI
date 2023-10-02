@@ -3,9 +3,9 @@ namespace NorthwindCRUD.Controllers
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using NorthwindCRUD.Exceptions;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
-    using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
 
     [ApiController]
@@ -76,7 +76,7 @@ namespace NorthwindCRUD.Controllers
                 var product = this.productService.GetById(id);
                 if (product != null)
                 {
-                    var category = this.categoryService.GetById(product.CategoryId);
+                    var category = this.categoryService.GetById(product.CategoryId ?? default);
 
                     if (category != null)
                     {
@@ -124,7 +124,7 @@ namespace NorthwindCRUD.Controllers
                 var product = this.productService.GetById(id);
                 if (product != null)
                 {
-                    var supplier = this.supplierService.GetById(product.SupplierId);
+                    var supplier = this.supplierService.GetById(product.SupplierId ?? default);
 
                     if (supplier != null)
                     {
@@ -155,6 +155,10 @@ namespace NorthwindCRUD.Controllers
                 }
 
                 return BadRequest(ModelState);
+            }
+            catch (InvalidEntityIdException exception)
+            {
+               return StatusCode(400, exception.Message);
             }
             catch (Exception error)
             {

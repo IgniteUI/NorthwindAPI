@@ -90,7 +90,7 @@
                 var territory = this.territoryService.GetById(id);
                 if (territory != null)
                 {
-                    var region = this.regionService.GetById(territory.RegionId);
+                    var region = this.regionService.GetById(territory.RegionId ?? default);
 
                     if (region != null)
                     {

@@ -125,7 +125,7 @@
                 var order = this.orderService.GetById(id);
                 if (order != null)
                 {
-                    var employee = this.employeeService.GetById(order.EmployeeId);
+                    var employee = this.employeeService.GetById(order.EmployeeId ?? default);
                     if (employee != null)
                     {
                         return Ok(this.mapper.Map<EmployeeDb, EmployeeDto>(employee));

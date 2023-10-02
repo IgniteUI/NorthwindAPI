@@ -14,6 +14,6 @@ namespace NorthwindCRUD.Models.DbModels
 
         public string Phone { get; set; }
 
-        public ICollection<OrderDb> Orders { get; set; } =  new List<OrderDb>();
+        public ICollection<OrderDb> Orders { get; set; } = new List<OrderDb>();
     }
 }
