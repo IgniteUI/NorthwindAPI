@@ -26,7 +26,7 @@ namespace NorthwindCRUD.Controllers
 
         [HttpGet]
         [Authorize]
-        public ActionResult<Models.Dtos.CategoryDto[]> GetAll()
+        public ActionResult<CategoryDto[]> GetAll()
         {
             try
             {
@@ -91,12 +91,7 @@ namespace NorthwindCRUD.Controllers
             try
             {
                 var products = this.productService.GetAllByCategoryId(id);
-                if (products != null)
-                {
-                    return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
             }
             catch (Exception error)
             {

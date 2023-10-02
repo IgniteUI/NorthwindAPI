@@ -63,7 +63,7 @@
             }
         }
 
-        [HttpGet("{id}/Territory")]
+        [HttpGet("{id}/Territories")]
         [Authorize]
         public ActionResult<CustomerDto> GetTerritoryByRegionId(int id)
         {
@@ -73,10 +73,7 @@
                 if (region != null)
                 {
                     var territories = this.territoryService.GetTerritoriesByRegionId(id);
-                    if (territories != null)
-                    {
-                        return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(territories));
-                    }
+                    return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(territories));
                 }
 
                 return NotFound();

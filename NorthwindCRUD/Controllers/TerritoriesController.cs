@@ -72,13 +72,7 @@
             try
             {
                 var employees = this.employeeTerritoryService.GetEmployeesByTerritoryId(id);
-
-                if (employees != null)
-                {
-                    return Ok(this.mapper.Map<EmployeeDb[], EmployeeDto[]>(employees));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<EmployeeDb[], EmployeeDto[]>(employees));
             }
             catch (Exception error)
             {
@@ -98,7 +92,11 @@
                 {
                     var region = this.regionService.GetById(territory.RegionId);
 
-                    return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
+                    if (region != null)
+                    {
+                        return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
+                    }
+ 
                 }
 
                 return NotFound();

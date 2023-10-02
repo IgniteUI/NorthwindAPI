@@ -38,17 +38,16 @@
                 .WithMany(c => c.Products);
 
             modelBuilder.Entity<ProductDb>()
-              .HasOne(p => p.Supplier)
-              .WithMany(c => c.Products);
+               .HasOne(p => p.Supplier)
+               .WithMany(c => c.Products);
 
             modelBuilder.Entity<CustomerDb>()
                 .HasOne(c => c.Address)
                 .WithMany(a => a.Customers);
 
-
             modelBuilder.Entity<OrderDb>()
-               .HasOne(o => o.ShipAddress)
-               .WithMany(a => a.Orders);
+                .HasOne(o => o.ShipAddress)
+                .WithMany(a => a.Orders);
 
             modelBuilder.Entity<OrderDb>()
                 .HasOne(o => o.Customer)
@@ -63,20 +62,20 @@
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OrderDb>()
-              .HasOne(o => o.Shipper)
-              .WithMany(s => s.Orders);
+                .HasOne(o => o.Shipper)
+                .WithMany(s => s.Orders);
 
             modelBuilder.Entity<OrderDetailDb>()
-               .HasOne(od => od.Product)
-               .WithMany(p => p.Details);
+                .HasOne(od => od.Product)
+                .WithMany(p => p.Details);
 
             modelBuilder.Entity<OrderDetailDb>()
                 .HasOne(o => o.Order)
                 .WithMany(o => o.Details);
 
             modelBuilder.Entity<EmployeeDb>()
-               .HasOne(e => e.Address)
-               .WithMany(a => a.Employees);
+                .HasOne(e => e.Address)
+                .WithMany(a => a.Employees);
 
             modelBuilder.Entity<TerritoryDb>()
                 .HasOne(t => t.Region)
@@ -96,7 +95,7 @@
                 .HasKey(et => new { et.EmployeeId, et.TerritoryId });
 
             modelBuilder.Entity<OrderDetailDb>()
-               .HasKey(et => new { et.ProductId, et.OrderId });
+                .HasKey(et => new { et.ProductId, et.OrderId });
         }
     }
 }

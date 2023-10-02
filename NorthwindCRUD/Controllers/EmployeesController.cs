@@ -113,12 +113,7 @@
             try
             {
                 var orders = this.ordersService.GetOrdersByEmployeeId(id);
-                if (orders != null)
-                {
-                    return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
             }
             catch (Exception error)
             {
@@ -134,12 +129,7 @@
             try
             {
                 var teritories = this.employeeTerritoryService.GetTeritoriesByEmployeeId(id);
-                if (teritories != null)
-                {
-                    return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(teritories));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(teritories));
             }
             catch (Exception error)
             {

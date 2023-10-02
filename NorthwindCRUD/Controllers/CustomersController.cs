@@ -69,12 +69,7 @@
             try
             {
                 var orders = this.orderService.GetOrdersByCustomerId(id);
-                if (orders != null)
-                {
-                    return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
             }
             catch (Exception error)
             {

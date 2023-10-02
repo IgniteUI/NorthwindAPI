@@ -70,12 +70,7 @@
             try
             {
                 var products = this.productService.GetAllBySupplierId(id);
-                if (products != null)
-                {
-                    return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
-                }
-
-                return NotFound();
+                return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
             }
             catch (Exception error)
             {
