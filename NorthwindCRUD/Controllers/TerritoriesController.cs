@@ -123,6 +123,10 @@
 
                 return BadRequest(ModelState);
             }
+            catch (InvalidOperationException exception)
+            {
+                return StatusCode(400, exception.Message);
+            }
             catch (Exception error)
             {
                 logger.LogError(error.Message);
@@ -150,6 +154,10 @@
                 }
 
                 return BadRequest(ModelState);
+            }
+            catch (InvalidOperationException exception)
+            {
+                return StatusCode(400, exception.Message);
             }
             catch (Exception error)
             {

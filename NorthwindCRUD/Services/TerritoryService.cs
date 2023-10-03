@@ -2,6 +2,7 @@
 {
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
+    using NorthwindCRUD.Constants;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
@@ -36,6 +37,11 @@
 
         public TerritoryDb Create(TerritoryDb model)
         {
+            if (this.dataContext.Regions.FirstOrDefault(r => r.RegionId == model.RegionId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId.ToString()));
+            }
+
             var id = IdGenerator.CreateDigitsId().ToString();
             var existWithId = this.GetById(id);
             while (existWithId != null)
@@ -55,10 +61,16 @@
 
         public TerritoryDb Update(TerritoryDb model)
         {
+            if (this.dataContext.Regions.FirstOrDefault(r => r.RegionId == model.RegionId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId.ToString()));
+            }
+
             var territoryEntity = this.dataContext.Territories.FirstOrDefault(p => p.TerritoryId == model.TerritoryId);
             if (territoryEntity != null)
             {
                 territoryEntity.TerritoryDescription = model.TerritoryDescription != null ? model.TerritoryDescription : territoryEntity.TerritoryDescription;
+                territoryEntity.RegionId = model.RegionId != null ? model.RegionId : territoryEntity.RegionId;
 
                 this.dataContext.SaveChanges();
             }

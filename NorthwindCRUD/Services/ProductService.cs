@@ -51,7 +51,7 @@
                 throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
             }
 
-            if (this.dataContext.Suppliers.FirstOrDefault(c => c.SupplierId == model.SupplierId) == null)
+            if (this.dataContext.Suppliers.FirstOrDefault(s => s.SupplierId == model.SupplierId) == null)
             {
                 throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
             }
@@ -75,6 +75,16 @@
 
         public ProductDb Update(ProductDb model)
         {
+            if (this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
+            }
+
+            if (this.dataContext.Suppliers.FirstOrDefault(s => s.SupplierId == model.SupplierId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
+            }
+
             var productEntity = this.dataContext.Products.FirstOrDefault(p => p.ProductId == model.ProductId);
             if (productEntity != null)
             {

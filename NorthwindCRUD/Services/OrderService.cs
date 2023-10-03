@@ -2,6 +2,7 @@
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.EntityFrameworkCore;
+    using NorthwindCRUD.Constants;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
@@ -73,6 +74,22 @@
 
         public OrderDb Create(OrderDb model)
         {
+
+            if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId.ToString()));
+            }
+
+            if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+            }
+
+            if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
+            }
+
             var id = IdGenerator.CreateDigitsId();
             var existWithId = this.GetById(id);
             while (existWithId != null)
@@ -99,6 +116,21 @@
         
         public OrderDb Update(OrderDb model)
         {
+            if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId.ToString()));
+            }
+
+            if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+            }
+
+            if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
+            }
+
             var orderEntity = this.dataContext.Orders
                 .Include(c => c.ShipAddress)
                 .FirstOrDefault(e => e.OrderId == model.OrderId);
