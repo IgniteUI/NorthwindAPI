@@ -150,8 +150,12 @@
                     var employeeTerrirtory = this.employeeTerritoryService.AddTerritoryToEmployee(mappedModel);
                     return Ok(this.mapper.Map<EmployeeTerritoryDb, EmployeeTerritoryDto>(employeeTerrirtory));
                 }
-
-                return NotFound();
+                return BadRequest(ModelState);
+            }
+            catch (InvalidOperationException exception)
+            {
+                logger.LogError(exception.Message);
+                return StatusCode(400, exception.Message);
             }
             catch (Exception error)
             {

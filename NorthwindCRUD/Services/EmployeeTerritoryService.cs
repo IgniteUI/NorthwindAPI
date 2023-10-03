@@ -2,6 +2,7 @@
 {
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
+    using NorthwindCRUD.Constants;
     using NorthwindCRUD.Models.Contracts;
     using NorthwindCRUD.Models.DbModels;
 
@@ -51,6 +52,16 @@
 
         public EmployeeTerritoryDb AddTerritoryToEmployee(EmployeeTerritoryDb model)
         {
+            if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+            }
+
+            if (this.dataContext.Territories.FirstOrDefault(t => t.TerritoryId == model.TerritoryId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Territory), model.TerritoryId.ToString()));
+            }
+
             var employeeTerritory = new EmployeeTerritoryDb
             {
                 EmployeeId = model.EmployeeId,
