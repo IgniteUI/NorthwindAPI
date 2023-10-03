@@ -3,7 +3,6 @@ namespace NorthwindCRUD.Controllers
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using NorthwindCRUD.Exceptions;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
@@ -156,7 +155,7 @@ namespace NorthwindCRUD.Controllers
 
                 return BadRequest(ModelState);
             }
-            catch (InvalidEntityIdException exception)
+            catch (InvalidOperationException exception)
             {
                return StatusCode(400, exception.Message);
             }
