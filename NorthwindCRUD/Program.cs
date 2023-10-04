@@ -11,6 +11,8 @@ using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Services;
 using System.Text;
 using NorthwindCRUD.Filters;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var AllowAnyOriginPolicy = "_allowAnyOrigin";
@@ -53,19 +55,17 @@ builder.Services.AddCors(options =>
 });
 
 var dbProvider = builder.Configuration.GetConnectionString("Provider");
+if (dbProvider == "SQLite")
+{
+    // For SQLite in memory to be shared across multiple EF calls, we need to maintain a separate open connection. 
+    // see post https://stackoverflow.com/questions/56319638/entityframeworkcore-sqlite-in-memory-db-tables-are-not-created
+    var keepAliveConnection = new SqliteConnection(builder.Configuration.GetConnectionString("SQLiteConnectionString"));
+    keepAliveConnection.Open();
+}
+
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
-
-    if (dbProvider == "SqlServer")
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnectionString"));
-    }
-    else if (dbProvider == "InMemory")
-    {
-        options.UseInMemoryDatabase(databaseName: builder.Configuration.GetConnectionString("InMemoryDBConnectionString"));
-    }
-
     if (dbProvider == "SqlServer")
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnectionString"));
@@ -78,6 +78,10 @@ builder.Services.AddDbContext<DataContext>(options =>
         });
 
         options.UseInMemoryDatabase(databaseName: builder.Configuration.GetConnectionString("InMemoryDBConnectionString"));
+    }
+    else if (dbProvider == "SQLite")
+    {
+        options.UseSqlite(builder.Configuration.GetConnectionString("SQLiteConnectionString"));
     }
 });
 
