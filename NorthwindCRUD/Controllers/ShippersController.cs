@@ -4,51 +4,54 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
+    using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
 
     [ApiController]
     [Route("[controller]")]
-    public class CustomerController : Controller
+    public class ShippersController : ControllerBase
     {
-        private readonly CustomerService customerService;
+        private readonly ShipperService shipperService;
+        private readonly OrderService orderService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public CustomerController(CustomerService customerService, IMapper mapper, ILogger logger)
+        public ShippersController(ShipperService shipperService, OrderService orderService, IMapper mapper, ILogger logger)
         {
-            this.customerService = customerService;
+            this.shipperService = shipperService;
+            this.orderService = orderService;
             this.mapper = mapper;
             this.logger = logger;
         }
 
         [HttpGet]
         [Authorize]
-        public ActionResult<CustomerInputModel[]> GetAll()
+        public ActionResult<ShipperDto[]> GetAll()
         {
             try
             {
-                var customers = this.customerService.GetAll();
-                return Ok(this.mapper.Map<CustomerDb[], CustomerInputModel[]>(customers));
+                var shippers = this.shipperService.GetAll();
+                return Ok(this.mapper.Map<ShipperDb[], ShipperDto[]>(shippers));
             }
             catch (Exception error)
             {
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
+
         }
 
         [HttpGet("{id}")]
         [Authorize]
-        public ActionResult<CustomerInputModel> GetById(string id)
+        public ActionResult<ShipperDto> GetById(int id)
         {
             try
             {
-                var customer = this.customerService.GetById(id);
-
-                if (customer != null)
+                var category = this.shipperService.GetById(id);
+                if (category != null)
                 {
-                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                    return Ok(this.mapper.Map<ShipperDb, ShipperDto>(category));
                 }
 
                 return NotFound();
@@ -60,17 +63,33 @@
             }
         }
 
+        [HttpGet("{id}/Orders")]
+        [Authorize]
+        public ActionResult<OrderDto[]> GetOrdersByShipperId(int id)
+        {
+            try
+            {
+                var orders = this.orderService.GetOrdersByShipperId(id);
+                return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpPost]
         [Authorize]
-        public ActionResult<CustomerInputModel> Create(CustomerInputModel model)
+        public ActionResult<ShipperDto> Create(ShipperDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<CustomerInputModel, CustomerDb>(model);
-                    var customer = this.customerService.Create(mappedModel);
-                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                    var mappedModel = this.mapper.Map<ShipperDto, ShipperDb>(model);
+                    var shipper = this.shipperService.Create(mappedModel);
+                    return Ok(this.mapper.Map<ShipperDb, ShipperDto>(shipper));
                 }
 
                 return BadRequest(ModelState);
@@ -84,18 +103,18 @@
 
         [HttpPut]
         [Authorize]
-        public ActionResult<CustomerInputModel> Update(CustomerInputModel model)
+        public ActionResult<ShipperDto> Update(ShipperDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<CustomerInputModel, CustomerDb>(model);
-                    var customer = this.customerService.Update(mappedModel);
+                    var mappedModel = this.mapper.Map<ShipperDto, ShipperDb>(model);
+                    var shipper = this.shipperService.Update(mappedModel);
 
-                    if (customer != null)
+                    if (shipper != null)
                     {
-                        return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                        return Ok(this.mapper.Map<ShipperDb, ShipperDto>(shipper));
                     }
 
                     return NotFound();
@@ -112,14 +131,14 @@
 
         [HttpDelete("{id}")]
         [Authorize]
-        public ActionResult<CustomerInputModel> Delete(string id)
+        public ActionResult<ShipperDto> Delete(int id)
         {
             try
             {
-                var customer = this.customerService.Delete(id);
-                if (customer != null)
+                var shipper = this.shipperService.Delete(id);
+                if (shipper != null)
                 {
-                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                    return Ok(this.mapper.Map<ShipperDb, ShipperDto>(shipper));
                 }
 
                 return NotFound();

@@ -4,7 +4,7 @@ namespace NorthwindCRUD.Controllers
     using GraphQL.AspNet.Attributes;
     using GraphQL.AspNet.Controllers;
     using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.InputModels;
+    using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
 
     [GraphRoute("category")]
@@ -22,49 +22,49 @@ namespace NorthwindCRUD.Controllers
         }
 
         [Query]
-        public CategoryInputModel[] GetAll()
+        public CategoryDto[] GetAll()
         {
             var categories = this.categoryService.GetAll();
-            return this.mapper.Map<CategoryDb[], CategoryInputModel[]>(categories);
+            return this.mapper.Map<CategoryDb[], CategoryDto[]>(categories);
         }
 
         [Query]
-        public CategoryInputModel? GetById(int id)
+        public CategoryDto? GetById(int id)
         {
             var category = this.categoryService.GetById(id);
 
             if (category != null)
             {
-                return this.mapper.Map<CategoryDb, CategoryInputModel>(category);
+                return this.mapper.Map<CategoryDb, CategoryDto>(category);
             }
 
             return null;
         }
 
         [Mutation]
-        public CategoryInputModel Create(CategoryInputModel model)
+        public CategoryDto Create(CategoryDto model)
         {
-            var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
+            var mappedModel = this.mapper.Map<CategoryDto, CategoryDb>(model);
             var category = this.categoryService.Create(mappedModel);
-            return this.mapper.Map<CategoryDb, CategoryInputModel>(category);
+            return this.mapper.Map<CategoryDb, CategoryDto>(category);
         }
 
         [Mutation]
-        public CategoryInputModel Update(CategoryInputModel model)
+        public CategoryDto Update(CategoryDto model)
         {
-            var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
+            var mappedModel = this.mapper.Map<CategoryDto, CategoryDb>(model);
             var category = this.categoryService.Update(mappedModel);
-            return this.mapper.Map<CategoryDb, CategoryInputModel>(category);
+            return this.mapper.Map<CategoryDb, CategoryDto>(category);
         }
 
         [Mutation]
-        public CategoryInputModel Delete(int id)
+        public CategoryDto Delete(int id)
         {
             var category = this.categoryService.Delete(id);
 
             if (category != null)
             {
-                return this.mapper.Map<CategoryDb, CategoryInputModel>(category);
+                return this.mapper.Map<CategoryDb, CategoryDto>(category);
             }
 
             return null;

@@ -4,32 +4,34 @@ namespace NorthwindCRUD.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.InputModels;
+    using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
 
     [ApiController]
     [Route("[controller]")]
-    public class CategoryController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly CategoryService categoryService;
+        private readonly ProductService productService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public CategoryController(CategoryService categoryService, IMapper mapper, ILogger logger)
+        public CategoriesController(CategoryService categoryService, ProductService productService, IMapper mapper, ILogger logger)
         {
             this.categoryService = categoryService;
+            this.productService = productService;
             this.mapper = mapper;
             this.logger = logger;   
         }
 
         [HttpGet]
         [Authorize]
-        public ActionResult<CategoryInputModel[]> GetAll()
+        public ActionResult<CategoryDto[]> GetAll()
         {
             try
             {
                 var categories = this.categoryService.GetAll();
-                return Ok(this.mapper.Map<CategoryDb[], CategoryInputModel[]>(categories));
+                return base.Ok(this.mapper.Map<CategoryDb[], CategoryDto[]>(categories));
             }
             catch (Exception error)
             {
@@ -41,14 +43,14 @@ namespace NorthwindCRUD.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public ActionResult<CategoryInputModel> GetById(int id)
+        public ActionResult<CategoryDto> GetById(int id)
         {
             try
             {
                 var category = this.categoryService.GetById(id);
                 if (category != null)
                 {
-                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                    return base.Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
                 }
 
                 return NotFound();
@@ -60,17 +62,55 @@ namespace NorthwindCRUD.Controllers
             }
         }
 
+
+        [HttpGet("{id}/Details")]
+        [Authorize]
+        public ActionResult<CategoryDetailsDto> GetDetailsById(int id)
+        {
+            try
+            {
+                var category = this.categoryService.GetById(id);
+                if (category != null)
+                {
+                    return Ok(this.mapper.Map<CategoryDb, CategoryDetailsDto>(category));
+                }
+
+                return NotFound();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("{id}/Products")]
+        [Authorize]
+        public ActionResult<ProductDto[]> GetProductsByCategoryId(int id)
+        {
+            try
+            {
+                var products = this.productService.GetAllByCategoryId(id);
+                return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpPost]
         [Authorize]
-        public ActionResult<CategoryInputModel> Create(CategoryInputModel model)
+        public ActionResult<CategoryDetailsDto> Create(CategoryDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
+                    var mappedModel = this.mapper.Map<CategoryDto, CategoryDb>(model);
                     var category = this.categoryService.Create(mappedModel);
-                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                    return Ok(this.mapper.Map<CategoryDb, CategoryDetailsDto>(category));
                 }
 
                 return BadRequest(ModelState);
@@ -84,18 +124,18 @@ namespace NorthwindCRUD.Controllers
 
         [HttpPut]
         [Authorize]
-        public ActionResult<CategoryInputModel> Update(CategoryInputModel model)
+        public ActionResult<CategoryDto> Update(CategoryDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<CategoryInputModel, CategoryDb>(model);
+                    var mappedModel = this.mapper.Map<CategoryDto, CategoryDb>(model);
                     var category = this.categoryService.Update(mappedModel);
 
                     if (category != null)
                     {
-                        return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                        return base.Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
                     }
 
                     return NotFound();
@@ -112,14 +152,14 @@ namespace NorthwindCRUD.Controllers
 
         [HttpDelete("{id}")]
         [Authorize]
-        public ActionResult<CategoryInputModel> Delete(int id)
+        public ActionResult<CategoryDto> Delete(int id)
         {
             try
             {
                 var category = this.categoryService.Delete(id);
                 if (category != null)
                 {
-                    return Ok(this.mapper.Map<CategoryDb, CategoryInputModel>(category));
+                    return base.Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
                 }
 
                 return NotFound();

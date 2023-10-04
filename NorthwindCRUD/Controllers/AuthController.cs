@@ -4,7 +4,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.InputModels;
+    using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
 
     [ApiController]
@@ -26,7 +26,7 @@
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public ActionResult<string> Login(LoginInputModel userModel)
+        public ActionResult<string> Login(LoginDto userModel)
         {
             try
             {
@@ -52,7 +52,7 @@
 
         [AllowAnonymous]
         [HttpPost("Register")]
-        public ActionResult<string> Register(RegisterInputModel userModel)
+        public ActionResult<string> Register(RegisterDto userModel)
         {
             try
             {
@@ -68,7 +68,7 @@
                         return BadRequest("User does not exists!");
                     }
 
-                    var mappedModel = this.mapper.Map<RegisterInputModel, UserDb>(userModel);
+                    var mappedModel = this.mapper.Map<RegisterDto, UserDb>(userModel);
                     var user = this.authService.RegisterUser(mappedModel);
 
                     if (user != null)

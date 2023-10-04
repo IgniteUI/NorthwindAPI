@@ -1,5 +1,4 @@
 ﻿using NorthwindCRUD.Models.Contracts;
-using System.ComponentModel.DataAnnotations;
 
 namespace NorthwindCRUD.Models.InputModels
 {
@@ -10,5 +9,7 @@ namespace NorthwindCRUD.Models.InputModels
         public string Description { get; set; }
 
         public string Name { get; set; }
+
+        public string Picture { get; set; }
     }
 }

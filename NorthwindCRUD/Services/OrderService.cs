@@ -1,8 +1,11 @@
 ﻿namespace NorthwindCRUD.Services
 {
+    using Microsoft.CodeAnalysis;
     using Microsoft.EntityFrameworkCore;
+    using NorthwindCRUD.Constants;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
+    using NorthwindCRUD.Models.Dtos;
 
     public class OrderService
     {
@@ -11,6 +14,13 @@
         public OrderService(DataContext dataContext)
         {
             this.dataContext = dataContext;
+        }
+
+        private IQueryable<OrderDb> GetOrdersQuery()
+        {
+            return this.dataContext.Orders
+                .Include(c => c.ShipAddress)
+                .Include(c => c.Details);
         }
 
         public OrderDb[] GetAll()
@@ -22,13 +32,64 @@
 
         public OrderDb GetById(int id)
         {
-            return this.dataContext.Orders
-                .Include(c => c.ShipAddress)
+            return GetOrdersQuery()
                 .FirstOrDefault(c => c.OrderId == id);
         }
 
+        public OrderDb[] GetOrdersByCustomerId(string id)
+        {
+            return GetOrdersQuery()
+                .Where(o => o.CustomerId == id)
+                .ToArray();
+        }
+
+        public OrderDb[] GetOrdersByEmployeeId(int id)
+        {
+            return GetOrdersQuery()
+                .Where(o => o.EmployeeId == id)
+                .ToArray();
+        }
+
+        public OrderDb[] GetOrdersByShipperId(int id)
+        {
+            return GetOrdersQuery()
+                .Where(o => o.ShipVia == id)
+                .ToArray();
+        }
+
+        public OrderDetailDb[] GetOrderDetailsByProductId(int id)
+        {
+            var ordersWithMatchingProduct = this.dataContext.Orders
+                .Include(o => o.Details)
+                .Where(o => o.Details.Any(d => d.ProductId == id))
+                .ToList();
+
+            var orderDetails = ordersWithMatchingProduct
+                .SelectMany(o => o.Details)
+                .ToArray();
+
+            return orderDetails;
+        }
+
+
         public OrderDb Create(OrderDb model)
         {
+
+            if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId.ToString()));
+            }
+
+            if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+            }
+
+            if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
+            }
+
             var id = IdGenerator.CreateDigitsId();
             var existWithId = this.GetById(id);
             while (existWithId != null)
@@ -55,6 +116,21 @@
         
         public OrderDb Update(OrderDb model)
         {
+            if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId.ToString()));
+            }
+
+            if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+            }
+
+            if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
+            {
+                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
+            }
+
             var orderEntity = this.dataContext.Orders
                 .Include(c => c.ShipAddress)
                 .FirstOrDefault(e => e.OrderId == model.OrderId);

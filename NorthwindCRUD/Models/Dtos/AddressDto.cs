@@ -1,8 +1,8 @@
-﻿namespace NorthwindCRUD.Models.InputModels
+﻿namespace NorthwindCRUD.Models.Dtos
 {
     using NorthwindCRUD.Models.Contracts;
 
-    public class AddressInputModel : IAddress
+    public class AddressDto : IAddress
     {
         public string Street {get; set;}
 
