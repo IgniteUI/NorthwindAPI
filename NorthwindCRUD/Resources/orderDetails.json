@@ -6999,11 +6999,4 @@
     "quantity": 10,
     "discount": 0
   },
-  {
-    "orderId": "NULL",
-    "productId": "NULL",
-    "unitPrice": "NULL",
-    "quantity": "NULL",
-    "discount": "NULL"
-  }
 ]

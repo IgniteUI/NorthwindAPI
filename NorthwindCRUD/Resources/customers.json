@@ -7,7 +7,7 @@
     "address": {
       "street": "Obere Str. 57",
       "city": "Berlin",
-      "region": null,
+      "region": "",
       "postalCode": "12209",
       "country": "Germany",
       "phone": "(171) 555-7788"
@@ -21,7 +21,7 @@
     "address": {
       "street": "Avda. de la Constitución 2222",
       "city": "México D.F.",
-      "region": null,
+      "region": "",
       "postalCode": "05021",
       "country": "Mexico",
       "phone": "(5) 555-4729"
@@ -35,7 +35,7 @@
     "address": {
       "street": "Mataderos  2312",
       "city": "México D.F.",
-      "region": null,
+      "region": "",
       "postalCode": "05023",
       "country": "Mexico",
       "phone": "(5) 555-3932"

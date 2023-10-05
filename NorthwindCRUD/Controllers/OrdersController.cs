@@ -75,10 +75,10 @@
         {
             try
             {
-                var order = this.orderService.GetById(id);
-                if (order != null)
+                var orderDetail = this.orderService.GetOrderDetailsById(id);
+                if (orderDetail != null)
                 {
-                    return Ok(this.mapper.Map<OrderDetailDb[], OrderDetailDto[]>(order.Details.ToArray()));
+                    return Ok(this.mapper.Map<OrderDetailDb[], OrderDetailDto[]>(orderDetail));
                 }
 
                 return NotFound();

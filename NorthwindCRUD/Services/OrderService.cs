@@ -36,6 +36,12 @@
                 .FirstOrDefault(c => c.OrderId == id);
         }
 
+        public OrderDetailDb[] GetOrderDetailsById(int id)
+        {
+            var details = this.dataContext.OrderDetails.Where(o => o.OrderId == id).ToArray();
+            return details;
+        }
+
         public OrderDb[] GetOrdersByCustomerId(string id)
         {
             return GetOrdersQuery()
