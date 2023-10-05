@@ -174,10 +174,10 @@
         {
             try
             {
-                var order = this.orderService.GetById(id);
-                if (order != null)
+                var orderDetails = this.orderService.GetOrderDetailsById(id);
+                if (orderDetails != null)
                 {
-                    var productIds = order.Details.Select(o => o.ProductId).ToArray();
+                    var productIds = orderDetails.Select(o => o.ProductId).ToArray();
                     var products = this.productService.GetProductsByIds(productIds);
 
                     if (products != null)
