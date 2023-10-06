@@ -125,7 +125,7 @@ namespace NorthwindCRUD.Services
 
         private DateTime ConvertToOrderDate(string dateString)
         {
-            if (DateTime.TryParseExact(dateString, "yyyy-MM-dd'T'HH:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
+            if (DateTime.TryParseExact(dateString, "yyyy-MM-dd'T'HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
             {
                 return result;
             }

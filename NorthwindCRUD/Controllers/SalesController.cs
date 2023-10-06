@@ -21,7 +21,7 @@
 
         public SalesController(SalesService salesService, IMapper mapper, ILogger logger)
         {
-            this.salesService= salesService;
+            this.salesService = salesService;
             this.mapper = mapper;
             this.logger = logger;
         }

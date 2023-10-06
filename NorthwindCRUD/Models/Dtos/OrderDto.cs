@@ -33,7 +33,5 @@
         public float Discount { get; set; }
 
         public AddressDto ShipAddress { get; set; }
-
-        public ICollection<OrderDetailDto> OrderDetails { get; set; }
     }
 }

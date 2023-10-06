@@ -25,7 +25,5 @@ namespace NorthwindCRUD.Models.Contracts
         string ShipName { get; set; }
 
         AddressDto ShipAddress { get; set; }
-
-        ICollection<OrderDetailDto> OrderDetails { get; set; }
     }
 }
