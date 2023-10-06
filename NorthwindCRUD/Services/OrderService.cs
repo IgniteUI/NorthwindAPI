@@ -29,6 +29,14 @@
                 .ToArray();
         }
 
+        public OrderDb[] GetNOrders(int numberOfOrdersToRetrieve)
+        {
+            return this.dataContext.Orders
+                .Include(c => c.ShipAddress)
+                .Take(numberOfOrdersToRetrieve)
+                .ToArray();
+        }
+
         public OrderDb GetById(int id)
         {
             return GetOrdersQuery()

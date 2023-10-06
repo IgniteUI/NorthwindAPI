@@ -46,7 +46,7 @@
                 return StatusCode(500);
             }
         }
-        
+
         [HttpGet("{id}")]
         [Authorize]
         public ActionResult<OrderDto> GetById(int id)
@@ -188,6 +188,22 @@
                 }
 
                 return NotFound();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("retrieve/{ordersToRetrieve}")]
+        [Authorize]
+        public ActionResult<OrderDto[]> OrdersToRetrieve(int ordersToRetrieve)
+        {
+            try
+            {
+                var orders = this.orderService.GetNOrders(ordersToRetrieve);
+                return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
             }
             catch (Exception error)
             {
