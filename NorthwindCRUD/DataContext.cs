@@ -69,14 +69,6 @@
                 .WithMany(s => s.Orders)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<OrderDetailDb>()
-                .HasOne(od => od.Product)
-                .WithMany(p => p.Details);
-
-            modelBuilder.Entity<OrderDetailDb>()
-                .HasOne(o => o.Order)
-                .WithMany(o => o.Details);
-
             modelBuilder.Entity<EmployeeDb>()
                 .HasOne(e => e.Address)
                 .WithMany(a => a.Employees)

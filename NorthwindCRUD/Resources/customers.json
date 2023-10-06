@@ -1,5 +1,47 @@
 [
   {
+    "customerId": "ALFKI",
+    "companyName": "Alfreds Futterkiste",
+    "contactName": "Maria Anders",
+    "contactTitle": "Sales Representative",
+    "address": {
+      "street": "Obere Str. 57",
+      "city": "Berlin",
+      "region": "",
+      "postalCode": "12209",
+      "country": "Germany",
+      "phone": "(171) 555-7788"
+    }
+  },
+  {
+    "customerId": "ANATR",
+    "companyName": "Ana Trujillo Emparedados y helados",
+    "contactName": "Ana Trujillo",
+    "contactTitle": "Owner",
+    "address": {
+      "street": "Avda. de la Constitución 2222",
+      "city": "México D.F.",
+      "region": "",
+      "postalCode": "05021",
+      "country": "Mexico",
+      "phone": "(5) 555-4729"
+    }
+  },
+  {
+    "customerId": "ANTON",
+    "companyName": "Antonio Moreno Taquería",
+    "contactName": "Antonio Moreno",
+    "contactTitle": "Owner",
+    "address": {
+      "street": "Mataderos  2312",
+      "city": "México D.F.",
+      "region": "",
+      "postalCode": "05023",
+      "country": "Mexico",
+      "phone": "(5) 555-3932"
+    }
+  },
+  {
     "customerID": "AROUT",
     "companyName": "Around the Horn",
     "contactName": "Thomas Hardy",
