@@ -1,18 +1,15 @@
 ﻿namespace NorthwindCRUD.Services
 {
-    using AutoMapper;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
 
     public class CategoryService
     {
 
-        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public CategoryService(IMapper mapper, DataContext dataContext)
+        public CategoryService(DataContext dataContext)
         {
-            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 

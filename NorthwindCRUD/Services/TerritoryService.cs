@@ -1,21 +1,16 @@
-﻿namespace NorthwindCRUD.Services
-{
-    using AutoMapper;
-    using Microsoft.EntityFrameworkCore;
-    using NorthwindCRUD.Constants;
-    using NorthwindCRUD.Helpers;
-    using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.Dtos;
+﻿using NorthwindCRUD.Constants;
+using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Models.DbModels;
 
+namespace NorthwindCRUD.Services
+{
     public class TerritoryService
     {
 
-        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public TerritoryService(IMapper mapper, DataContext dataContext)
+        public TerritoryService(DataContext dataContext)
         {
-            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 
