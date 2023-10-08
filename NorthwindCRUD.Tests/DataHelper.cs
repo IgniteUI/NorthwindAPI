@@ -19,6 +19,5 @@ namespace NorthwindCRUD.Tests
             int randomIndex = random.Next(array.Length);
             return array[randomIndex];
         }
-
     }
 }

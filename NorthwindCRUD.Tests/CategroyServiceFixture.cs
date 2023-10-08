@@ -1,13 +1,13 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Services;
 using NorthwindCRUD.Models.DbModels;
+using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
     [TestClass]
     public class CategoryServiceFixture : BaseFixture
     {
-        private CategoryService categoryService;
+        private CategoryService categoryService = null!;
 
         [TestInitialize]
         public void Initialize()
@@ -22,7 +22,7 @@ namespace NorthwindCRUD.Tests
             var category = new CategoryDb
             {
                 Name = "New Category",
-                Description = "New Category Description"
+                Description = "New Category Description",
             };
 
             var createdCategory = categoryService.Create(category);
@@ -40,7 +40,7 @@ namespace NorthwindCRUD.Tests
             var category = new CategoryDb
             {
                 Name = "New Category",
-                Description = "New Category Description"
+                Description = "New Category Description",
             };
             var createdCategory = categoryService.Create(category);
 
@@ -59,9 +59,9 @@ namespace NorthwindCRUD.Tests
             var category = new CategoryDb
             {
                 Name = "New Category",
-                Description = "New Category Description"
+                Description = "New Category Description",
             };
-            
+
             var createdCategory = categoryService.Create(category);
 
             categoryService.Delete(createdCategory.CategoryId);
@@ -76,7 +76,7 @@ namespace NorthwindCRUD.Tests
             var result = categoryService.GetAll();
 
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Count() > 0);
+            Assert.IsTrue(result.Length > 0);
         }
     }
 }

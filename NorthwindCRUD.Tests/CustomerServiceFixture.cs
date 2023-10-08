@@ -1,13 +1,13 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Services;
 using NorthwindCRUD.Models.DbModels;
+using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
     [TestClass]
     public class CustomerServiceFixture : BaseFixture
     {
-        private CustomerService customerService;
+        private CustomerService customerService = null!;
 
         [TestInitialize]
         public void Initialize()
@@ -24,7 +24,7 @@ namespace NorthwindCRUD.Tests
                 Street = "6955 Union Park Center Suite 500",
                 City = "Midvale",
                 PostalCode = "84047",
-                Region = "",
+                Region = string.Empty,
                 Country = "USA",
                 Phone = "(800) 231-8588",
             };
@@ -39,7 +39,7 @@ namespace NorthwindCRUD.Tests
             };
 
             var createdCustomer = customerService.Create(customer);
-            
+
             Assert.IsNotNull(createdCustomer);
             Assert.AreEqual(customer.CompanyName, createdCustomer.CompanyName);
             Assert.AreEqual(customer.ContactName, createdCustomer.ContactName);
@@ -52,26 +52,11 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldUpdateEmployee()
-        {
-        }
-
-        [TestMethod]
-        public void ShouldDeleteEmployee()
-        {
-        }
-
-        [TestMethod]
         public void ShouldReturnAllCustomers()
         {
             var result = customerService.GetAll();
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Count() > 0);
-        }
-
-        [TestMethod]
-        public void ShouldReturnEmployeesByReportsTo()
-        {            
+            Assert.IsTrue(result.Length > 0);
         }
     }
 }

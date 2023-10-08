@@ -1,13 +1,13 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Services;
 using NorthwindCRUD.Models.DbModels;
+using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
     [TestClass]
     public class EmployeeServiceFixture : BaseFixture
     {
-        private EmployeeService employeeService;
+        private EmployeeService employeeService = null!;
 
         [TestInitialize]
         public void Initialize()
@@ -23,7 +23,7 @@ namespace NorthwindCRUD.Tests
             {
                 FirstName = "John",
                 LastName = "Doe",
-                Title = "Manager"
+                Title = "Manager",
             };
 
             var createdEmployee = employeeService.Create(employee);
@@ -41,7 +41,7 @@ namespace NorthwindCRUD.Tests
             {
                 FirstName = "John",
                 LastName = "Doe",
-                Title = "Manager"
+                Title = "Manager",
             };
             var createdEmployee = employeeService.Create(employee);
 
@@ -59,13 +59,13 @@ namespace NorthwindCRUD.Tests
             {
                 FirstName = "John",
                 LastName = "Doe",
-                Title = "Manager"
+                Title = "Manager",
             };
             var createdEmployee = employeeService.Create(employee);
 
             employeeService.Delete(createdEmployee.EmployeeId);
             var deletedEmployee = employeeService.GetById(createdEmployee.EmployeeId);
-            
+
             Assert.IsNull(deletedEmployee);
         }
 
@@ -75,17 +75,17 @@ namespace NorthwindCRUD.Tests
             var result = employeeService.GetAll();
 
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Count() > 0);
+            Assert.IsTrue(result.Length > 0);
         }
 
         [TestMethod]
         public void ShouldReturnEmployeesByReportsTo()
-        {            
+        {
             var manager = new EmployeeDb
             {
                 FirstName = "Manager",
                 LastName = "Doe",
-                Title = "Manager"
+                Title = "Manager",
             };
 
             var createdManager = employeeService.Create(manager);
@@ -94,7 +94,7 @@ namespace NorthwindCRUD.Tests
                 FirstName = "Employee1",
                 LastName = "Smith",
                 Title = "Employee",
-                ReportsTo = createdManager.EmployeeId
+                ReportsTo = createdManager.EmployeeId,
             };
 
             var employee2 = new EmployeeDb
@@ -102,18 +102,15 @@ namespace NorthwindCRUD.Tests
                 FirstName = "Employee2",
                 LastName = "Johnson",
                 Title = "Employee",
-                ReportsTo = createdManager.EmployeeId
+                ReportsTo = createdManager.EmployeeId,
             };
-
 
             var createdEmployee1 = employeeService.Create(employee1);
             var createdEmployee2 = employeeService.Create(employee2);
 
-            
             var result = employeeService.GetEmployeesByReportsTo(createdManager.EmployeeId);
-            
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
+            Assert.AreEqual(2, result.Length);
             Assert.IsTrue(result.All(e => e.ReportsTo == createdManager.EmployeeId));
         }
 
@@ -124,7 +121,7 @@ namespace NorthwindCRUD.Tests
             {
                 FirstName = "John",
                 LastName = "Doe",
-                Title = "Manager"
+                Title = "Manager",
             };
             var createdEmployee = employeeService.Create(employee);
 

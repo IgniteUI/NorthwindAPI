@@ -1,15 +1,15 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Services;
 using NorthwindCRUD.Models.DbModels;
+using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
     [TestClass]
     public class ProductServiceFixture : BaseFixture
     {
-        private ProductService productService;
-        private CategoryService categoryService;
-        private SupplierService supplierService;
+        private ProductService productService = null!;
+        private CategoryService categoryService = null!;
+        private SupplierService supplierService = null!;
 
         [TestInitialize]
         public void Initialize()
@@ -54,7 +54,7 @@ namespace NorthwindCRUD.Tests
             };
 
             var createdProduct = productService.Create(product);
-            
+
             createdProduct.UnitPrice = 15;
             createdProduct.UnitsInStock = 50;
 
@@ -80,7 +80,6 @@ namespace NorthwindCRUD.Tests
 
             var createdProduct = productService.Create(product);
 
-
             productService.Delete(createdProduct.ProductId);
             var deletedProduct = productService.GetById(createdProduct.ProductId);
 
@@ -93,7 +92,7 @@ namespace NorthwindCRUD.Tests
             var result = productService.GetAll();
 
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Count() > 0);
+            Assert.IsTrue(result.Length > 0);
         }
 
         [TestMethod]

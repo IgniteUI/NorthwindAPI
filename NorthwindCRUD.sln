@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthwindCRUD", "NorthwindC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthwindCRUD.Tests", "NorthwindCRUD.Tests\NorthwindCRUD.Tests.csproj", "{F2C392E4-219B-41F3-8010-10E69EBF434D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github Workflows", "Github Workflows", "{816E41A3-F9E9-4244-88C7-930196599CFF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{816E41A3-F9E9-4244-88C7-930196599CFF}"
+	ProjectSection(SolutionItems) = preProject
+		NorthwindCRUD.ruleset = NorthwindCRUD.ruleset
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github-workflows", "github-workflows", "{CA0B0BD2-B68E-4511-9038-02261DE7EE0D}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build-test-ci.yml = .github\workflows\build-test-ci.yml
 	EndProjectSection
@@ -29,6 +34,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CA0B0BD2-B68E-4511-9038-02261DE7EE0D} = {816E41A3-F9E9-4244-88C7-930196599CFF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {562EFEC3-EDD3-4783-A44E-BAFEE6B3E989}

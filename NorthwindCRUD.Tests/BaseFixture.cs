@@ -1,13 +1,15 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Data.Common;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using NorthwindCRUD.Helpers;
-using System.Data.Common;
+using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
     public class BaseFixture
     {
-        private DbConnection? connection;
+        // null! indicates that the member is initialized in other code
+        private DbConnection? connection = null!;
 
         protected DataContext GetInMemoryDatabaseContext()
         {
@@ -25,15 +27,14 @@ namespace NorthwindCRUD.Tests
             }
         }
 
-        protected static DbConnection CreateDbConnection()
+        protected DbConnection CreateDbConnection()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
             return connection;
         }
 
-
-        protected static DataContext CreateInMemoryDatabaseContext(DbConnection connection)
+        protected DataContext CreateInMemoryDatabaseContext(DbConnection connection)
         {
             var options = new DbContextOptionsBuilder<DataContext>()
                 .UseSqlite(connection)
@@ -45,6 +46,5 @@ namespace NorthwindCRUD.Tests
 
             return new DataContext(options);
         }
-
     }
 }
