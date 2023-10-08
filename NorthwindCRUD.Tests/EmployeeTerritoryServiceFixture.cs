@@ -20,23 +20,11 @@ namespace NorthwindCRUD.Tests
             employeeTerritoryService = new EmployeeTerritoryService(context);
         }
 
-        static T GetRandomElement<T>(T[] array)
-        {
-            if (array == null || array.Length == 0)
-            {
-                throw new ArgumentException("The array cannot be null or empty.");
-            }
-
-            Random random = new Random();
-            int randomIndex = random.Next(array.Length);
-            return array[randomIndex];
-        }
-
         [TestMethod]
         public void ShouldAddTerritoryToEmployee()
         {
-            var employeeId = GetRandomElement(employeeService.GetAll()).EmployeeId;
-            var territoryId = GetRandomElement(territoryService.GetAll()).TerritoryId;
+            var employeeId = employeeService.GetAll().GetRandomElement().EmployeeId;
+            var territoryId = territoryService.GetAll().GetRandomElement().TerritoryId;
 
             var employeeTerritory = new EmployeeTerritoryDb
             {
@@ -54,9 +42,9 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldReturnTerritoriesForEmployee()
         {
-            var employeeId = GetRandomElement(employeeService.GetAll()).EmployeeId;
-            var territoryId1 = GetRandomElement(territoryService.GetAll()).TerritoryId;
-            var territoryId2 = GetRandomElement(territoryService.GetAll()).TerritoryId;
+            var employeeId = employeeService.GetAll().GetRandomElement().EmployeeId;
+            var territoryId1 = territoryService.GetAll().GetRandomElement().TerritoryId;
+            var territoryId2 = territoryService.GetAll().GetRandomElement().TerritoryId;
             
             var initialTerritoryCount = employeeTerritoryService.GetTeritoriesByEmployeeId(employeeId).Count();
 
@@ -87,9 +75,9 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldReturnEmployeesForTerritory()
         {
-            var employeeId1 = GetRandomElement(employeeService.GetAll()).EmployeeId;
-            var employeeId2= GetRandomElement(employeeService.GetAll()).EmployeeId;
-            var territoryId = GetRandomElement(territoryService.GetAll()).TerritoryId;
+            var employeeId1 = employeeService.GetAll().GetRandomElement().EmployeeId;
+            var employeeId2= employeeService.GetAll().GetRandomElement().EmployeeId;
+            var territoryId = territoryService.GetAll().GetRandomElement().TerritoryId;
 
             var initialEmployeeCount = employeeTerritoryService.GetEmployeesByTerritoryId(territoryId).Count();
 
