@@ -46,7 +46,7 @@
                 return StatusCode(500);
             }
         }
-        
+
         [HttpGet("{id}")]
         [Authorize]
         public ActionResult<OrderDto> GetById(int id)
@@ -75,10 +75,10 @@
         {
             try
             {
-                var order = this.orderService.GetById(id);
-                if (order != null)
+                var orderDetail = this.orderService.GetOrderDetailsById(id);
+                if (orderDetail != null)
                 {
-                    return Ok(this.mapper.Map<OrderDetailDb[], OrderDetailDto[]>(order.Details.ToArray()));
+                    return Ok(this.mapper.Map<OrderDetailDb[], OrderDetailDto[]>(orderDetail));
                 }
 
                 return NotFound();
@@ -174,10 +174,10 @@
         {
             try
             {
-                var order = this.orderService.GetById(id);
-                if (order != null)
+                var orderDetails = this.orderService.GetOrderDetailsById(id);
+                if (orderDetails != null)
                 {
-                    var productIds = order.Details.Select(o => o.ProductId).ToArray();
+                    var productIds = orderDetails.Select(o => o.ProductId).ToArray();
                     var products = this.productService.GetProductsByIds(productIds);
 
                     if (products != null)
@@ -188,6 +188,22 @@
                 }
 
                 return NotFound();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("retrieve/{ordersToRetrieve}")]
+        [Authorize]
+        public ActionResult<OrderDto[]> OrdersToRetrieve(int ordersToRetrieve)
+        {
+            try
+            {
+                var orders = this.orderService.GetNOrders(ordersToRetrieve);
+                return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
             }
             catch (Exception error)
             {

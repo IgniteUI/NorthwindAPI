@@ -130,6 +130,7 @@ builder.Services.AddTransient<RegionService>();
 builder.Services.AddTransient<ShipperService>();
 builder.Services.AddTransient<SupplierService>();
 builder.Services.AddTransient<TerritoryService>();
+builder.Services.AddTransient<SalesService>();
 
 var app = builder.Build();
 

@@ -8,7 +8,6 @@
     {
         public OrderDb()
         {
-            this.Details = new List<OrderDetailDb>();
         }
 
         [Key]
@@ -46,7 +45,5 @@
         public string? ShipAddressId { get; set; }
 
         public AddressDb? ShipAddress { get; set; }
-
-        public ICollection<OrderDetailDb> Details { get; set; }
     }
 }

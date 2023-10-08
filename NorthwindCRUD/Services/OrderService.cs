@@ -19,8 +19,7 @@
         private IQueryable<OrderDb> GetOrdersQuery()
         {
             return this.dataContext.Orders
-                .Include(c => c.ShipAddress)
-                .Include(c => c.Details);
+                .Include(c => c.ShipAddress);
         }
 
         public OrderDb[] GetAll()
@@ -30,10 +29,24 @@
                 .ToArray();
         }
 
+        public OrderDb[] GetNOrders(int numberOfOrdersToRetrieve)
+        {
+            return this.dataContext.Orders
+                .Include(c => c.ShipAddress)
+                .Take(numberOfOrdersToRetrieve)
+                .ToArray();
+        }
+
         public OrderDb GetById(int id)
         {
             return GetOrdersQuery()
                 .FirstOrDefault(c => c.OrderId == id);
+        }
+
+        public OrderDetailDb[] GetOrderDetailsById(int id)
+        {
+            var details = this.dataContext.OrderDetails.Where(o => o.OrderId == id).ToArray();
+            return details;
         }
 
         public OrderDb[] GetOrdersByCustomerId(string id)
@@ -59,16 +72,11 @@
 
         public OrderDetailDb[] GetOrderDetailsByProductId(int id)
         {
-            var ordersWithMatchingProduct = this.dataContext.Orders
-                .Include(o => o.Details)
-                .Where(o => o.Details.Any(d => d.ProductId == id))
-                .ToList();
-
-            var orderDetails = ordersWithMatchingProduct
-                .SelectMany(o => o.Details)
+            var details = this.dataContext.OrderDetails
+                .Where(o => o.ProductId == id)
                 .ToArray();
 
-            return orderDetails;
+            return details;
         }
 
 
