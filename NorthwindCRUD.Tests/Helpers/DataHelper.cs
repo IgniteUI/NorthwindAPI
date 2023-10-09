@@ -71,6 +71,12 @@ namespace NorthwindCRUD.Tests
             return GetJsonContent<RegionDb>("regions.json").GetRandomElement();
         }
 
+        internal RegionDb CreateRegion()
+        {
+            var region = GetRegion();
+            return RegionService.Create(region);
+        }
+
         internal ProductDb CreateProduct(ProductDb product)
         {
             var createdCategory = CategoryService.Create(DataHelper.GetCategory());
@@ -91,6 +97,11 @@ namespace NorthwindCRUD.Tests
         internal TerritoryDb CreateTerritory()
         {
             TerritoryDb territory = GetTerritory();
+            return CreateTerritory(territory);
+        }
+
+        internal TerritoryDb CreateTerritory(TerritoryDb territory)
+        {
             RegionDb region = RegionService.Create(GetRegion());
             territory.RegionId = region.RegionId;
             return TerritoryService.Create(territory);
