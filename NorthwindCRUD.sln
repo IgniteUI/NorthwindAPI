@@ -17,6 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NorthwindCRUD.ruleset = NorthwindCRUD.ruleset
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "analysis-rules", "analysis-rules", "{1470F2C9-4F6C-49CE-A344-3C536B712610}"
+	ProjectSection(SolutionItems) = preProject
+		NorthwindCRUD.ruleset = NorthwindCRUD.ruleset
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,7 +41,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{CA0B0BD2-B68E-4511-9038-02261DE7EE0D} = {816E41A3-F9E9-4244-88C7-930196599CFF}
+		{CA0B0BD2-B68E-4511-9038-02261DE7EE0D} = {404CF973-7C12-49EA-84F7-022ED792A105}
+		{1470F2C9-4F6C-49CE-A344-3C536B712610} = {404CF973-7C12-49EA-84F7-022ED792A105}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {562EFEC3-EDD3-4783-A44E-BAFEE6B3E989}
