@@ -3,10 +3,7 @@
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
-    using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
     using System.ComponentModel.DataAnnotations;
 
@@ -15,7 +12,6 @@
     public class SalesController : ControllerBase
     {
         private readonly SalesService salesService;
-        private readonly ProductService productService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
@@ -28,7 +24,7 @@
 
         [HttpGet("ByCategory")]
         [Authorize]
-        public IActionResult GetSalesByCategoryAndYear([FromQuery] [Required] string categoryName, [FromQuery] int? orderYear = null)
+        public ActionResult<SalesDto[]> GetSalesByCategoryAndYear([FromQuery] [Required] string categoryName, [FromQuery] int? orderYear = null)
         {
             try {
                 var response = this.salesService.GetSalesDataByCategoryAndYear(categoryName, orderYear);
@@ -42,7 +38,7 @@
 
         [HttpGet("ByCountry/{country}")]
         [Authorize]
-        public IActionResult GetSalesByCountry(
+        public ActionResult<SalesDto[]> GetSalesByCountry(
             string country,
             [FromQuery] [Required] string startDate,
             [FromQuery] [Required] string endDate)
@@ -72,7 +68,7 @@
 
         [HttpGet("ByYear/{year}")]
         [Authorize]
-        public IActionResult GetSalesByYear(
+        public ActionResult<SalesDto[]> GetSalesByYear(
             int year,
             [FromQuery] int startMounth,
             [FromQuery] int endMounth)
