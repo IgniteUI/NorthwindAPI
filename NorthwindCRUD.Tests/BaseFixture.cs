@@ -1,8 +1,7 @@
 ﻿using System.Data.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using NorthwindCRUD.Helpers;
-using NorthwindCRUD.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NorthwindCRUD.Tests
 {
@@ -11,13 +10,24 @@ namespace NorthwindCRUD.Tests
         // null! indicates that the member is initialized in other code
         private DbConnection? connection = null!;
 
+        public DataHelper DataHelper { get; set; } = null!;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            DataContext context = GetInMemoryDatabaseContext();
+            DataHelper = new DataHelper(context);
+        }
+
         protected DataContext GetInMemoryDatabaseContext()
         {
             if (connection == null)
             {
                 connection = CreateDbConnection();
                 var context = CreateInMemoryDatabaseContext(connection);
-                DBSeeder.Seed(context);
+                context.Database.EnsureCreated();
+
+                // DBSeeder.Seed(context);
                 return context;
             }
             else

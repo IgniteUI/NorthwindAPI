@@ -1,44 +1,15 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Models.DbModels;
-using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
     [TestClass]
     public class CustomerServiceFixture : BaseFixture
     {
-        private CustomerService customerService = null!;
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            DataContext context = GetInMemoryDatabaseContext();
-            customerService = new CustomerService(context);
-        }
-
         [TestMethod]
         public void ShouldCreateCustomer()
         {
-            var address = new AddressDb
-            {
-                Street = "6955 Union Park Center Suite 500",
-                City = "Midvale",
-                PostalCode = "84047",
-                Region = string.Empty,
-                Country = "USA",
-                Phone = "(800) 231-8588",
-            };
-
-            var customer = new CustomerDb
-            {
-                CustomerId = "12345",
-                CompanyName = "Infragistics",
-                ContactName = "Maria Anders",
-                ContactTitle = "Sales Representative",
-                Address = address,
-            };
-
-            var createdCustomer = customerService.Create(customer);
+            var customer = DataHelper.GetCustomer();
+            var createdCustomer = DataHelper.CustomerService.Create(customer);
 
             Assert.IsNotNull(createdCustomer);
             Assert.AreEqual(customer.CompanyName, createdCustomer.CompanyName);
@@ -54,9 +25,12 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldReturnAllCustomers()
         {
-            var result = customerService.GetAll();
+            DataHelper.CustomerService.Create(DataHelper.GetCustomer());
+            DataHelper.CustomerService.Create(DataHelper.GetCustomer());
+
+            var result = DataHelper.CustomerService.GetAll();
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Length > 0);
+            Assert.AreEqual(2, result.Length);
         }
     }
 }

@@ -1,40 +1,19 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Models.DbModels;
-using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
     [TestClass]
     public class EmployeeTerritoryServiceFixture : BaseFixture
     {
-        private EmployeeTerritoryService employeeTerritoryService = null!;
-        private EmployeeService employeeService = null!;
-        private TerritoryService territoryService = null!;
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            DataContext context = GetInMemoryDatabaseContext();
-            employeeService = new EmployeeService(context);
-            territoryService = new TerritoryService(context);
-            employeeTerritoryService = new EmployeeTerritoryService(context);
-        }
-
         [TestMethod]
         public void ShouldAddTerritoryToEmployee()
         {
-            var employeeId = employeeService.GetAll().GetRandomElement().EmployeeId;
-            var territoryId = territoryService.GetAll().GetRandomElement().TerritoryId;
+            var employeeId = DataHelper.CreateEmployee().EmployeeId;
+            var territoryId = DataHelper.CreateTerritory().TerritoryId;
 
-            var employeeTerritory = new EmployeeTerritoryDb
-            {
-                EmployeeId = employeeId,
-                TerritoryId = territoryId,
-            };
+            DataHelper.CreateEmployeeTerritory(employeeId, territoryId);
 
-            employeeTerritoryService.AddTerritoryToEmployee(employeeTerritory);
-
-            var territories = employeeTerritoryService.GetTeritoriesByEmployeeId(employeeId);
+            var territories = DataHelper.EmployeeTerritoryService.GetTeritoriesByEmployeeId(employeeId);
             Assert.IsNotNull(territories);
             Assert.IsTrue(territories.Any(t => t.TerritoryId == territoryId));
         }
@@ -42,32 +21,17 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldReturnTerritoriesForEmployee()
         {
-            var employeeId = employeeService.GetAll().GetRandomElement().EmployeeId;
-            var territoryId1 = territoryService.GetAll().GetRandomElement().TerritoryId;
-            var territoryId2 = territoryService.GetAll().GetRandomElement().TerritoryId;
+            var employeeId = DataHelper.CreateEmployee().EmployeeId;
+            var territoryId1 = DataHelper.CreateTerritory().TerritoryId;
+            var territoryId2 = DataHelper.CreateTerritory().TerritoryId;
 
-            var initialTerritoryCount = employeeTerritoryService.GetTeritoriesByEmployeeId(employeeId).Length;
+            DataHelper.CreateEmployeeTerritory(employeeId, territoryId1);
+            DataHelper.CreateEmployeeTerritory(employeeId, territoryId2);
 
-            var employeeTerritory = new EmployeeTerritoryDb
-            {
-                EmployeeId = employeeId,
-                TerritoryId = territoryId1,
-            };
-
-            employeeTerritoryService.AddTerritoryToEmployee(employeeTerritory);
-
-            employeeTerritory = new EmployeeTerritoryDb
-            {
-                EmployeeId = employeeId,
-                TerritoryId = territoryId2,
-            };
-
-            employeeTerritoryService.AddTerritoryToEmployee(employeeTerritory);
-
-            var territories = employeeTerritoryService.GetTeritoriesByEmployeeId(employeeId);
+            var territories = DataHelper.EmployeeTerritoryService.GetTeritoriesByEmployeeId(employeeId);
 
             Assert.IsNotNull(territories);
-            Assert.AreEqual(initialTerritoryCount + 2, territories.Length);
+            Assert.AreEqual(2, territories.Length);
             Assert.IsTrue(territories.Any(t => t.TerritoryId == territoryId1));
             Assert.IsTrue(territories.Any(t => t.TerritoryId == territoryId2));
         }
@@ -75,32 +39,17 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldReturnEmployeesForTerritory()
         {
-            var employeeId1 = employeeService.GetAll().GetRandomElement().EmployeeId;
-            var employeeId2 = employeeService.GetAll().GetRandomElement().EmployeeId;
-            var territoryId = territoryService.GetAll().GetRandomElement().TerritoryId;
+            var territoryId = DataHelper.CreateTerritory().TerritoryId;
+            var employeeId1 = DataHelper.CreateEmployee().EmployeeId;
+            var employeeId2 = DataHelper.CreateEmployee().EmployeeId;
 
-            var initialEmployeeCount = employeeTerritoryService.GetEmployeesByTerritoryId(territoryId).Length;
+            DataHelper.CreateEmployeeTerritory(employeeId1, territoryId);
+            DataHelper.CreateEmployeeTerritory(employeeId2, territoryId);
 
-            var employeeTerritory = new EmployeeTerritoryDb
-            {
-                EmployeeId = employeeId1,
-                TerritoryId = territoryId,
-            };
-
-            employeeTerritoryService.AddTerritoryToEmployee(employeeTerritory);
-
-            employeeTerritory = new EmployeeTerritoryDb
-            {
-                EmployeeId = employeeId2,
-                TerritoryId = territoryId,
-            };
-
-            employeeTerritoryService.AddTerritoryToEmployee(employeeTerritory);
-
-            var employees = employeeTerritoryService.GetEmployeesByTerritoryId(territoryId);
+            var employees = DataHelper.EmployeeTerritoryService.GetEmployeesByTerritoryId(territoryId);
 
             Assert.IsNotNull(employees);
-            Assert.AreEqual(initialEmployeeCount + 2, employees.Length);
+            Assert.AreEqual(2, employees.Length);
             Assert.IsTrue(employees.Any(e => e.EmployeeId == employeeId1));
             Assert.IsTrue(employees.Any(e => e.EmployeeId == employeeId2));
         }

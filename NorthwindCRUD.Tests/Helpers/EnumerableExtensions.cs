@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NorthwindCRUD.Tests
+﻿namespace NorthwindCRUD.Tests
 {
-    public static class DataHelper
+    public static class EnumerableExtensions
     {
         public static T GetRandomElement<T>(this T[] array)
         {

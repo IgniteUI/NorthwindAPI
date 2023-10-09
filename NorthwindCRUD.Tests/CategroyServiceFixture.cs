@@ -1,33 +1,17 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Models.DbModels;
-using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
     [TestClass]
     public class CategoryServiceFixture : BaseFixture
     {
-        private CategoryService categoryService = null!;
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            DataContext context = GetInMemoryDatabaseContext();
-            categoryService = new CategoryService(context);
-        }
-
         [TestMethod]
         public void ShouldCreateCategory()
         {
-            var category = new CategoryDb
-            {
-                Name = "New Category",
-                Description = "New Category Description",
-            };
+            var category = DataHelper.GetCategory();
+            var createdCategory = DataHelper.CategoryService.Create(category);
 
-            var createdCategory = categoryService.Create(category);
-
-            var result = categoryService.GetById(createdCategory.CategoryId);
+            var result = DataHelper.CategoryService.GetById(createdCategory.CategoryId);
 
             Assert.IsNotNull(createdCategory);
             Assert.AreEqual(category.Name, result.Name);
@@ -37,16 +21,12 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldUpdateCategory()
         {
-            var category = new CategoryDb
-            {
-                Name = "New Category",
-                Description = "New Category Description",
-            };
-            var createdCategory = categoryService.Create(category);
+            var category = DataHelper.GetCategory();
+            var createdCategory = DataHelper.CategoryService.Create(category);
 
             createdCategory.Name = "Updated Category";
             createdCategory.Description = "Updated Description";
-            var updatedCategory = categoryService.Update(createdCategory);
+            var updatedCategory = DataHelper.CategoryService.Update(createdCategory);
 
             Assert.IsNotNull(updatedCategory);
             Assert.AreEqual("Updated Category", updatedCategory.Name);
@@ -56,16 +36,12 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldDeleteCategory()
         {
-            var category = new CategoryDb
-            {
-                Name = "New Category",
-                Description = "New Category Description",
-            };
+            var category = DataHelper.GetCategory();
 
-            var createdCategory = categoryService.Create(category);
+            var createdCategory = DataHelper.CategoryService.Create(category);
 
-            categoryService.Delete(createdCategory.CategoryId);
-            var deletedCategory = categoryService.GetById(createdCategory.CategoryId);
+            DataHelper.CategoryService.Delete(createdCategory.CategoryId);
+            var deletedCategory = DataHelper.CategoryService.GetById(createdCategory.CategoryId);
 
             Assert.IsNull(deletedCategory);
         }
@@ -73,10 +49,12 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldReturnAllCategories()
         {
-            var result = categoryService.GetAll();
+            DataHelper.CategoryService.Create(DataHelper.GetCategory());
+            DataHelper.CategoryService.Create(DataHelper.GetCategory());
+            var result = DataHelper.CategoryService.GetAll();
 
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Length > 0);
+            Assert.AreEqual(2, result.Length);
         }
     }
 }

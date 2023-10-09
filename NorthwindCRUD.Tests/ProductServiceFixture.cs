@@ -1,39 +1,15 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Models.DbModels;
-using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
     [TestClass]
     public class ProductServiceFixture : BaseFixture
     {
-        private ProductService productService = null!;
-        private CategoryService categoryService = null!;
-        private SupplierService supplierService = null!;
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            DataContext context = GetInMemoryDatabaseContext();
-            productService = new ProductService(context);
-            categoryService = new CategoryService(context);
-            supplierService = new SupplierService(context);
-        }
-
         [TestMethod]
         public void ShouldCreateProduct()
         {
-            var categoryId = categoryService.GetAll().GetRandomElement().CategoryId;
-            var supplierId = supplierService.GetAll().GetRandomElement().SupplierId;
-            var product = new ProductDb
-            {
-                UnitPrice = 10,
-                UnitsInStock = 100,
-                CategoryId = categoryId,
-                SupplierId = supplierId,
-            };
-
-            var createdProduct = productService.Create(product);
+            var product = DataHelper.GetProduct();
+            var createdProduct = DataHelper.CreateProduct(product);
 
             Assert.IsNotNull(createdProduct);
             Assert.AreEqual(product.UnitPrice, createdProduct.UnitPrice);
@@ -43,22 +19,13 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldUpdateProduct()
         {
-            var categoryId = categoryService.GetAll().GetRandomElement().CategoryId;
-            var supplierId = supplierService.GetAll().GetRandomElement().SupplierId;
-            var product = new ProductDb
-            {
-                UnitPrice = 10,
-                UnitsInStock = 100,
-                CategoryId = categoryId,
-                SupplierId = supplierId,
-            };
-
-            var createdProduct = productService.Create(product);
+            var product = DataHelper.GetProduct();
+            var createdProduct = DataHelper.CreateProduct(product);
 
             createdProduct.UnitPrice = 15;
             createdProduct.UnitsInStock = 50;
 
-            var updatedProduct = productService.Update(createdProduct);
+            var updatedProduct = DataHelper.ProductService.Update(createdProduct);
 
             Assert.IsNotNull(updatedProduct);
             Assert.AreEqual(15, updatedProduct.UnitPrice);
@@ -68,20 +35,11 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldDeleteProduct()
         {
-            var categoryId = categoryService.GetAll().GetRandomElement().CategoryId;
-            var supplierId = supplierService.GetAll().GetRandomElement().SupplierId;
-            var product = new ProductDb
-            {
-                UnitPrice = 10,
-                UnitsInStock = 100,
-                CategoryId = categoryId,
-                SupplierId = supplierId,
-            };
+            var product = DataHelper.GetProduct();
+            var createdProduct = DataHelper.CreateProduct(product);
 
-            var createdProduct = productService.Create(product);
-
-            productService.Delete(createdProduct.ProductId);
-            var deletedProduct = productService.GetById(createdProduct.ProductId);
+            DataHelper.ProductService.Delete(createdProduct.ProductId);
+            var deletedProduct = DataHelper.ProductService.GetById(createdProduct.ProductId);
 
             Assert.IsNull(deletedProduct);
         }
@@ -89,31 +47,25 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldGetAllProducts()
         {
-            var result = productService.GetAll();
+            DataHelper.CreateProduct(DataHelper.GetProduct());
+            DataHelper.CreateProduct(DataHelper.GetProduct());
+
+            var result = DataHelper.ProductService.GetAll();
 
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.Length > 0);
+            Assert.AreEqual(2, result.Length);
         }
 
         [TestMethod]
         public void ShouldGetProductById()
         {
-            var categoryId = categoryService.GetAll().GetRandomElement().CategoryId;
-            var supplierId = supplierService.GetAll().GetRandomElement().SupplierId;
-            var product = new ProductDb
-            {
-                UnitPrice = 10,
-                UnitsInStock = 100,
-                CategoryId = categoryId,
-                SupplierId = supplierId,
-            };
-
-            var createdProduct = productService.Create(product);
-            var result = productService.GetById(createdProduct.ProductId);
+            var product = DataHelper.GetProduct();
+            var createdProduct = DataHelper.CreateProduct(product);
+            var result = DataHelper.ProductService.GetById(createdProduct.ProductId);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(10, result.UnitPrice);
-            Assert.AreEqual(100, result.UnitsInStock);
+            Assert.AreEqual(product.UnitPrice, result.UnitPrice);
+            Assert.AreEqual(product.UnitsInStock, result.UnitsInStock);
         }
     }
 }
