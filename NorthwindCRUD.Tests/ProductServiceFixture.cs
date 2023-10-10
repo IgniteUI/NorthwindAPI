@@ -19,8 +19,7 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldUpdateProduct()
         {
-            var product = DataHelper.GetProduct();
-            var createdProduct = DataHelper.CreateProduct(product);
+            var createdProduct = DataHelper.CreateProduct();
 
             createdProduct.UnitPrice = 15;
             createdProduct.UnitsInStock = 50;
@@ -35,8 +34,7 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldDeleteProduct()
         {
-            var product = DataHelper.GetProduct();
-            var createdProduct = DataHelper.CreateProduct(product);
+            var createdProduct = DataHelper.CreateProduct();
 
             DataHelper.ProductService.Delete(createdProduct.ProductId);
             var deletedProduct = DataHelper.ProductService.GetById(createdProduct.ProductId);
@@ -47,8 +45,8 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldGetAllProducts()
         {
-            DataHelper.CreateProduct(DataHelper.GetProduct());
-            DataHelper.CreateProduct(DataHelper.GetProduct());
+            DataHelper.CreateProduct();
+            DataHelper.CreateProduct();
 
             var result = DataHelper.ProductService.GetAll();
 
@@ -59,13 +57,12 @@ namespace NorthwindCRUD.Tests
         [TestMethod]
         public void ShouldGetProductById()
         {
-            var product = DataHelper.GetProduct();
-            var createdProduct = DataHelper.CreateProduct(product);
+            var createdProduct = DataHelper.CreateProduct();
             var result = DataHelper.ProductService.GetById(createdProduct.ProductId);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(product.UnitPrice, result.UnitPrice);
-            Assert.AreEqual(product.UnitsInStock, result.UnitsInStock);
+            Assert.AreEqual(createdProduct.UnitPrice, result.UnitPrice);
+            Assert.AreEqual(createdProduct.UnitsInStock, result.UnitsInStock);
         }
     }
 }

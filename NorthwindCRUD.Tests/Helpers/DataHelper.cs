@@ -8,18 +8,22 @@ namespace NorthwindCRUD.Tests
 {
     public class DataHelper
     {
-        public DataHelper(DataContext context)
+        private DataContext dataContext;
+
+        public DataHelper(DataContext dataContext)
         {
-            CategoryService = new CategoryService(context);
-            CustomerService = new CustomerService(context);
-            EmployeeService = new EmployeeService(context);
-            ProductService = new ProductService(context);
-            SupplierService = new SupplierService(context);
-            RegionService = new RegionService(context);
-            TerritoryService = new TerritoryService(context);
-            OrderService = new OrderService(context);
-            ShipperService = new ShipperService(context);
-            EmployeeTerritoryService = new EmployeeTerritoryService(context);
+            this.dataContext = dataContext;
+            CategoryService = new CategoryService(dataContext);
+            CustomerService = new CustomerService(dataContext);
+            EmployeeService = new EmployeeService(dataContext);
+            ProductService = new ProductService(dataContext);
+            SupplierService = new SupplierService(dataContext);
+            RegionService = new RegionService(dataContext);
+            TerritoryService = new TerritoryService(dataContext);
+            OrderService = new OrderService(dataContext);
+            ShipperService = new ShipperService(dataContext);
+            EmployeeTerritoryService = new EmployeeTerritoryService(dataContext);
+            SalesService = new SalesService(dataContext);
         }
 
         public CategoryService CategoryService { get; set; }
@@ -35,6 +39,8 @@ namespace NorthwindCRUD.Tests
         public TerritoryService TerritoryService { get; set; }
 
         public OrderService OrderService { get; set; }
+
+        public SalesService SalesService { get; set; }
 
         public ShipperService ShipperService { get; set; }
 
@@ -87,6 +93,11 @@ namespace NorthwindCRUD.Tests
             return GetJsonContent<OrderDb>("orders.json").GetRandomElement();
         }
 
+        internal OrderDetailDb GetOrderDetail()
+        {
+            return GetJsonContent<OrderDetailDb>("orderDetails.json").GetRandomElement();
+        }
+
         internal SupplierDb CreateSupplier()
         {
             return SupplierService.Create(GetSupplier());
@@ -107,7 +118,7 @@ namespace NorthwindCRUD.Tests
             return CustomerService.Create(GetCustomer());
         }
 
-        internal OrderDb CreateOrder()
+        internal OrderDb CreateOrder(string? orderDate = null)
         {
             var order = GetOrder();
             var customer = CreateCustomer();
@@ -117,11 +128,29 @@ namespace NorthwindCRUD.Tests
             order.EmployeeId = employee.EmployeeId;
             order.ShipperId = shipper.ShipperId;
 
-            return OrderService.Create(order);
+            if (orderDate != null)
+            {
+                order.OrderDate = orderDate;
+            }
+
+            OrderDb result = OrderService.Create(order);
+            ProductDb product = CreateProduct();
+            OrderDetailDb details = GetOrderDetail();
+            details.OrderId = result.OrderId;
+            details.ProductId = product.ProductId;
+            this.dataContext.Add(details);
+            this.dataContext.SaveChanges();
+
+            return result;
         }
 
-        internal ProductDb CreateProduct(ProductDb product)
+        internal ProductDb CreateProduct(ProductDb? product = null)
         {
+            if (product == null)
+            {
+                product = GetProduct();
+            }
+
             var createdCategory = CategoryService.Create(DataHelper.GetCategory());
             product.CategoryId = createdCategory.CategoryId;
 
@@ -136,13 +165,13 @@ namespace NorthwindCRUD.Tests
             return EmployeeService.Create(GetEmployee());
         }
 
-        internal TerritoryDb CreateTerritory()
+        internal TerritoryDb CreateTerritory(TerritoryDb? territory = null)
         {
-            return CreateTerritory(GetTerritory());
-        }
+            if (territory == null)
+            {
+                territory = GetTerritory();
+            }
 
-        internal TerritoryDb CreateTerritory(TerritoryDb territory)
-        {
             RegionDb region = CreateRegion();
             territory.RegionId = region.RegionId;
             return TerritoryService.Create(territory);
