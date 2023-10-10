@@ -26,7 +26,6 @@
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<RegionDto[]> GetAll()
         {
             try
@@ -43,7 +42,6 @@
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         public ActionResult<RegionDto> GetById(int id)
         {
             try
@@ -64,7 +62,6 @@
         }
 
         [HttpGet("{id}/Territories")]
-        [Authorize]
         public ActionResult<CustomerDto> GetTerritoryByRegionId(int id)
         {
             try
@@ -86,7 +83,6 @@
         }
 
         [HttpPost]
-        [Authorize]
         public ActionResult<RegionDto> Create(RegionDto model)
         {
             try

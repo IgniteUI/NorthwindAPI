@@ -32,7 +32,6 @@
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<OrderDto[]> GetAll()
         {
             try
@@ -48,7 +47,6 @@
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         public ActionResult<OrderDto> GetById(int id)
         {
             try
@@ -70,7 +68,6 @@
         }
 
         [HttpGet("{id}/Details")]
-        [Authorize]
         public ActionResult<OrderDetailDto[]> GetDetailsByOrderId(int id)
         {
             try
@@ -91,7 +88,6 @@
         }
 
         [HttpGet("{id}/Customer")]
-        [Authorize]
         public ActionResult<CustomerDto> GetCustomerByOrderId(int id)
         {
             try
@@ -117,7 +113,6 @@
         }
 
         [HttpGet("{id}/Employee")]
-        [Authorize]
         public ActionResult<CustomerDto> GetEmployeeByOrderId(int id)
         {
             try
@@ -142,7 +137,6 @@
         }
 
         [HttpGet("{id}/Shipper")]
-        [Authorize]
         public ActionResult<CustomerDto> GetShipperByOrderId(int id)
         {
             try
@@ -169,7 +163,6 @@
 
 
         [HttpGet("{id}/Products")]
-        [Authorize]
         public ActionResult<ProductDto[]> GetProductsByOrderId(int id)
         {
             try
