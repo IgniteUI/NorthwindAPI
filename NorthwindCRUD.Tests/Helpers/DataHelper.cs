@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using NorthwindCRUD.Models.DbModels;
 using NorthwindCRUD.Services;
@@ -17,6 +16,7 @@ namespace NorthwindCRUD.Tests
             SupplierService = new SupplierService(context);
             RegionService = new RegionService(context);
             TerritoryService = new TerritoryService(context);
+            ShipperService = new ShipperService(context);
             EmployeeTerritoryService = new EmployeeTerritoryService(context);
         }
 
@@ -31,6 +31,8 @@ namespace NorthwindCRUD.Tests
         public SupplierService SupplierService { get; set; }
 
         public TerritoryService TerritoryService { get; set; }
+
+        public ShipperService ShipperService { get; set; }
 
         public RegionService RegionService { get; set; }
 
@@ -61,6 +63,11 @@ namespace NorthwindCRUD.Tests
             return GetJsonContent<SupplierDb>("suppliers.json").GetRandomElement();
         }
 
+        internal static ShipperDb GetShipper()
+        {
+            return GetJsonContent<ShipperDb>("shippers.json").GetRandomElement();
+        }
+
         internal static TerritoryDb GetTerritory()
         {
             return GetJsonContent<TerritoryDb>("territories.json").GetRandomElement();
@@ -71,10 +78,19 @@ namespace NorthwindCRUD.Tests
             return GetJsonContent<RegionDb>("regions.json").GetRandomElement();
         }
 
+        internal SupplierDb CreateSupplier()
+        {
+            return SupplierService.Create(GetSupplier());
+        }
+
+        internal ShipperDb CreateShipper()
+        {
+            return ShipperService.Create(GetShipper());
+        }
+
         internal RegionDb CreateRegion()
         {
-            var region = GetRegion();
-            return RegionService.Create(region);
+            return RegionService.Create(GetRegion());
         }
 
         internal ProductDb CreateProduct(ProductDb product)
@@ -90,19 +106,17 @@ namespace NorthwindCRUD.Tests
 
         internal EmployeeDb CreateEmployee()
         {
-            var createdEmployee = EmployeeService.Create(GetEmployee());
-            return createdEmployee;
+            return EmployeeService.Create(GetEmployee());
         }
 
         internal TerritoryDb CreateTerritory()
         {
-            TerritoryDb territory = GetTerritory();
-            return CreateTerritory(territory);
+            return CreateTerritory(GetTerritory());
         }
 
         internal TerritoryDb CreateTerritory(TerritoryDb territory)
         {
-            RegionDb region = RegionService.Create(GetRegion());
+            RegionDb region = CreateRegion();
             territory.RegionId = region.RegionId;
             return TerritoryService.Create(territory);
         }
