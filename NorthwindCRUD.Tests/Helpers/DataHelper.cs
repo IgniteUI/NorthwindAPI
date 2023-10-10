@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Newtonsoft.Json;
+using NorthwindCRUD.Models.Contracts;
 using NorthwindCRUD.Models.DbModels;
 using NorthwindCRUD.Services;
 
@@ -16,6 +17,7 @@ namespace NorthwindCRUD.Tests
             SupplierService = new SupplierService(context);
             RegionService = new RegionService(context);
             TerritoryService = new TerritoryService(context);
+            OrderService = new OrderService(context);
             ShipperService = new ShipperService(context);
             EmployeeTerritoryService = new EmployeeTerritoryService(context);
         }
@@ -31,6 +33,8 @@ namespace NorthwindCRUD.Tests
         public SupplierService SupplierService { get; set; }
 
         public TerritoryService TerritoryService { get; set; }
+
+        public OrderService OrderService { get; set; }
 
         public ShipperService ShipperService { get; set; }
 
@@ -78,6 +82,11 @@ namespace NorthwindCRUD.Tests
             return GetJsonContent<RegionDb>("regions.json").GetRandomElement();
         }
 
+        internal OrderDb GetOrder()
+        {
+            return GetJsonContent<OrderDb>("orders.json").GetRandomElement();
+        }
+
         internal SupplierDb CreateSupplier()
         {
             return SupplierService.Create(GetSupplier());
@@ -91,6 +100,24 @@ namespace NorthwindCRUD.Tests
         internal RegionDb CreateRegion()
         {
             return RegionService.Create(GetRegion());
+        }
+
+        internal CustomerDb CreateCustomer()
+        {
+            return CustomerService.Create(GetCustomer());
+        }
+
+        internal OrderDb CreateOrder()
+        {
+            var order = GetOrder();
+            var customer = CreateCustomer();
+            var employee = CreateEmployee();
+            var shipper = CreateShipper();
+            order.CustomerId = customer.CustomerId;
+            order.EmployeeId = employee.EmployeeId;
+            order.ShipperId = shipper.ShipperId;
+
+            return OrderService.Create(order);
         }
 
         internal ProductDb CreateProduct(ProductDb product)
