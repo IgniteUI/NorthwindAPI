@@ -25,7 +25,6 @@
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<CustomerDto[]> GetAll()
         {
             try
@@ -41,7 +40,6 @@
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         public ActionResult<CustomerDto> GetById(string id)
         {
             try
@@ -63,7 +61,6 @@
         }
 
         [HttpGet("{id}/Orders")]
-        [Authorize]
         public ActionResult<OrderDto[]> GetOrdersByCustomerId(string id)
         {
             try

@@ -25,7 +25,6 @@ namespace NorthwindCRUD.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<CategoryDto[]> GetAll()
         {
             try
@@ -42,7 +41,6 @@ namespace NorthwindCRUD.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         public ActionResult<CategoryDto> GetById(int id)
         {
             try
@@ -64,7 +62,6 @@ namespace NorthwindCRUD.Controllers
 
 
         [HttpGet("{id}/Details")]
-        [Authorize]
         public ActionResult<CategoryDetailsDto> GetDetailsById(int id)
         {
             try
@@ -85,7 +82,6 @@ namespace NorthwindCRUD.Controllers
         }
 
         [HttpGet("{id}/Products")]
-        [Authorize]
         public ActionResult<ProductDto[]> GetProductsByCategoryId(int id)
         {
             try
