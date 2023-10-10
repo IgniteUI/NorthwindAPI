@@ -118,7 +118,7 @@ namespace NorthwindCRUD.Tests
             return CustomerService.Create(GetCustomer());
         }
 
-        internal OrderDb CreateOrder(string? orderDate = null)
+        internal OrderDb CreateOrder(string? orderDate = null, string? country = null, ProductDb? product = null, int? quantity = null)
         {
             var order = GetOrder();
             var customer = CreateCustomer();
@@ -133,11 +133,34 @@ namespace NorthwindCRUD.Tests
                 order.OrderDate = orderDate;
             }
 
+            if (country != null)
+            {
+                order.ShipAddress = new AddressDb
+                {
+                    Country = country,
+                    Street = string.Empty,
+                    City = string.Empty,
+                    Region = string.Empty,
+                    PostalCode = string.Empty,
+                };
+            }
+
             OrderDb result = OrderService.Create(order);
-            ProductDb product = CreateProduct();
             OrderDetailDb details = GetOrderDetail();
             details.OrderId = result.OrderId;
+
+            if (product == null)
+            {
+                product = CreateProduct();
+            }
+
+            if (quantity != null)
+            {
+                details.Quantity = quantity.Value;
+            }
+
             details.ProductId = product.ProductId;
+
             this.dataContext.Add(details);
             this.dataContext.SaveChanges();
 
