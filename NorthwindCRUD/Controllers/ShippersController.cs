@@ -26,7 +26,6 @@
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<ShipperDto[]> GetAll()
         {
             try
@@ -43,7 +42,6 @@
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         public ActionResult<ShipperDto> GetById(int id)
         {
             try
@@ -64,7 +62,6 @@
         }
 
         [HttpGet("{id}/Orders")]
-        [Authorize]
         public ActionResult<OrderDto[]> GetOrdersByShipperId(int id)
         {
             try
