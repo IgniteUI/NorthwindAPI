@@ -14,6 +14,6 @@ namespace NorthwindCRUD.Models.Contracts
 
         string Country { get; set; }
 
-        string Phone { get; set; }
+        string? Phone { get; set; }
     }
 }

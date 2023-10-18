@@ -29,5 +29,11 @@
         public string Notes { get; set; }
 
         public string AvatarUrl { get; set; }
+
+        public int ReportsTo { get; set; }
+
+        public ICollection<EmployeeTerritoryDb> EmployeesTerritories { get; set; } =  new List<EmployeeTerritoryDb>();
+
+        public ICollection<OrderDb> Orders { get; set; } = new List<OrderDb>();
     }
 }

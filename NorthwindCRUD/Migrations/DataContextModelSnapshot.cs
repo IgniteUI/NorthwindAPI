@@ -21,7 +21,7 @@ namespace NorthwindCRUD.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("NorthwindCRUD.Models.Address", b =>
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.AddressDb", b =>
                 {
                     b.Property<string>("AddressId")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,7 @@ namespace NorthwindCRUD.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("NorthwindCRUD.Models.Category", b =>
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.CategoryDb", b =>
                 {
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -74,7 +74,7 @@ namespace NorthwindCRUD.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("NorthwindCRUD.Models.Customer", b =>
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.CustomerDb", b =>
                 {
                     b.Property<string>("CustomerId")
                         .HasColumnType("nvarchar(450)");
@@ -84,7 +84,6 @@ namespace NorthwindCRUD.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CompanyName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContactName")
@@ -102,7 +101,7 @@ namespace NorthwindCRUD.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("NorthwindCRUD.Models.Employee", b =>
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.EmployeeDb", b =>
                 {
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
@@ -150,7 +149,7 @@ namespace NorthwindCRUD.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("NorthwindCRUD.Models.Order", b =>
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.OrderDb", b =>
                 {
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -191,9 +190,27 @@ namespace NorthwindCRUD.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("NorthwindCRUD.Models.Customer", b =>
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.UserDb", b =>
                 {
-                    b.HasOne("NorthwindCRUD.Models.Address", "Address")
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.CustomerDb", b =>
+                {
+                    b.HasOne("NorthwindCRUD.Models.DbModels.AddressDb", "Address")
                         .WithMany("Customers")
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -202,9 +219,9 @@ namespace NorthwindCRUD.Migrations
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("NorthwindCRUD.Models.Employee", b =>
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.EmployeeDb", b =>
                 {
-                    b.HasOne("NorthwindCRUD.Models.Address", "Address")
+                    b.HasOne("NorthwindCRUD.Models.DbModels.AddressDb", "Address")
                         .WithMany("Employees")
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -213,9 +230,9 @@ namespace NorthwindCRUD.Migrations
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("NorthwindCRUD.Models.Order", b =>
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.OrderDb", b =>
                 {
-                    b.HasOne("NorthwindCRUD.Models.Address", "ShipAddress")
+                    b.HasOne("NorthwindCRUD.Models.DbModels.AddressDb", "ShipAddress")
                         .WithMany("Orders")
                         .HasForeignKey("ShipAddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -224,7 +241,7 @@ namespace NorthwindCRUD.Migrations
                     b.Navigation("ShipAddress");
                 });
 
-            modelBuilder.Entity("NorthwindCRUD.Models.Address", b =>
+            modelBuilder.Entity("NorthwindCRUD.Models.DbModels.AddressDb", b =>
                 {
                     b.Navigation("Customers");
 

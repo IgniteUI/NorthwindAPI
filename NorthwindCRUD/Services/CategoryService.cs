@@ -1,14 +1,18 @@
 ﻿namespace NorthwindCRUD.Services
 {
+    using AutoMapper;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
 
     public class CategoryService
     {
+
+        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public CategoryService(DataContext dataContext)
+        public CategoryService(IMapper mapper, DataContext dataContext)
         {
+            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 
@@ -48,6 +52,7 @@
             {
                 categoryEntity.Description = model.Description != null ? model.Description : categoryEntity.Description;
                 categoryEntity.Name = model.Name != null ? model.Name : categoryEntity.Name;
+                categoryEntity.Picture = model.Picture != null ? model.Picture : categoryEntity.Picture;
 
                 this.dataContext.SaveChanges();
             }

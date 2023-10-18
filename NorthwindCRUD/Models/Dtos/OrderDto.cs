@@ -1,15 +1,16 @@
-﻿namespace NorthwindCRUD.Models.InputModels
+﻿namespace NorthwindCRUD.Models.Dtos
 {
     using NorthwindCRUD.Models.Contracts;
-    using System.ComponentModel.DataAnnotations;
 
-    public class OrderInputModel : IOrder
+    public class OrderDto : IOrder
     {
         public int OrderId { get; set; }
 
         public string CustomerId { get; set; }
 
         public int EmployeeId { get; set; }
+
+        public int ShipperId { get; set; }
 
         public string OrderDate { get; set; }
 
@@ -21,8 +22,6 @@
 
         public string ShipName { get; set; }
 
-        public string ShipAddressId { get; set; }
-
-        public AddressInputModel ShipAddress { get; set; }
+        public AddressDto ShipAddress { get; set; }
     }
 }

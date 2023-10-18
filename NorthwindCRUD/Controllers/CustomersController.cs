@@ -1,33 +1,36 @@
 ﻿namespace NorthwindCRUD.Controllers
 {
     using AutoMapper;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.InputModels;
+    using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
 
     [ApiController]
     [Route("[controller]")]
-    public class CustomerController : Controller
+    public class CustomersController : Controller
     {
         private readonly CustomerService customerService;
+        private readonly OrderService orderService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public CustomerController(CustomerService customerService, IMapper mapper, ILogger logger)
+        public CustomersController(CustomerService customerService, OrderService orderService, IMapper mapper, ILogger logger)
         {
             this.customerService = customerService;
+            this.orderService = orderService;
             this.mapper = mapper;
             this.logger = logger;
         }
 
         [HttpGet]
-        public ActionResult<CustomerInputModel[]> GetAll()
+        public ActionResult<CustomerDto[]> GetAll()
         {
             try
             {
                 var customers = this.customerService.GetAll();
-                return Ok(this.mapper.Map<CustomerDb[], CustomerInputModel[]>(customers));
+                return Ok(this.mapper.Map<CustomerDb[], CustomerDto[]>(customers));
             }
             catch (Exception error)
             {
@@ -37,7 +40,7 @@
         }
 
         [HttpGet("{id}")]
-        public ActionResult<CustomerInputModel> GetById(string id)
+        public ActionResult<CustomerDto> GetById(string id)
         {
             try
             {
@@ -45,7 +48,7 @@
 
                 if (customer != null)
                 {
-                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                    return Ok(this.mapper.Map<CustomerDb, CustomerDto>(customer));
                 }
 
                 return NotFound();
@@ -57,16 +60,32 @@
             }
         }
 
+        [HttpGet("{id}/Orders")]
+        public ActionResult<OrderDto[]> GetOrdersByCustomerId(string id)
+        {
+            try
+            {
+                var orders = this.orderService.GetOrdersByCustomerId(id);
+                return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpPost]
-        public ActionResult<CustomerInputModel> Create(CustomerInputModel model)
+        [Authorize]
+        public ActionResult<CustomerDto> Create(CustomerDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<CustomerInputModel, CustomerDb>(model);
+                    var mappedModel = this.mapper.Map<CustomerDto, CustomerDb>(model);
                     var customer = this.customerService.Create(mappedModel);
-                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                    return Ok(this.mapper.Map<CustomerDb, CustomerDto>(customer));
                 }
 
                 return BadRequest(ModelState);
@@ -79,15 +98,22 @@
         }
 
         [HttpPut]
-        public ActionResult<CustomerInputModel> Update(CustomerInputModel model)
+        [Authorize]
+        public ActionResult<CustomerDto> Update(CustomerDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var mappedModel = this.mapper.Map<CustomerInputModel, CustomerDb>(model);
+                    var mappedModel = this.mapper.Map<CustomerDto, CustomerDb>(model);
                     var customer = this.customerService.Update(mappedModel);
-                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+
+                    if (customer != null)
+                    {
+                        return Ok(this.mapper.Map<CustomerDb, CustomerDto>(customer));
+                    }
+
+                    return NotFound();
                 }
 
                 return BadRequest(ModelState);
@@ -100,15 +126,15 @@
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<CustomerInputModel> Delete(string id)
+        [Authorize]
+        public ActionResult<CustomerDto> Delete(string id)
         {
             try
             {
                 var customer = this.customerService.Delete(id);
-
                 if (customer != null)
                 {
-                    return Ok(this.mapper.Map<CustomerDb, CustomerInputModel>(customer));
+                    return Ok(this.mapper.Map<CustomerDb, CustomerDto>(customer));
                 }
 
                 return NotFound();
