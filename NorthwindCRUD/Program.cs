@@ -20,7 +20,7 @@ var AllowAnyOriginPolicy = "_allowAnyOrigin";
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-builder.Services.AddControllers(options => 
+builder.Services.AddControllers(options =>
                     options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true)
                 .AddNewtonsoftJson(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -39,7 +39,7 @@ builder.Services.AddSwaggerGen(option =>
         BearerFormat = "JWT",
         Scheme = "bearer"
     });
-    
+
     option.OperationFilter<AuthResponsesOperationFilter>();
 });
 
@@ -72,7 +72,8 @@ builder.Services.AddDbContext<DataContext>(options =>
     }
     else if (dbProvider == "InMemory")
     {
-        options.ConfigureWarnings(warnOpts => {
+        options.ConfigureWarnings(warnOpts =>
+        {
             // InMemory doesn't support transactions and we're ok with it
             warnOpts.Ignore(InMemoryEventId.TransactionIgnoredWarning);
         });
@@ -150,7 +151,15 @@ app.UseAuthorization();
 
 app.UseGraphQL();
 
-app.UseSwagger();
+app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((swagger, httpReq) =>
+            {
+                // Adding server base address in the generated file relative to the server's host
+                swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
+            });
+    });
+
 app.UseSwaggerUI();
 app.UseSeedDB();
 
