@@ -12,11 +12,15 @@ namespace NorthwindCRUD.Tests
 
         public DataHelper DataHelper { get; set; } = null!;
 
+        public DataHelper DataHelper2 { get; set; } = null!;
+
         [TestInitialize]
         public void Initialize()
         {
             DataContext context = GetInMemoryDatabaseContext();
             DataHelper = new DataHelper(context);
+            DataContext context2 = GetInMemoryDatabaseContext();
+            DataHelper2 = new DataHelper(context2);
         }
 
         protected DataContext GetInMemoryDatabaseContext()

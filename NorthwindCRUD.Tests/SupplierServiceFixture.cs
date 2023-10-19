@@ -14,6 +14,8 @@ namespace NorthwindCRUD.Tests
             var createdSupplier = DataHelper.SupplierService.Create(supplier);
 
             Assert.IsNotNull(createdSupplier);
+            createdSupplier = DataHelper2.SupplierService.GetById(createdSupplier.SupplierId);
+
             Assert.AreEqual(supplier.SupplierId, createdSupplier.SupplierId);
             Assert.AreEqual(supplier.CompanyName, createdSupplier.CompanyName);
             Assert.AreEqual(supplier.ContactName, createdSupplier.ContactName);
@@ -23,6 +25,9 @@ namespace NorthwindCRUD.Tests
         public void ShouldUpdateSupplier()
         {
             var supplier = DataHelper.GetSupplier();
+            string? originalCompanyName = supplier.CompanyName;
+            string? originalContactName = supplier.ContactName;
+            string? originalContactTitle = supplier.ContactTitle;
             DataHelper.SupplierService.Create(supplier);
 
             supplier.CompanyName = "Updated Supplier";
@@ -32,9 +37,10 @@ namespace NorthwindCRUD.Tests
             var updatedSupplier = DataHelper.SupplierService.Update(supplier);
 
             Assert.IsNotNull(updatedSupplier);
-            Assert.AreEqual("Updated Supplier", updatedSupplier.CompanyName);
-            Assert.AreEqual("Updated Contact", updatedSupplier.ContactName);
-            Assert.AreEqual("Updated Title", updatedSupplier.ContactTitle);
+            updatedSupplier = DataHelper2.SupplierService.GetById(updatedSupplier.SupplierId);
+            Assert.AreEqual(supplier.CompanyName, updatedSupplier.CompanyName);
+            Assert.AreEqual(supplier.ContactName, updatedSupplier.ContactName);
+            Assert.AreEqual(supplier.ContactTitle, updatedSupplier.ContactTitle);
         }
 
         [TestMethod]
@@ -44,7 +50,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.SupplierService.Create(supplier);
 
             DataHelper.SupplierService.Delete(supplier.SupplierId);
-            var deletedSupplier = DataHelper.SupplierService.GetById(supplier.SupplierId);
+            var deletedSupplier = DataHelper2.SupplierService.GetById(supplier.SupplierId);
 
             Assert.IsNull(deletedSupplier);
         }
@@ -55,7 +61,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.CreateSupplier();
             DataHelper.CreateSupplier();
 
-            var result = DataHelper.SupplierService.GetAll();
+            var result = DataHelper2.SupplierService.GetAll();
 
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Length);
@@ -67,7 +73,7 @@ namespace NorthwindCRUD.Tests
             var supplier = DataHelper.GetSupplier();
             DataHelper.SupplierService.Create(supplier);
 
-            var result = DataHelper.SupplierService.GetById(supplier.SupplierId);
+            var result = DataHelper2.SupplierService.GetById(supplier.SupplierId);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(supplier.SupplierId, result.SupplierId);

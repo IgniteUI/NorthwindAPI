@@ -12,6 +12,7 @@ namespace NorthwindCRUD.Tests
             var createdCustomer = DataHelper.CustomerService.Create(customer);
 
             Assert.IsNotNull(createdCustomer);
+            createdCustomer = DataHelper2.CustomerService.GetById(createdCustomer.CustomerId);
             Assert.AreEqual(customer.CompanyName, createdCustomer.CompanyName);
             Assert.AreEqual(customer.ContactName, createdCustomer.ContactName);
             Assert.AreEqual(customer.ContactTitle, createdCustomer.ContactTitle);
@@ -28,7 +29,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.CustomerService.Create(DataHelper.GetCustomer());
             DataHelper.CustomerService.Create(DataHelper.GetCustomer());
 
-            var result = DataHelper.CustomerService.GetAll();
+            var result = DataHelper2.CustomerService.GetAll();
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Length);
         }

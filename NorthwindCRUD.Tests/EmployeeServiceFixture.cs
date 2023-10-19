@@ -14,22 +14,27 @@ namespace NorthwindCRUD.Tests
             var createdEmployee = DataHelper.EmployeeService.Create(employee);
 
             Assert.IsNotNull(createdEmployee);
-            Assert.AreEqual(employee.FirstName, createdEmployee.FirstName);
-            Assert.AreEqual(employee.LastName, createdEmployee.LastName);
-            Assert.AreEqual(employee.Title, createdEmployee.Title);
+            var newEmployee = DataHelper2.EmployeeService.GetById(createdEmployee.EmployeeId);
+            Assert.AreEqual(employee.FirstName, newEmployee.FirstName);
+            Assert.AreEqual(employee.LastName, newEmployee.LastName);
+            Assert.AreEqual(employee.Title, newEmployee.Title);
         }
 
         [TestMethod]
         public void ShouldUpdateEmployee()
         {
             var employee = DataHelper.GetEmployee();
+            string originalTitle = employee.Title;
             var createdEmployee = DataHelper.EmployeeService.Create(employee);
 
             createdEmployee.Title = "Director";
             var updatedEmployee = DataHelper.EmployeeService.Update(createdEmployee);
 
             Assert.IsNotNull(updatedEmployee);
-            Assert.AreEqual("Director", updatedEmployee.Title);
+            updatedEmployee = DataHelper2.EmployeeService.GetById(updatedEmployee.EmployeeId);
+
+            Assert.AreNotEqual(originalTitle, updatedEmployee.Title);
+            Assert.AreEqual(createdEmployee.Title, updatedEmployee.Title);
         }
 
         [TestMethod]
@@ -39,7 +44,7 @@ namespace NorthwindCRUD.Tests
             var createdEmployee = DataHelper.EmployeeService.Create(employee);
 
             DataHelper.EmployeeService.Delete(createdEmployee.EmployeeId);
-            var deletedEmployee = DataHelper.EmployeeService.GetById(createdEmployee.EmployeeId);
+            var deletedEmployee = DataHelper2.EmployeeService.GetById(createdEmployee.EmployeeId);
 
             Assert.IsNull(deletedEmployee);
         }
@@ -50,7 +55,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.EmployeeService.Create(DataHelper.GetEmployee());
             DataHelper.EmployeeService.Create(DataHelper.GetEmployee());
 
-            var result = DataHelper.EmployeeService.GetAll();
+            var result = DataHelper2.EmployeeService.GetAll();
 
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Length);

@@ -13,6 +13,7 @@ namespace NorthwindCRUD.Tests
             var createdShipper = DataHelper.ShipperService.Create(shipper);
 
             Assert.IsNotNull(createdShipper);
+            createdShipper = DataHelper2.ShipperService.GetById(createdShipper.ShipperId);
             Assert.AreEqual(shipper.ShipperId, createdShipper.ShipperId);
             Assert.AreEqual(shipper.CompanyName, createdShipper.CompanyName);
             Assert.AreEqual(shipper.Phone, createdShipper.Phone);
@@ -22,6 +23,8 @@ namespace NorthwindCRUD.Tests
         public void ShouldUpdateShipper()
         {
             var shipper = DataHelper.GetShipper();
+            string originalCompanyName = shipper.CompanyName;
+            string originalPhone = shipper.Phone;
             DataHelper.ShipperService.Create(shipper);
 
             shipper.CompanyName = "Updated shipper company";
@@ -30,8 +33,11 @@ namespace NorthwindCRUD.Tests
             var updatedShipper = DataHelper.ShipperService.Update(shipper);
 
             Assert.IsNotNull(updatedShipper);
-            Assert.AreEqual("Updated shipper company", updatedShipper.CompanyName);
-            Assert.AreEqual("555-555-5555", updatedShipper.Phone);
+            updatedShipper = DataHelper2.ShipperService.GetById(updatedShipper.ShipperId);
+            Assert.AreNotEqual(originalCompanyName, updatedShipper.CompanyName);
+            Assert.AreNotEqual(originalPhone, updatedShipper.Phone);
+            Assert.AreEqual(shipper.CompanyName, updatedShipper.CompanyName);
+            Assert.AreEqual(shipper.Phone, updatedShipper.Phone);
         }
 
         [TestMethod]
@@ -41,7 +47,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.ShipperService.Create(shipper);
 
             DataHelper.ShipperService.Delete(shipper.ShipperId);
-            var deletedShipper = DataHelper.ShipperService.GetById(shipper.ShipperId);
+            var deletedShipper = DataHelper2.ShipperService.GetById(shipper.ShipperId);
 
             Assert.IsNull(deletedShipper);
         }
@@ -52,7 +58,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.CreateShipper();
             DataHelper.CreateShipper();
 
-            var result = DataHelper.ShipperService.GetAll();
+            var result = DataHelper2.ShipperService.GetAll();
 
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Length);
@@ -64,7 +70,7 @@ namespace NorthwindCRUD.Tests
             var shipper = DataHelper.GetShipper();
             DataHelper.ShipperService.Create(shipper);
 
-            var result = DataHelper.ShipperService.GetById(shipper.ShipperId);
+            var result = DataHelper2.ShipperService.GetById(shipper.ShipperId);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(shipper.ShipperId, result.ShipperId);

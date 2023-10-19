@@ -12,13 +12,13 @@ namespace NorthwindCRUD.Tests
             var order1 = DataHelper.CreateOrder("2023-10-10T00:00:00");
             var order2 = DataHelper.CreateOrder("2023-01-01T00:00:00");
 
-            SalesDto[] salesData = DataHelper.SalesService.RetrieveSalesDataByYear(2023, 0, 0);
+            SalesDto[] salesData = DataHelper2.SalesService.RetrieveSalesDataByYear(2023, 0, 0);
 
             Assert.IsNotNull(salesData);
             Assert.AreEqual(2, salesData.Length);
 
-            var orderDetail1 = DataHelper.OrderService.GetOrderDetailsById(order1.OrderId);
-            var orderDetail2 = DataHelper.OrderService.GetOrderDetailsById(order2.OrderId);
+            var orderDetail1 = DataHelper2.OrderService.GetOrderDetailsById(order1.OrderId);
+            var orderDetail2 = DataHelper2.OrderService.GetOrderDetailsById(order2.OrderId);
             Assert.AreEqual(orderDetail1.Sum(od => od.Quantity) + orderDetail2.Sum(od => od.Quantity), salesData.Sum(s => s.QuantitySold));
             Assert.AreEqual(
                             orderDetail1.Sum(od => od.Quantity * od.UnitPrice) +
@@ -57,13 +57,13 @@ namespace NorthwindCRUD.Tests
             var order2 = DataHelper.CreateOrder("2023-01-01T00:00:00", product: product, quantity: 10);
             var order1 = DataHelper.CreateOrder("2023-10-10T00:00:00", product: product, quantity: 20);
 
-            SalesDto[] salesData = DataHelper.SalesService.GetSalesDataByCategoryAndYear(product.Category!.Name, 2023);
+            SalesDto[] salesData = DataHelper2.SalesService.GetSalesDataByCategoryAndYear(product.Category!.Name, 2023);
 
             Assert.IsNotNull(salesData);
             Assert.AreEqual(2, salesData.Length);
 
-            var orderDetail1 = DataHelper.OrderService.GetOrderDetailsById(order1.OrderId);
-            var orderDetail2 = DataHelper.OrderService.GetOrderDetailsById(order2.OrderId);
+            var orderDetail1 = DataHelper2.OrderService.GetOrderDetailsById(order1.OrderId);
+            var orderDetail2 = DataHelper2.OrderService.GetOrderDetailsById(order2.OrderId);
             Assert.AreEqual(orderDetail1.Sum(od => od.Quantity) + orderDetail2.Sum(od => od.Quantity), salesData.Sum(s => s.QuantitySold));
             Assert.AreEqual(
                             orderDetail1.Sum(od => od.Quantity * od.UnitPrice) +

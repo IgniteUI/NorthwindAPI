@@ -13,6 +13,8 @@ namespace NorthwindCRUD.Tests
             var createdTerritory = DataHelper.CreateTerritory(territory);
 
             Assert.IsNotNull(createdTerritory);
+            createdTerritory = DataHelper2.TerritoryService.GetById(createdTerritory.TerritoryId);
+
             Assert.AreEqual(territory.TerritoryId, createdTerritory.TerritoryId);
             Assert.AreEqual(territory.TerritoryDescription, createdTerritory.TerritoryDescription);
             Assert.AreEqual(territory.RegionId, createdTerritory.RegionId);
@@ -22,6 +24,7 @@ namespace NorthwindCRUD.Tests
         public void ShouldUpdateTerritory()
         {
             var territory = DataHelper.GetTerritory();
+            string originalTerritoryDescription = territory.TerritoryDescription;
             var createdTerritory = DataHelper.CreateTerritory(territory);
 
             createdTerritory.TerritoryDescription = "Updated Territory";
@@ -29,7 +32,10 @@ namespace NorthwindCRUD.Tests
             var updatedTerritory = DataHelper.TerritoryService.Update(createdTerritory);
 
             Assert.IsNotNull(updatedTerritory);
-            Assert.AreEqual("Updated Territory", updatedTerritory.TerritoryDescription);
+
+            updatedTerritory = DataHelper2.TerritoryService.GetById(updatedTerritory.TerritoryId);
+            Assert.AreNotEqual(originalTerritoryDescription, updatedTerritory.TerritoryDescription);
+            Assert.AreEqual(createdTerritory.TerritoryDescription, updatedTerritory.TerritoryDescription);
         }
 
         [TestMethod]
@@ -37,7 +43,7 @@ namespace NorthwindCRUD.Tests
         {
             var territory = DataHelper.CreateTerritory();
             DataHelper.TerritoryService.Delete(territory.TerritoryId);
-            var deletedTerritory = DataHelper.TerritoryService.GetById(territory.TerritoryId);
+            var deletedTerritory = DataHelper2.TerritoryService.GetById(territory.TerritoryId);
 
             Assert.IsNull(deletedTerritory);
         }
@@ -48,7 +54,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.CreateTerritory();
             DataHelper.CreateTerritory();
 
-            var result = DataHelper.TerritoryService.GetAll();
+            var result = DataHelper2.TerritoryService.GetAll();
 
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Length);
@@ -59,7 +65,7 @@ namespace NorthwindCRUD.Tests
         {
             var territory = DataHelper.CreateTerritory();
 
-            var result = DataHelper.TerritoryService.GetById(territory.TerritoryId);
+            var result = DataHelper2.TerritoryService.GetById(territory.TerritoryId);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(territory.TerritoryId, result.TerritoryId);

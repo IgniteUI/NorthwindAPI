@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Models.DbModels;
 
 namespace NorthwindCRUD.Tests
 {
@@ -20,6 +19,7 @@ namespace NorthwindCRUD.Tests
             var createdOrder = DataHelper.OrderService.Create(order);
 
             Assert.IsNotNull(createdOrder);
+            createdOrder = DataHelper2.OrderService.GetById(createdOrder.OrderId);
             Assert.AreEqual(order.OrderId, createdOrder.OrderId);
             Assert.AreEqual(order.CustomerId, createdOrder.CustomerId);
             Assert.AreEqual(order.EmployeeId, createdOrder.EmployeeId);
@@ -29,6 +29,8 @@ namespace NorthwindCRUD.Tests
         public void ShouldUpdateOrder()
         {
             var order = DataHelper.CreateOrder();
+            string? originalCustomerId = order.CustomerId;
+            int? originalEmployeeId = order.EmployeeId;
 
             order.CustomerId = DataHelper.CreateCustomer().CustomerId;
             order.EmployeeId = DataHelper.CreateEmployee().EmployeeId;
@@ -36,6 +38,9 @@ namespace NorthwindCRUD.Tests
             var updatedOrder = DataHelper.OrderService.Update(order);
 
             Assert.IsNotNull(updatedOrder);
+            updatedOrder = DataHelper2.OrderService.GetById(updatedOrder.OrderId);
+            Assert.AreNotEqual(originalCustomerId, updatedOrder.CustomerId);
+            Assert.AreNotEqual(originalEmployeeId, updatedOrder.EmployeeId);
             Assert.AreEqual(order.CustomerId, updatedOrder.CustomerId);
             Assert.AreEqual(order.EmployeeId, updatedOrder.EmployeeId);
         }
@@ -46,7 +51,7 @@ namespace NorthwindCRUD.Tests
             var order = DataHelper.CreateOrder();
 
             DataHelper.OrderService.Delete(order.OrderId);
-            var deletedOrder = DataHelper.OrderService.GetById(order.OrderId);
+            var deletedOrder = DataHelper2.OrderService.GetById(order.OrderId);
 
             Assert.IsNull(deletedOrder);
         }
@@ -57,7 +62,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.CreateOrder();
             DataHelper.CreateOrder();
 
-            var result = DataHelper.OrderService.GetAll();
+            var result = DataHelper2.OrderService.GetAll();
 
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Length);
@@ -68,7 +73,7 @@ namespace NorthwindCRUD.Tests
         {
             var order = DataHelper.CreateOrder();
 
-            var result = DataHelper.OrderService.GetById(order.OrderId);
+            var result = DataHelper2.OrderService.GetById(order.OrderId);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(order.OrderId, result.OrderId);

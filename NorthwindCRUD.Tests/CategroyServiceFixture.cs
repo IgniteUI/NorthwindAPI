@@ -11,17 +11,19 @@ namespace NorthwindCRUD.Tests
             var category = DataHelper.GetCategory();
             var createdCategory = DataHelper.CategoryService.Create(category);
 
-            var result = DataHelper.CategoryService.GetById(createdCategory.CategoryId);
-
             Assert.IsNotNull(createdCategory);
-            Assert.AreEqual(category.Name, result.Name);
-            Assert.AreEqual(category.Description, result.Description);
+            createdCategory = DataHelper2.CategoryService.GetById(createdCategory.CategoryId);
+
+            Assert.AreEqual(category.Name, createdCategory.Name);
+            Assert.AreEqual(category.Description, createdCategory.Description);
         }
 
         [TestMethod]
         public void ShouldUpdateCategory()
         {
             var category = DataHelper.GetCategory();
+            string orignalName = category.Name;
+            string orignalDescription = category.Description;
             var createdCategory = DataHelper.CategoryService.Create(category);
 
             createdCategory.Name = "Updated Category";
@@ -29,8 +31,11 @@ namespace NorthwindCRUD.Tests
             var updatedCategory = DataHelper.CategoryService.Update(createdCategory);
 
             Assert.IsNotNull(updatedCategory);
-            Assert.AreEqual("Updated Category", updatedCategory.Name);
-            Assert.AreEqual("Updated Description", updatedCategory.Description);
+            updatedCategory = DataHelper2.CategoryService.GetById(updatedCategory.CategoryId);
+            Assert.AreNotEqual(orignalName, updatedCategory.Name);
+            Assert.AreNotEqual(orignalDescription, updatedCategory.Description);
+            Assert.AreEqual(createdCategory.Name, updatedCategory.Name);
+            Assert.AreEqual(createdCategory.Description, updatedCategory.Description);
         }
 
         [TestMethod]
@@ -41,7 +46,7 @@ namespace NorthwindCRUD.Tests
             var createdCategory = DataHelper.CategoryService.Create(category);
 
             DataHelper.CategoryService.Delete(createdCategory.CategoryId);
-            var deletedCategory = DataHelper.CategoryService.GetById(createdCategory.CategoryId);
+            var deletedCategory = DataHelper2.CategoryService.GetById(createdCategory.CategoryId);
 
             Assert.IsNull(deletedCategory);
         }
@@ -51,7 +56,7 @@ namespace NorthwindCRUD.Tests
         {
             DataHelper.CategoryService.Create(DataHelper.GetCategory());
             DataHelper.CategoryService.Create(DataHelper.GetCategory());
-            var result = DataHelper.CategoryService.GetAll();
+            var result = DataHelper2.CategoryService.GetAll();
 
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Length);

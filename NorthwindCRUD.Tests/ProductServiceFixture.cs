@@ -12,6 +12,8 @@ namespace NorthwindCRUD.Tests
             var createdProduct = DataHelper.CreateProduct(product);
 
             Assert.IsNotNull(createdProduct);
+            createdProduct = DataHelper2.ProductService.GetById(createdProduct.ProductId);
+
             Assert.AreEqual(product.UnitPrice, createdProduct.UnitPrice);
             Assert.AreEqual(product.UnitsInStock, createdProduct.UnitsInStock);
         }
@@ -20,15 +22,21 @@ namespace NorthwindCRUD.Tests
         public void ShouldUpdateProduct()
         {
             var createdProduct = DataHelper.CreateProduct();
-
+            double? originaUnitPrice = createdProduct.UnitPrice;
+            double? originaUnitsInStock = createdProduct.UnitsInStock;
             createdProduct.UnitPrice = 15;
             createdProduct.UnitsInStock = 50;
 
             var updatedProduct = DataHelper.ProductService.Update(createdProduct);
 
             Assert.IsNotNull(updatedProduct);
-            Assert.AreEqual(15, updatedProduct.UnitPrice);
-            Assert.AreEqual(50, updatedProduct.UnitsInStock);
+            updatedProduct = DataHelper2.ProductService.GetById(updatedProduct.ProductId);
+
+            Assert.AreNotEqual(originaUnitPrice, updatedProduct.UnitPrice);
+            Assert.AreNotEqual(originaUnitsInStock, updatedProduct.UnitsInStock);
+
+            Assert.AreEqual(createdProduct.UnitPrice, updatedProduct.UnitPrice);
+            Assert.AreEqual(createdProduct.UnitsInStock, updatedProduct.UnitsInStock);
         }
 
         [TestMethod]
@@ -37,7 +45,7 @@ namespace NorthwindCRUD.Tests
             var createdProduct = DataHelper.CreateProduct();
 
             DataHelper.ProductService.Delete(createdProduct.ProductId);
-            var deletedProduct = DataHelper.ProductService.GetById(createdProduct.ProductId);
+            var deletedProduct = DataHelper2.ProductService.GetById(createdProduct.ProductId);
 
             Assert.IsNull(deletedProduct);
         }
@@ -48,7 +56,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.CreateProduct();
             DataHelper.CreateProduct();
 
-            var result = DataHelper.ProductService.GetAll();
+            var result = DataHelper2.ProductService.GetAll();
 
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Length);
@@ -58,7 +66,7 @@ namespace NorthwindCRUD.Tests
         public void ShouldGetProductById()
         {
             var createdProduct = DataHelper.CreateProduct();
-            var result = DataHelper.ProductService.GetById(createdProduct.ProductId);
+            var result = DataHelper2.ProductService.GetById(createdProduct.ProductId);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(createdProduct.UnitPrice, result.UnitPrice);
