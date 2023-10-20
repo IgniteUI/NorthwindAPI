@@ -18,8 +18,11 @@ namespace NorthwindCRUD.Tests
         public void Initialize()
         {
             DataContext context = GetInMemoryDatabaseContext();
-            DataHelper = new DataHelper(context);
             DataContext context2 = GetInMemoryDatabaseContext();
+            Assert.AreNotEqual(context.GetHashCode(), context2.GetHashCode(), "Contexts instances should be different.");
+            Assert.AreEqual(context.Database.GetDbConnection(), context2.Database.GetDbConnection(), "Contexts instances should have the same database connection.");
+
+            DataHelper = new DataHelper(context);
             DataHelper2 = new DataHelper(context2);
         }
 
