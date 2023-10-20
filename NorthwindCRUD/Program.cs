@@ -41,6 +41,7 @@ builder.Services.AddSwaggerGen(option =>
     });
 
     option.OperationFilter<AuthResponsesOperationFilter>();
+    option.EnableAnnotations();
 });
 
 builder.Services.AddCors(options =>
