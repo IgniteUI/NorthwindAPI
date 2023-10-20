@@ -25,7 +25,7 @@ namespace NorthwindCRUD.Controllers
             this.orderService = orderService;
             this.supplierService = supplierService;
             this.mapper = mapper;
-            this.logger = logger;   
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -41,7 +41,6 @@ namespace NorthwindCRUD.Controllers
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
-            
         }
 
         [HttpGet("{id}")]
@@ -76,7 +75,7 @@ namespace NorthwindCRUD.Controllers
 
                     if (category != null)
                     {
-                        return Ok(this.mapper.Map<CategoryDb , CategoryDto>(category));
+                        return Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
                     }
                 }
 

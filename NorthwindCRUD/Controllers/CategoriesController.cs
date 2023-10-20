@@ -21,7 +21,7 @@ namespace NorthwindCRUD.Controllers
             this.categoryService = categoryService;
             this.productService = productService;
             this.mapper = mapper;
-            this.logger = logger;   
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -30,14 +30,13 @@ namespace NorthwindCRUD.Controllers
             try
             {
                 var categories = this.categoryService.GetAll();
-                return base.Ok(this.mapper.Map<CategoryDb[], CategoryDto[]>(categories));
+                return Ok(this.mapper.Map<CategoryDb[], CategoryDto[]>(categories));
             }
             catch (Exception error)
             {
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
-            
         }
 
         [HttpGet("{id}")]
@@ -48,7 +47,7 @@ namespace NorthwindCRUD.Controllers
                 var category = this.categoryService.GetById(id);
                 if (category != null)
                 {
-                    return base.Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
+                    return Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
                 }
 
                 return NotFound();
@@ -59,7 +58,6 @@ namespace NorthwindCRUD.Controllers
                 return StatusCode(500);
             }
         }
-
 
         [HttpGet("{id}/Details")]
         public ActionResult<CategoryDetailsDto> GetDetailsById(int id)
@@ -131,7 +129,7 @@ namespace NorthwindCRUD.Controllers
 
                     if (category != null)
                     {
-                        return base.Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
+                        return Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
                     }
 
                     return NotFound();
@@ -155,7 +153,7 @@ namespace NorthwindCRUD.Controllers
                 var category = this.categoryService.Delete(id);
                 if (category != null)
                 {
-                    return base.Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
+                    return Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
                 }
 
                 return NotFound();

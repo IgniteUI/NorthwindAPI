@@ -93,7 +93,7 @@
             try
             {
                 var order = this.orderService.GetById(id);
-                if (order != null)
+                if (order != null && order.CustomerId != null)
                 {
                     var customer = this.customerService.GetById(order.CustomerId);
 
@@ -160,7 +160,6 @@
                 return StatusCode(500);
             }
         }
-
 
         [HttpGet("{id}/Products")]
         public ActionResult<ProductDto[]> GetProductsByOrderId(int id)

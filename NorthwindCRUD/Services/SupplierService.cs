@@ -5,10 +5,9 @@ namespace NorthwindCRUD.Services
 {
     public class SupplierService
     {
-
         private readonly DataContext dataContext;
 
-        public SupplierService( DataContext dataContext)
+        public SupplierService(DataContext dataContext)
         {
             this.dataContext = dataContext;
         }
@@ -18,7 +17,7 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Suppliers.ToArray();
         }
 
-        public SupplierDb GetById(int id)
+        public SupplierDb? GetById(int id)
         {
             return this.dataContext.Suppliers.FirstOrDefault(p => p.SupplierId == id);
         }
@@ -32,6 +31,7 @@ namespace NorthwindCRUD.Services
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.SupplierId = id;
 
             PropertyHelper<SupplierDb>.MakePropertiesEmptyIfNull(model);
@@ -42,7 +42,7 @@ namespace NorthwindCRUD.Services
             return supplierEntity.Entity;
         }
 
-        public SupplierDb Update(SupplierDb model)
+        public SupplierDb? Update(SupplierDb model)
         {
             var supplierEntity = this.dataContext.Suppliers.FirstOrDefault(p => p.SupplierId == model.SupplierId);
             if (supplierEntity != null)
@@ -65,7 +65,7 @@ namespace NorthwindCRUD.Services
             return supplierEntity;
         }
 
-        public SupplierDb Delete(int id)
+        public SupplierDb? Delete(int id)
         {
             var supplierEntity = this.GetById(id);
             if (supplierEntity != null)

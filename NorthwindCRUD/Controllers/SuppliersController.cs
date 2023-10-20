@@ -38,7 +38,6 @@
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
-
         }
 
         [HttpGet("{id}")]

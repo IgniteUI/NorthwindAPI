@@ -14,6 +14,7 @@ namespace NorthwindCRUD.Tests
             Assert.AreEqual(customer, createdCustomer, "Customers instances should be the same since we are over the same context");
 
             createdCustomer = DataHelper2.CustomerService.GetById(createdCustomer.CustomerId);
+            Assert.IsNotNull(createdCustomer);
             Assert.AreNotEqual(customer, createdCustomer, "Customer instances should be different");
 
             Assert.AreEqual(customer.CompanyName, createdCustomer.CompanyName);

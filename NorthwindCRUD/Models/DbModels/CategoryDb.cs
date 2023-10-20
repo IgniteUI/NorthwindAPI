@@ -1,9 +1,9 @@
-﻿namespace NorthwindCRUD.Models.DbModels
-{
-    using NorthwindCRUD.Models.Contracts;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using NorthwindCRUD.Models.Contracts;
 
+namespace NorthwindCRUD.Models.DbModels
+{
     public class CategoryDb : ICategory, ICategoryDetail
     {
         [Key]

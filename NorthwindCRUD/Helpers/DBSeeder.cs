@@ -17,9 +17,9 @@
                 SeedCategories(dbContext);
                 SeedRegions(dbContext);
                 SeedTerritories(dbContext);
-                SeedSuppliers(dbContext); 
+                SeedSuppliers(dbContext);
                 SeedProducts(dbContext);
-                SeedShippers(dbContext);                
+                SeedShippers(dbContext);
                 SeedEmployees(dbContext);
                 SeedCustomers(dbContext);
                 SeedOrders(dbContext);
@@ -28,7 +28,7 @@
 
                 transaction.Commit();
             }
-            catch (Exception error)
+            catch (Exception)
             {
                 transaction.Rollback();
                 throw;
@@ -42,8 +42,11 @@
                 var employeesTerritoriesData = File.ReadAllText("./Resources/employees-territories.json");
                 var parsedEmployeesTerritories = JsonConvert.DeserializeObject<EmployeeTerritoryDb[]>(employeesTerritoriesData);
 
-                dbContext.EmployeesTerritories.AddRange(parsedEmployeesTerritories);
-                dbContext.SaveChanges();
+                if (parsedEmployeesTerritories != null)
+                {
+                    dbContext.EmployeesTerritories.AddRange(parsedEmployeesTerritories);
+                    dbContext.SaveChanges();
+                }
             }
         }
 
@@ -54,15 +57,18 @@
                 var suppliersData = File.ReadAllText("./Resources/suppliers.json");
                 var parsedSuppliers = JsonConvert.DeserializeObject<SupplierDb[]>(suppliersData);
 
-                foreach (var supplier in parsedSuppliers)
+                if (parsedSuppliers != null)
                 {
-                    var matchingProducts = dbContext.Products.Where(p => p.SupplierId == supplier.SupplierId).ToList();
-                    supplier.Products = matchingProducts;
+                    foreach (var supplier in parsedSuppliers)
+                    {
+                        var matchingProducts = dbContext.Products.Where(p => p.SupplierId == supplier.SupplierId).ToList();
+                        supplier.Products = matchingProducts;
 
-                    dbContext.Suppliers.Add(supplier);
+                        dbContext.Suppliers.Add(supplier);
+                    }
+
+                    dbContext.SaveChanges();
                 }
-
-                dbContext.SaveChanges();
             }
         }
 
@@ -72,12 +78,15 @@
             {
                 var shippersData = File.ReadAllText("./Resources/shippers.json");
                 var parsedShippers = JsonConvert.DeserializeObject<ShipperDb[]>(shippersData);
-                foreach (var shipper in parsedShippers)
+                if (parsedShippers != null)
                 {
-                    var matchingOrders = dbContext.Orders.Where(o => o.ShipperId == shipper.ShipperId).ToList();
-                    shipper.Orders = matchingOrders;
+                    foreach (var shipper in parsedShippers)
+                    {
+                        var matchingOrders = dbContext.Orders.Where(o => o.ShipperId == shipper.ShipperId).ToList();
+                        shipper.Orders = matchingOrders;
 
-                    dbContext.Shippers.Add(shipper);
+                        dbContext.Shippers.Add(shipper);
+                    }
                 }
 
                 dbContext.SaveChanges();
@@ -91,8 +100,11 @@
                 var territoriesData = File.ReadAllText("./Resources/territories.json");
                 var parsedTerritories = JsonConvert.DeserializeObject<TerritoryDb[]>(territoriesData);
 
-                dbContext.Territories.AddRange(parsedTerritories);
-                dbContext.SaveChanges();
+                if (parsedTerritories != null)
+                {
+                    dbContext.Territories.AddRange(parsedTerritories);
+                    dbContext.SaveChanges();
+                }
             }
         }
 
@@ -103,17 +115,23 @@
                 var ordersData = File.ReadAllText("./Resources/orders.json");
                 var parsedOrders = JsonConvert.DeserializeObject<OrderDb[]>(ordersData);
 
-                foreach (var order in parsedOrders)
+                if (parsedOrders != null)
                 {
-                    if (dbContext.Addresses.FirstOrDefault(a => a.Street == order.ShipAddress.Street) == null)
+                    foreach (var order in parsedOrders)
                     {
-                        dbContext.Addresses.Add(order.ShipAddress);
+                        if (order.ShipAddress != null)
+                        {
+                            if (dbContext.Addresses.FirstOrDefault(a => a.Street == order.ShipAddress.Street) == null)
+                            {
+                                dbContext.Addresses.Add(order.ShipAddress);
+                            }
+
+                            dbContext.Orders.Add(order);
+                        }
                     }
 
-
-                    dbContext.Orders.Add(order);
+                    dbContext.SaveChanges();
                 }
-                dbContext.SaveChanges();
             }
         }
 
@@ -123,8 +141,11 @@
             {
                 var ordersDetailsData = File.ReadAllText("./Resources/orderDetails.json");
                 var parsedordersDetails = JsonConvert.DeserializeObject<OrderDetailDb[]>(ordersDetailsData);
-                dbContext.OrderDetails.AddRange(parsedordersDetails);
-                dbContext.SaveChanges();
+                if (parsedordersDetails != null)
+                {
+                    dbContext.OrderDetails.AddRange(parsedordersDetails);
+                    dbContext.SaveChanges();
+                }
             }
         }
 
@@ -134,16 +155,20 @@
             {
                 var employeesData = File.ReadAllText("./Resources/employees.json");
                 var parsedEmployees = JsonConvert.DeserializeObject<EmployeeDb[]>(employeesData);
-
-                foreach (var employee in parsedEmployees)
+                if (parsedEmployees != null)
                 {
-                    if (dbContext.Addresses.FirstOrDefault(a => a.Street == employee.Address.Street) == null)
+                    foreach (var employee in parsedEmployees)
                     {
-                        dbContext.Addresses.Add(employee.Address);
+                        if (dbContext.Addresses.FirstOrDefault(a => a.Street == employee.Address.Street) == null)
+                        {
+                            dbContext.Addresses.Add(employee.Address);
+                        }
+
+                        dbContext.Employees.Add(employee);
                     }
-                    dbContext.Employees.Add(employee);
+
+                    dbContext.SaveChanges();
                 }
-                dbContext.SaveChanges();
             }
         }
 
@@ -154,21 +179,25 @@
                 var customersData = File.ReadAllText("./Resources/customers.json");
                 var parsedCustomers = JsonConvert.DeserializeObject<CustomerDb[]>(customersData);
 
-                foreach (var customer in parsedCustomers)
+                if (parsedCustomers != null)
                 {
-                    var existingCustomer = dbContext.Customers.Find(customer.CustomerId);
-
-                    if (existingCustomer == null)
+                    foreach (var customer in parsedCustomers)
                     {
-                        if (dbContext.Addresses.FirstOrDefault(a => a.Street == customer.Address.Street) == null)
-                        {
-                            dbContext.Addresses.Add(customer.Address);
-                        }
+                        var existingCustomer = dbContext.Customers.Find(customer.CustomerId);
 
-                        dbContext.Customers.Add(customer);
+                        if (existingCustomer == null)
+                        {
+                            if (dbContext.Addresses.FirstOrDefault(a => a.Street == customer.Address.Street) == null)
+                            {
+                                dbContext.Addresses.Add(customer.Address);
+                            }
+
+                            dbContext.Customers.Add(customer);
+                        }
                     }
+
+                    dbContext.SaveChanges();
                 }
-                dbContext.SaveChanges();
             }
         }
 
@@ -179,27 +208,33 @@
                 var productsData = File.ReadAllText("./Resources/products.json");
                 var parsedProducts = JsonConvert.DeserializeObject<ProductDb[]>(productsData);
 
-                dbContext.Products.AddRange(parsedProducts);
-                dbContext.SaveChanges();
+                if (parsedProducts != null)
+                {
+                    dbContext.Products.AddRange(parsedProducts);
+                    dbContext.SaveChanges();
+                }
             }
         }
 
         private static void SeedRegions(DataContext dbContext)
-        {            
+        {
             if (!dbContext.Regions.Any())
             {
                 var productsData = File.ReadAllText("./Resources/regions.json");
                 var parsedRegions = JsonConvert.DeserializeObject<RegionDb[]>(productsData);
 
-
-                foreach (var region in parsedRegions)
+                if (parsedRegions != null)
                 {
-                    var matchingTerritories = dbContext.Territories.Where(t => t.RegionId == region.RegionId).ToList();
-                    region.Territories = matchingTerritories;
+                    foreach (var region in parsedRegions)
+                    {
+                        var matchingTerritories = dbContext.Territories.Where(t => t.RegionId == region.RegionId).ToList();
+                        region.Territories = matchingTerritories;
 
-                    dbContext.Regions.Add(region);
+                        dbContext.Regions.Add(region);
+                    }
+
+                    dbContext.SaveChanges();
                 }
-                dbContext.SaveChanges();
             }
         }
 
@@ -210,8 +245,11 @@
                 var categoriesData = File.ReadAllText("./Resources/categories.json");
                 var parsedCategories = JsonConvert.DeserializeObject<CategoryDb[]>(categoriesData);
 
-                dbContext.Categories.AddRange(parsedCategories);
-                dbContext.SaveChanges();
+                if (parsedCategories != null)
+                {
+                    dbContext.Categories.AddRange(parsedCategories);
+                    dbContext.SaveChanges();
+                }
             }
         }
     }

@@ -1,9 +1,8 @@
-﻿namespace NorthwindCRUD.Models.DbModels
-{
-    using NorthwindCRUD.Models.Contracts;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace NorthwindCRUD.Models.DbModels
+{
     public class OrderDb
     {
         public OrderDb()
@@ -16,7 +15,7 @@
 
         public string? CustomerId { get; set; }
 
-        public CustomerDb? Customer { get; set;}
+        public CustomerDb? Customer { get; set; }
 
         public int? EmployeeId { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using NorthwindCRUD.Constants;
+﻿using System.Globalization;
+using NorthwindCRUD.Constants;
 using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Models.DbModels;
 
@@ -18,7 +19,7 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Products.ToArray();
         }
 
-        public ProductDb GetById(int id)
+        public ProductDb? GetById(int id)
         {
             return this.dataContext.Products.FirstOrDefault(p => p.ProductId == id);
         }
@@ -42,14 +43,14 @@ namespace NorthwindCRUD.Services
 
         public ProductDb Create(ProductDb model)
         {
-            if(this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
+            if (this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
             }
 
             if (this.dataContext.Suppliers.FirstOrDefault(s => s.SupplierId == model.SupplierId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
             }
 
             var id = IdGenerator.CreateDigitsId();
@@ -59,6 +60,7 @@ namespace NorthwindCRUD.Services
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.ProductId = id;
 
             PropertyHelper<ProductDb>.MakePropertiesEmptyIfNull(model);
@@ -69,16 +71,16 @@ namespace NorthwindCRUD.Services
             return productEntity.Entity;
         }
 
-        public ProductDb Update(ProductDb model)
+        public ProductDb? Update(ProductDb model)
         {
             if (this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
             }
 
             if (this.dataContext.Suppliers.FirstOrDefault(s => s.SupplierId == model.SupplierId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
             }
 
             var productEntity = this.dataContext.Products.FirstOrDefault(p => p.ProductId == model.ProductId);
@@ -99,7 +101,7 @@ namespace NorthwindCRUD.Services
             return productEntity;
         }
 
-        public ProductDb Delete(int id)
+        public ProductDb? Delete(int id)
         {
             var productEntity = this.GetById(id);
             if (productEntity != null)

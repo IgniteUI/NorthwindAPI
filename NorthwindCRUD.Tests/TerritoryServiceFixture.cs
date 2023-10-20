@@ -14,7 +14,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(createdTerritory);
             createdTerritory = DataHelper2.TerritoryService.GetById(createdTerritory.TerritoryId);
-
+            Assert.IsNotNull(createdTerritory);
             Assert.AreEqual(territory.TerritoryId, createdTerritory.TerritoryId);
             Assert.AreEqual(territory.TerritoryDescription, createdTerritory.TerritoryDescription);
             Assert.AreEqual(territory.RegionId, createdTerritory.RegionId);
@@ -32,8 +32,8 @@ namespace NorthwindCRUD.Tests
             var updatedTerritory = DataHelper.TerritoryService.Update(createdTerritory);
 
             Assert.IsNotNull(updatedTerritory);
-
             updatedTerritory = DataHelper2.TerritoryService.GetById(updatedTerritory.TerritoryId);
+            Assert.IsNotNull(updatedTerritory);
             Assert.AreNotEqual(originalTerritoryDescription, updatedTerritory.TerritoryDescription);
             Assert.AreEqual(createdTerritory.TerritoryDescription, updatedTerritory.TerritoryDescription);
         }

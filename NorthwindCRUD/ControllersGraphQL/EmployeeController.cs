@@ -30,7 +30,7 @@
         }
 
         [Query]
-        public EmployeeDto GetById(int id)
+        public EmployeeDto? GetById(int id)
         {
             var employee = this.employeeService.GetById(id);
 
@@ -41,7 +41,7 @@
 
             return null;
         }
-        
+
         [Mutation]
         public EmployeeDto Create(EmployeeDto model)
         {
@@ -51,15 +51,15 @@
         }
 
         [Mutation]
-        public EmployeeDto Update(EmployeeDto model)
+        public EmployeeDto? Update(EmployeeDto model)
         {
             var mappedModel = this.mapper.Map<EmployeeDto, EmployeeDb>(model);
             var employee = this.employeeService.Update(mappedModel);
-            return this.mapper.Map<EmployeeDb, EmployeeDto>(employee);
+            return employee != null ? this.mapper.Map<EmployeeDb, EmployeeDto>(employee) : null;
         }
 
         [Mutation]
-        public EmployeeDto Delete(int id)
+        public EmployeeDto? Delete(int id)
         {
             var employee = this.employeeService.Delete(id);
 

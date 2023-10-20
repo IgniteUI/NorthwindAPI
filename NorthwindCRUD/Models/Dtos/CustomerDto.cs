@@ -1,14 +1,14 @@
-﻿namespace NorthwindCRUD.Models.Dtos
-{
-    using NorthwindCRUD.Models.Contracts;
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using NorthwindCRUD.Models.Contracts;
 
+namespace NorthwindCRUD.Models.Dtos
+{
     public class CustomerDto : ICustomer
     {
         public string CustomerId { get; set; }
 
         [Required]
-        public string CompanyName { get; set; }
+        public string? CompanyName { get; set; }
 
         public string ContactName { get; set; }
 

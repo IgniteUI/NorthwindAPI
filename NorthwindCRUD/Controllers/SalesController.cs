@@ -1,12 +1,12 @@
-﻿namespace NorthwindCRUD.Controllers
-{
-    using AutoMapper;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using NorthwindCRUD.Models.Dtos;
-    using NorthwindCRUD.Services;
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using NorthwindCRUD.Models.Dtos;
+using NorthwindCRUD.Services;
 
+namespace NorthwindCRUD.Controllers
+{
     [ApiController]
     [Route("[controller]")]
     public class SalesController : ControllerBase
@@ -26,7 +26,8 @@
         [Authorize]
         public ActionResult<SalesDto[]> GetSalesByCategoryAndYear([FromQuery] [Required] string categoryName, [FromQuery] int? orderYear = null)
         {
-            try {
+            try
+            {
                 var response = this.salesService.GetSalesDataByCategoryAndYear(categoryName, orderYear);
                 return Ok(response);
             }
@@ -43,7 +44,6 @@
             [FromQuery] [Required] string startDate,
             [FromQuery] [Required] string endDate)
         {
-
             try
             {
                 var salesData = this.salesService.RetrieveSalesDataByCountry(startDate, endDate, country);
@@ -73,7 +73,6 @@
             [FromQuery] int startMounth,
             [FromQuery] int endMounth)
         {
-
             try
             {
                 var salesData = this.salesService.RetrieveSalesDataByYear(year, startMounth, endMounth);

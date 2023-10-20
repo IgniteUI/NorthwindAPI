@@ -123,6 +123,11 @@
             try
             {
                 var teritories = this.employeeTerritoryService.GetTeritoriesByEmployeeId(id);
+                if (teritories == null)
+                {
+                    return NotFound($"No territories for employee {id}");
+                }
+
                 return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(teritories));
             }
             catch (Exception error)
@@ -144,6 +149,7 @@
                     var employeeTerrirtory = this.employeeTerritoryService.AddTerritoryToEmployee(mappedModel);
                     return Ok(this.mapper.Map<EmployeeTerritoryDb, EmployeeTerritoryDto>(employeeTerrirtory));
                 }
+
                 return BadRequest(ModelState);
             }
             catch (InvalidOperationException exception)

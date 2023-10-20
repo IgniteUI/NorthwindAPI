@@ -5,7 +5,6 @@ namespace NorthwindCRUD.Services
 {
     public class RegionService
     {
-
         private readonly DataContext dataContext;
 
         public RegionService(DataContext dataContext)
@@ -18,7 +17,7 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Regions.ToArray();
         }
 
-        public RegionDb GetById(int id)
+        public RegionDb? GetById(int id)
         {
             return this.dataContext.Regions.FirstOrDefault(p => p.RegionId == id);
         }
@@ -32,17 +31,18 @@ namespace NorthwindCRUD.Services
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.RegionId = id;
 
             PropertyHelper<RegionDb>.MakePropertiesEmptyIfNull(model);
 
-            var RegionEntity = this.dataContext.Regions.Add(model);
+            var regionEntity = this.dataContext.Regions.Add(model);
             this.dataContext.SaveChanges();
 
-            return RegionEntity.Entity;
+            return regionEntity.Entity;
         }
 
-        public RegionDb Update(RegionDb model)
+        public RegionDb? Update(RegionDb model)
         {
             var regionEntity = this.dataContext.Regions.FirstOrDefault(p => p.RegionId == model.RegionId);
             if (regionEntity != null)
@@ -55,16 +55,16 @@ namespace NorthwindCRUD.Services
             return regionEntity;
         }
 
-        public RegionDb Delete(int id)
+        public RegionDb? Delete(int id)
         {
-            var RegionEntity = this.GetById(id);
-            if (RegionEntity != null)
+            var regionEntity = this.GetById(id);
+            if (regionEntity != null)
             {
-                this.dataContext.Regions.Remove(RegionEntity);
+                this.dataContext.Regions.Remove(regionEntity);
                 this.dataContext.SaveChanges();
             }
 
-            return RegionEntity;
+            return regionEntity;
         }
     }
 }

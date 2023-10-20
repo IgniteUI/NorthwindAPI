@@ -1,6 +1,6 @@
-﻿using NorthwindCRUD.Models.Contracts;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
@@ -18,7 +18,7 @@ namespace NorthwindCRUD.Models.DbModels
 
         public CategoryDb? Category { get; set; }
 
-        public string QuantityPerUnit { get; set; }
+        public string? QuantityPerUnit { get; set; }
 
         public double? UnitPrice { get; set; }
 

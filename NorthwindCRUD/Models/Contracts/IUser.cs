@@ -1,6 +1,6 @@
 ﻿namespace NorthwindCRUD.Models.Contracts
 {
-    public class IUser
+    public interface IUser
     {
         string Email { get; set; }
 
