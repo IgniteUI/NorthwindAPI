@@ -1,19 +1,15 @@
-﻿namespace NorthwindCRUD.Services
-{
-    using AutoMapper;
-    using NorthwindCRUD.Constants;
-    using NorthwindCRUD.Helpers;
-    using NorthwindCRUD.Models.DbModels;
+﻿using NorthwindCRUD.Constants;
+using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Models.DbModels;
 
+namespace NorthwindCRUD.Services
+{
     public class ProductService
     {
-
-        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public ProductService(IMapper mapper, DataContext dataContext)
+        public ProductService(DataContext dataContext)
         {
-            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 
