@@ -23,6 +23,7 @@
                 SeedEmployees(dbContext);
                 SeedCustomers(dbContext);
                 SeedOrders(dbContext);
+                SeedOrderDetails(dbContext);
                 SeedEmployeesTerritories(dbContext);
 
                 transaction.Commit();
@@ -109,20 +110,20 @@
                         dbContext.Addresses.Add(order.ShipAddress);
                     }
 
-                    if (!dbContext.OrderDetails.Any(o => o.OrderId == order.OrderId))
-                    {
-                        var orderDetailsData = order.Details.ToList();
-
-                        orderDetailsData.ForEach(o =>
-                        {
-                            o.OrderId = order.OrderId;
-                        });
-
-                        dbContext.OrderDetails.AddRange(order.Details);
-                    }
 
                     dbContext.Orders.Add(order);
                 }
+                dbContext.SaveChanges();
+            }
+        }
+
+        private static void SeedOrderDetails(DataContext dbContext)
+        {
+            if (!dbContext.OrderDetails.Any())
+            {
+                var ordersDetailsData = File.ReadAllText("./Resources/orderDetails.json");
+                var parsedordersDetails = JsonConvert.DeserializeObject<OrderDetailDb[]>(ordersDetailsData);
+                dbContext.OrderDetails.AddRange(parsedordersDetails);
                 dbContext.SaveChanges();
             }
         }
@@ -155,11 +156,17 @@
 
                 foreach (var customer in parsedCustomers)
                 {
-                    if (dbContext.Addresses.FirstOrDefault(a => a.Street == customer.Address.Street) == null)
+                    var existingCustomer = dbContext.Customers.Find(customer.CustomerId);
+
+                    if (existingCustomer == null)
                     {
-                        dbContext.Addresses.Add(customer.Address);
+                        if (dbContext.Addresses.FirstOrDefault(a => a.Street == customer.Address.Street) == null)
+                        {
+                            dbContext.Addresses.Add(customer.Address);
+                        }
+
+                        dbContext.Customers.Add(customer);
                     }
-                    dbContext.Customers.Add(customer);
                 }
                 dbContext.SaveChanges();
             }

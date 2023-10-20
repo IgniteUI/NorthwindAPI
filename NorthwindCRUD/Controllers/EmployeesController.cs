@@ -27,7 +27,6 @@
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<EmployeeDto[]> GetAll()
         {
             try
@@ -43,7 +42,6 @@
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         public ActionResult<EmployeeDto> GetById(int id)
         {
             try
@@ -65,7 +63,6 @@
         }
 
         [HttpGet("{id}/Superior")]
-        [Authorize]
         public ActionResult<EmployeeDto> GetSuperiorById(int id)
         {
             try
@@ -92,7 +89,6 @@
         }
 
         [HttpGet("{id}/Subordinates")]
-        [Authorize]
         public ActionResult<EmployeeDto[]> GetSubordinatesById(int id)
         {
             try
@@ -107,7 +103,6 @@
         }
 
         [HttpGet("{id}/Orders")]
-        [Authorize]
         public ActionResult<OrderDto[]> GetOrdersByEmployeeId(int id)
         {
             try
@@ -123,7 +118,6 @@
         }
 
         [HttpGet("{id}/Teritories")]
-        [Authorize]
         public ActionResult<EmployeeDto[]> GetTeritoriesByEmployeeId(int id)
         {
             try

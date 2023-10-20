@@ -28,7 +28,6 @@
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<TerritoryDto[]> GetAll()
         {
             try
@@ -45,7 +44,6 @@
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         public ActionResult<TerritoryDto> GetById(string id)
         {
             try
@@ -66,7 +64,6 @@
         }
 
         [HttpGet("{id}/Employees")]
-        [Authorize]
         public ActionResult<EmployeeDto[]> GetEmployeesByTerritory(string id)
         {
             try
@@ -82,7 +79,6 @@
         }
 
         [HttpGet("{id}/Region")]
-        [Authorize]
         public ActionResult<RegionDto[]> GetRegionByTerritory(string id)
         {
             try
