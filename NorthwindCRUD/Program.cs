@@ -157,7 +157,7 @@ app.UseSwagger(c =>
         c.PreSerializeFilters.Add((swagger, httpReq) =>
             {
                 // Adding server base address in the generated file relative to the server's host
-                swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
+                swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"https://{httpReq.Host.Value}" } };
             });
     });
 
