@@ -14,9 +14,9 @@ namespace NorthwindCRUD.Controllers
         private readonly CategoryService categoryService;
         private readonly ProductService productService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<CategoriesController> logger;
 
-        public CategoriesController(CategoryService categoryService, ProductService productService, IMapper mapper, ILogger logger)
+        public CategoriesController(CategoryService categoryService, ProductService productService, IMapper mapper, ILogger<CategoriesController> logger)
         {
             this.categoryService = categoryService;
             this.productService = productService;

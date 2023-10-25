@@ -15,9 +15,9 @@
         private readonly RegionService regionService;
         private readonly TerritoryService territoryService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(RegionService regionService, TerritoryService territoryService, IMapper mapper, ILogger logger)
+        public RegionsController(RegionService regionService, TerritoryService territoryService, IMapper mapper, ILogger<RegionsController> logger)
         {
             this.regionService = regionService;
             this.territoryService = territoryService;

@@ -2,7 +2,6 @@
 using AutoMapper;
 using GraphQL.AspNet.Configuration.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -23,6 +22,13 @@ namespace NorthwindCRUD
             var allowAnyOriginPolicy = "_allowAnyOrigin";
 
             builder.Logging.ClearProviders();
+
+            builder.Services.AddLogging(options =>
+            {
+                var logConfigSection = builder.Configuration.GetSection("Logging");
+                options.AddConfiguration(logConfigSection);
+            });
+
             builder.Logging.AddConsole();
 
             builder.Services.AddControllers(options =>
@@ -92,14 +98,6 @@ namespace NorthwindCRUD
                     options.UseSqlite(builder.Configuration.GetConnectionString("SQLiteConnectionString"));
                 }
             });
-
-#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-            var serviceProvider = builder.Services.BuildServiceProvider(); // TODO: review ASP0000 warning, see: https://stackoverflow.com/questions/58999401/calling-buildserviceprovider-from-application-code-results-in-copy-of-singleto
-#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-
-            var logger = serviceProvider.GetRequiredService<ILogger<ControllerBase>>();
-
-            builder.Services.AddSingleton(typeof(ILogger), logger);
 
             var config = new MapperConfiguration(cfg =>
             {

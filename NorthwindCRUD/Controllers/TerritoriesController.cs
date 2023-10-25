@@ -16,9 +16,9 @@
         private readonly RegionService regionService;
         private readonly EmployeeTerritoryService employeeTerritoryService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<TerritoriesController> logger;
 
-        public TerritoriesController(TerritoryService territoryService, EmployeeTerritoryService employeeTerritoryService, RegionService regionService, IMapper mapper, ILogger logger)
+        public TerritoriesController(TerritoryService territoryService, EmployeeTerritoryService employeeTerritoryService, RegionService regionService, IMapper mapper, ILogger<TerritoriesController> logger)
         {
             this.territoryService = territoryService;
             this.regionService = regionService;

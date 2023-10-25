@@ -14,9 +14,9 @@
         private readonly CustomerService customerService;
         private readonly OrderService orderService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<CustomersController> logger;
 
-        public CustomersController(CustomerService customerService, OrderService orderService, IMapper mapper, ILogger logger)
+        public CustomersController(CustomerService customerService, OrderService orderService, IMapper mapper, ILogger<CustomersController> logger)
         {
             this.customerService = customerService;
             this.orderService = orderService;

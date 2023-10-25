@@ -18,9 +18,9 @@
         private readonly ShipperService shipperService;
         private readonly ProductService productService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<OrdersController> logger;
 
-        public OrdersController(OrderService orderService, EmployeeService employeeService, CustomerService customerService, ShipperService shipperService, ProductService productService, IMapper mapper, ILogger logger)
+        public OrdersController(OrderService orderService, EmployeeService employeeService, CustomerService customerService, ShipperService shipperService, ProductService productService, IMapper mapper, ILogger<OrdersController> logger)
         {
             this.orderService = orderService;
             this.employeeService = employeeService;

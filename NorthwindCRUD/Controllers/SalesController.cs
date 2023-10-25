@@ -13,9 +13,9 @@ namespace NorthwindCRUD.Controllers
     {
         private readonly SalesService salesService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<SalesController> logger;
 
-        public SalesController(SalesService salesService, IMapper mapper, ILogger logger)
+        public SalesController(SalesService salesService, IMapper mapper, ILogger<SalesController> logger)
         {
             this.salesService = salesService;
             this.mapper = mapper;
