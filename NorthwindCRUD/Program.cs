@@ -94,7 +94,7 @@ namespace NorthwindCRUD
             });
 
 #pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
-            var serviceProvider = builder.Services.BuildServiceProvider(); // TODO: review this warning, see: https://stackoverflow.com/questions/58999401/calling-buildserviceprovider-from-application-code-results-in-copy-of-singleto
+            var serviceProvider = builder.Services.BuildServiceProvider(); // TODO: review ASP0000 warning, see: https://stackoverflow.com/questions/58999401/calling-buildserviceprovider-from-application-code-results-in-copy-of-singleto
 #pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 
             var logger = serviceProvider.GetRequiredService<ILogger<ControllerBase>>();
