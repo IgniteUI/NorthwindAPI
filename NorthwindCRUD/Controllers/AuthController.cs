@@ -14,9 +14,9 @@
         private readonly IConfiguration configuration;
         private readonly AuthService authService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<AuthController> logger;
 
-        public AuthController(IConfiguration configuration, AuthService authService, IMapper mapper, ILogger logger)
+        public AuthController(IConfiguration configuration, AuthService authService, IMapper mapper, ILogger<AuthController> logger)
         {
             this.configuration = configuration;
             this.authService = authService;
