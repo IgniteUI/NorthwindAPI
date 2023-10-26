@@ -6,7 +6,7 @@ namespace NorthwindCRUD.Models.Contracts
     {
         string CustomerId { get; set; }
 
-        string? CompanyName { get; set; }
+        string CompanyName { get; set; }
 
         string ContactName { get; set; }
 

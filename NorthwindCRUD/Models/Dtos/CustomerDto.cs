@@ -8,7 +8,7 @@ namespace NorthwindCRUD.Models.Dtos
         public string CustomerId { get; set; }
 
         [Required]
-        public string? CompanyName { get; set; }
+        public string CompanyName { get; set; }
 
         public string ContactName { get; set; }
 
