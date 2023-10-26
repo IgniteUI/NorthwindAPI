@@ -18,7 +18,7 @@ namespace NorthwindCRUD.Models.DbModels
 
         public CategoryDb? Category { get; set; }
 
-        public string? QuantityPerUnit { get; set; }
+        public string QuantityPerUnit { get; set; }
 
         public double? UnitPrice { get; set; }
 

@@ -10,7 +10,7 @@ namespace NorthwindCRUD.Models.Dtos
 
         public int? CategoryId { get; set; }
 
-        public string? QuantityPerUnit { get; set; }
+        public string QuantityPerUnit { get; set; }
 
         public double? UnitPrice { get; set; }
 

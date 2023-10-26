@@ -8,7 +8,7 @@
 
         int? CategoryId { get; set; }
 
-        string? QuantityPerUnit { get; set; }
+        string QuantityPerUnit { get; set; }
 
         double? UnitPrice { get; set; }
 
