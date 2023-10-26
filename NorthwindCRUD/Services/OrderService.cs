@@ -1,12 +1,12 @@
-﻿namespace NorthwindCRUD.Services
-{
-    using Microsoft.CodeAnalysis;
-    using Microsoft.EntityFrameworkCore;
-    using NorthwindCRUD.Constants;
-    using NorthwindCRUD.Helpers;
-    using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.Dtos;
+﻿using System.Globalization;
+using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
+using NorthwindCRUD.Constants;
+using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Models.DbModels;
 
+namespace NorthwindCRUD.Services
+{
     public class OrderService
     {
         private readonly DataContext dataContext;
@@ -14,12 +14,6 @@
         public OrderService(DataContext dataContext)
         {
             this.dataContext = dataContext;
-        }
-
-        private IQueryable<OrderDb> GetOrdersQuery()
-        {
-            return this.dataContext.Orders
-                .Include(c => c.ShipAddress);
         }
 
         public OrderDb[] GetAll()
@@ -37,10 +31,9 @@
                 .ToArray();
         }
 
-        public OrderDb GetById(int id)
+        public OrderDb? GetById(int id)
         {
-            return GetOrdersQuery()
-                .FirstOrDefault(c => c.OrderId == id);
+            return GetOrdersQuery().FirstOrDefault(c => c.OrderId == id);
         }
 
         public OrderDetailDb[] GetOrderDetailsById(int id)
@@ -79,23 +72,21 @@
             return details;
         }
 
-
         public OrderDb Create(OrderDb model)
         {
-
             if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId?.ToString()));
             }
 
             if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
             }
 
             if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
             }
 
             var id = IdGenerator.CreateDigitsId();
@@ -105,15 +96,16 @@
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.OrderId = id;
 
             PropertyHelper<OrderDb>.MakePropertiesEmptyIfNull(model);
 
             if (model.ShipAddress == null)
             {
-                var emptyAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == "");
+                var emptyAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == string.Empty);
                 model.ShipAddress = emptyAddress;
-                model.ShipAddressId = emptyAddress.AddressId;
+                model.ShipAddressId = emptyAddress?.AddressId;
             }
 
             var orderEntity = this.dataContext.Orders.Add(model);
@@ -121,22 +113,22 @@
 
             return orderEntity.Entity;
         }
-        
-        public OrderDb Update(OrderDb model)
+
+        public OrderDb? Update(OrderDb model)
         {
             if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId?.ToString()));
             }
 
             if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
             }
 
             if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
             }
 
             var orderEntity = this.dataContext.Orders
@@ -147,8 +139,8 @@
             {
                 orderEntity.OrderDate = model.OrderDate != null ? model.OrderDate : orderEntity.OrderDate;
                 orderEntity.RequiredDate = model.RequiredDate != null ? model.RequiredDate : orderEntity.RequiredDate;
-                orderEntity.ShipVia = model.ShipVia != null ? model.ShipVia : orderEntity.ShipVia;
-                orderEntity.Freight = model.Freight != null ? model.Freight : orderEntity.Freight;
+                orderEntity.ShipVia = model.ShipVia; // ShipVia has int type which can't be null
+                orderEntity.Freight = model.Freight; // Freight has double type which can't be null
                 orderEntity.ShipName = model.ShipName != null ? model.ShipName : orderEntity.ShipName;
                 orderEntity.EmployeeId = model.EmployeeId != null ? model.EmployeeId : orderEntity.EmployeeId;
                 orderEntity.CustomerId = model.CustomerId != null ? model.CustomerId : orderEntity.CustomerId;
@@ -156,7 +148,7 @@
                 if (model.ShipAddress != null)
                 {
                     var newAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == model.ShipAddress.Street);
-                    if (newAddress != null)
+                    if (newAddress != null && orderEntity.ShipAddress != null)
                     {
                         orderEntity.ShipAddress.City = model.ShipAddress.City;
                         orderEntity.ShipAddress.Region = model.ShipAddress.Region;
@@ -178,7 +170,7 @@
             return orderEntity;
         }
 
-        public OrderDb Delete(int id)
+        public OrderDb? Delete(int id)
         {
             var orderEntity = this.GetById(id);
             if (orderEntity != null)
@@ -188,6 +180,12 @@
             }
 
             return orderEntity;
+        }
+
+        private IQueryable<OrderDb> GetOrdersQuery()
+        {
+            return this.dataContext.Orders
+                .Include(c => c.ShipAddress);
         }
     }
 }

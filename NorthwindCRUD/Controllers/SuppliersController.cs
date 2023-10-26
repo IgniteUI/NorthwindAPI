@@ -15,9 +15,9 @@
         private readonly SupplierService supplierService;
         private readonly ProductService productService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<SuppliersController> logger;
 
-        public SuppliersController(SupplierService supplierService, ProductService productService, IMapper mapper, ILogger logger)
+        public SuppliersController(SupplierService supplierService, ProductService productService, IMapper mapper, ILogger<SuppliersController> logger)
         {
             this.supplierService = supplierService;
             this.productService = productService;
@@ -38,7 +38,6 @@
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
-
         }
 
         [HttpGet("{id}")]

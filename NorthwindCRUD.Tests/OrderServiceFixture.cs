@@ -20,6 +20,8 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(createdOrder);
             createdOrder = DataHelper2.OrderService.GetById(createdOrder.OrderId);
+            Assert.IsNotNull(createdOrder);
+
             Assert.AreEqual(order.OrderId, createdOrder.OrderId);
             Assert.AreEqual(order.CustomerId, createdOrder.CustomerId);
             Assert.AreEqual(order.EmployeeId, createdOrder.EmployeeId);
@@ -39,6 +41,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(updatedOrder);
             updatedOrder = DataHelper2.OrderService.GetById(updatedOrder.OrderId);
+            Assert.IsNotNull(updatedOrder);
             Assert.AreNotEqual(originalCustomerId, updatedOrder.CustomerId);
             Assert.AreNotEqual(originalEmployeeId, updatedOrder.EmployeeId);
             Assert.AreEqual(order.CustomerId, updatedOrder.CustomerId);

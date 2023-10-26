@@ -15,7 +15,7 @@
         private readonly AuthService authService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
-        
+
         public AuthController(IConfiguration configuration, AuthService authService, IMapper mapper, ILogger logger)
         {
             this.configuration = configuration;
@@ -38,6 +38,7 @@
 
                         return Ok(token);
                     }
+
                     return BadRequest("Email or password are not correct!");
                 }
 
@@ -75,7 +76,6 @@
                     {
                         var token = this.authService.GenerateJwtToken(user.Email);
                         return Ok(token);
-
                     }
 
                     return BadRequest("Email or password are not correct!");

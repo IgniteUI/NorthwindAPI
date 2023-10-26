@@ -20,7 +20,7 @@
                 .ToArray();
         }
 
-        public EmployeeDb GetById(int id)
+        public EmployeeDb? GetById(int id)
         {
             return this.dataContext.Employees.FirstOrDefault(c => c.EmployeeId == id);
         }
@@ -41,15 +41,19 @@
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.EmployeeId = id;
 
             PropertyHelper<EmployeeDb>.MakePropertiesEmptyIfNull(model);
 
             if (model.Address == null)
             {
-                var emptyAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == "");
-                model.Address = emptyAddress;
-                model.AddressId = emptyAddress.AddressId;
+                var emptyAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == string.Empty);
+                if (emptyAddress != null)
+                {
+                    model.Address = emptyAddress;
+                    model.AddressId = emptyAddress.AddressId;
+                }
             }
 
             var employeeEntity = this.dataContext.Employees.Add(model);
@@ -58,7 +62,7 @@
             return employeeEntity.Entity;
         }
 
-        public EmployeeDb Update(EmployeeDb model)
+        public EmployeeDb? Update(EmployeeDb model)
         {
             var employeeEntity = this.dataContext.Employees
                 .Include(c => c.Address)
@@ -100,7 +104,7 @@
             return employeeEntity;
         }
 
-        public EmployeeDb Delete(int id)
+        public EmployeeDb? Delete(int id)
         {
             var employeeEntity = this.GetById(id);
             if (employeeEntity != null)

@@ -16,9 +16,9 @@
         private readonly RegionService regionService;
         private readonly EmployeeTerritoryService employeeTerritoryService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<TerritoriesController> logger;
 
-        public TerritoriesController(TerritoryService territoryService, EmployeeTerritoryService employeeTerritoryService, RegionService regionService, IMapper mapper, ILogger logger)
+        public TerritoriesController(TerritoryService territoryService, EmployeeTerritoryService employeeTerritoryService, RegionService regionService, IMapper mapper, ILogger<TerritoriesController> logger)
         {
             this.territoryService = territoryService;
             this.regionService = regionService;
@@ -40,7 +40,6 @@
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
-
         }
 
         [HttpGet("{id}")]
@@ -69,6 +68,11 @@
             try
             {
                 var employees = this.employeeTerritoryService.GetEmployeesByTerritoryId(id);
+                if (employees == null)
+                {
+                    return NotFound($"No employees for territory {id}");
+                }
+
                 return Ok(this.mapper.Map<EmployeeDb[], EmployeeDto[]>(employees));
             }
             catch (Exception error)
@@ -92,7 +96,6 @@
                     {
                         return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
                     }
- 
                 }
 
                 return NotFound();
@@ -139,11 +142,11 @@
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<TerritoryDto, TerritoryDb>(model);
-                    var Territory = this.territoryService.Update(mappedModel);
+                    var territory = this.territoryService.Update(mappedModel);
 
-                    if (Territory != null)
+                    if (territory != null)
                     {
-                        return Ok(this.mapper.Map<TerritoryDb, TerritoryDto>(Territory));
+                        return Ok(this.mapper.Map<TerritoryDb, TerritoryDto>(territory));
                     }
 
                     return NotFound();
@@ -168,10 +171,10 @@
         {
             try
             {
-                var Territory = this.territoryService.Delete(id);
-                if (Territory != null)
+                var territory = this.territoryService.Delete(id);
+                if (territory != null)
                 {
-                    return Ok(this.mapper.Map<TerritoryDb, TerritoryDto>(Territory));
+                    return Ok(this.mapper.Map<TerritoryDb, TerritoryDto>(territory));
                 }
 
                 return NotFound();

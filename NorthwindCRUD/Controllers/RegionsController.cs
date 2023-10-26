@@ -15,9 +15,9 @@
         private readonly RegionService regionService;
         private readonly TerritoryService territoryService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(RegionService regionService, TerritoryService territoryService, IMapper mapper, ILogger logger)
+        public RegionsController(RegionService regionService, TerritoryService territoryService, IMapper mapper, ILogger<RegionsController> logger)
         {
             this.regionService = regionService;
             this.territoryService = territoryService;
@@ -38,7 +38,6 @@
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
-
         }
 
         [HttpGet("{id}")]
@@ -90,8 +89,8 @@
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<RegionDto, RegionDb>(model);
-                    var Region = this.regionService.Create(mappedModel);
-                    return Ok(this.mapper.Map<RegionDb, RegionDto>(Region));
+                    var region = this.regionService.Create(mappedModel);
+                    return Ok(this.mapper.Map<RegionDb, RegionDto>(region));
                 }
 
                 return BadRequest(ModelState);

@@ -14,10 +14,11 @@ namespace NorthwindCRUD.Tests
             var createdEmployee = DataHelper.EmployeeService.Create(employee);
 
             Assert.IsNotNull(createdEmployee);
-            var newEmployee = DataHelper2.EmployeeService.GetById(createdEmployee.EmployeeId);
-            Assert.AreEqual(employee.FirstName, newEmployee.FirstName);
-            Assert.AreEqual(employee.LastName, newEmployee.LastName);
-            Assert.AreEqual(employee.Title, newEmployee.Title);
+            createdEmployee = DataHelper2.EmployeeService.GetById(createdEmployee.EmployeeId);
+            Assert.IsNotNull(createdEmployee);
+            Assert.AreEqual(employee.FirstName, createdEmployee.FirstName);
+            Assert.AreEqual(employee.LastName, createdEmployee.LastName);
+            Assert.AreEqual(employee.Title, createdEmployee.Title);
         }
 
         [TestMethod]
@@ -32,7 +33,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(updatedEmployee);
             updatedEmployee = DataHelper2.EmployeeService.GetById(updatedEmployee.EmployeeId);
-
+            Assert.IsNotNull(updatedEmployee);
             Assert.AreNotEqual(originalTitle, updatedEmployee.Title);
             Assert.AreEqual(createdEmployee.Title, updatedEmployee.Title);
         }

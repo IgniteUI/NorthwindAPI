@@ -16,16 +16,16 @@ namespace NorthwindCRUD.Controllers
         private readonly OrderService orderService;
         private readonly SupplierService supplierService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<ProductsController> logger;
 
-        public ProductsController(ProductService productService, CategoryService categoryService, OrderService orderService, SupplierService supplierService, IMapper mapper, ILogger logger)
+        public ProductsController(ProductService productService, CategoryService categoryService, OrderService orderService, SupplierService supplierService, IMapper mapper, ILogger<ProductsController> logger)
         {
             this.productService = productService;
             this.categoryService = categoryService;
             this.orderService = orderService;
             this.supplierService = supplierService;
             this.mapper = mapper;
-            this.logger = logger;   
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -41,7 +41,6 @@ namespace NorthwindCRUD.Controllers
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
-            
         }
 
         [HttpGet("{id}")]
@@ -76,7 +75,7 @@ namespace NorthwindCRUD.Controllers
 
                     if (category != null)
                     {
-                        return Ok(this.mapper.Map<CategoryDb , CategoryDto>(category));
+                        return Ok(this.mapper.Map<CategoryDb, CategoryDto>(category));
                     }
                 }
 

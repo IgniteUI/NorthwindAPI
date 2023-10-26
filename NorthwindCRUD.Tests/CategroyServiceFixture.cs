@@ -14,8 +14,8 @@ namespace NorthwindCRUD.Tests
             Assert.IsNotNull(createdCategory);
             createdCategory = DataHelper2.CategoryService.GetById(createdCategory.CategoryId);
 
-            Assert.AreEqual(category.Name, createdCategory.Name);
-            Assert.AreEqual(category.Description, createdCategory.Description);
+            Assert.AreEqual(category.Name, createdCategory?.Name);
+            Assert.AreEqual(category.Description, createdCategory?.Description);
         }
 
         [TestMethod]
@@ -32,6 +32,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(updatedCategory);
             updatedCategory = DataHelper2.CategoryService.GetById(updatedCategory.CategoryId);
+            Assert.IsNotNull(updatedCategory);
             Assert.AreNotEqual(orignalName, updatedCategory.Name);
             Assert.AreNotEqual(orignalDescription, updatedCategory.Description);
             Assert.AreEqual(createdCategory.Name, updatedCategory.Name);

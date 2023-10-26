@@ -14,6 +14,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(createdShipper);
             createdShipper = DataHelper2.ShipperService.GetById(createdShipper.ShipperId);
+            Assert.IsNotNull(createdShipper);
             Assert.AreEqual(shipper.ShipperId, createdShipper.ShipperId);
             Assert.AreEqual(shipper.CompanyName, createdShipper.CompanyName);
             Assert.AreEqual(shipper.Phone, createdShipper.Phone);
@@ -34,6 +35,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(updatedShipper);
             updatedShipper = DataHelper2.ShipperService.GetById(updatedShipper.ShipperId);
+            Assert.IsNotNull(updatedShipper);
             Assert.AreNotEqual(originalCompanyName, updatedShipper.CompanyName);
             Assert.AreNotEqual(originalPhone, updatedShipper.Phone);
             Assert.AreEqual(shipper.CompanyName, updatedShipper.CompanyName);

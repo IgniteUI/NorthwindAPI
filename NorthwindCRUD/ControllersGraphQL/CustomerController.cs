@@ -1,13 +1,13 @@
-﻿namespace NorthwindCRUD.Controllers
-{
-    using AutoMapper;
-    using GraphQL.AspNet.Attributes;
-    using GraphQL.AspNet.Controllers;
-    using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.Dtos;
-    using NorthwindCRUD.Models.InputModels;
-    using NorthwindCRUD.Services;
+﻿using AutoMapper;
+using GraphQL.AspNet.Attributes;
+using GraphQL.AspNet.Controllers;
+using NorthwindCRUD.Models.DbModels;
+using NorthwindCRUD.Models.Dtos;
+using NorthwindCRUD.Models.InputModels;
+using NorthwindCRUD.Services;
 
+namespace NorthwindCRUD.Controllers
+{
     [GraphRoute("customer")]
     public class CustomerGraphController : GraphController
     {
@@ -30,7 +30,7 @@
         }
 
         [Query]
-        public CustomerDto GetById(string id)
+        public CustomerDto? GetById(string id)
         {
             var customer = this.customerService.GetById(id);
 
@@ -45,22 +45,21 @@
         [Mutation]
         public CustomerDto Create(CustomerDto model)
         {
-
             var mappedModel = this.mapper.Map<CustomerDto, CustomerDb>(model);
             var customer = this.customerService.Create(mappedModel);
             return this.mapper.Map<CustomerDb, CustomerDto>(customer);
         }
 
         [Mutation]
-        public CustomerDto Update(CustomerDto model)
+        public CustomerDto? Update(CustomerDto model)
         {
             var mappedModel = this.mapper.Map<CustomerDto, CustomerDb>(model);
             var customer = this.customerService.Update(mappedModel);
-            return this.mapper.Map<CustomerDb, CustomerDto>(customer);
+            return customer != null ? this.mapper.Map<CustomerDb, CustomerDto>(customer) : null;
         }
 
         [Mutation]
-        public CustomerDto Delete(string id)
+        public CustomerDto? Delete(string id)
         {
             var customer = this.customerService.Delete(id);
 

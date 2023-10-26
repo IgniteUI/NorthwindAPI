@@ -13,7 +13,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(createdProduct);
             createdProduct = DataHelper2.ProductService.GetById(createdProduct.ProductId);
-
+            Assert.IsNotNull(createdProduct);
             Assert.AreEqual(product.UnitPrice, createdProduct.UnitPrice);
             Assert.AreEqual(product.UnitsInStock, createdProduct.UnitsInStock);
         }
@@ -31,7 +31,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(updatedProduct);
             updatedProduct = DataHelper2.ProductService.GetById(updatedProduct.ProductId);
-
+            Assert.IsNotNull(updatedProduct);
             Assert.AreNotEqual(originaUnitPrice, updatedProduct.UnitPrice);
             Assert.AreNotEqual(originaUnitsInStock, updatedProduct.UnitsInStock);
 

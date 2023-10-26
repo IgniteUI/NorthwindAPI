@@ -1,9 +1,9 @@
-﻿namespace NorthwindCRUD.Models.DbModels
-{
-    using NorthwindCRUD.Models.Contracts;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using NorthwindCRUD.Models.Contracts;
 
+namespace NorthwindCRUD.Models.DbModels
+{
     public class EmployeeDb : IEmployee
     {
         [Key]
@@ -32,7 +32,7 @@
 
         public int ReportsTo { get; set; }
 
-        public ICollection<EmployeeTerritoryDb> EmployeesTerritories { get; set; } =  new List<EmployeeTerritoryDb>();
+        public ICollection<EmployeeTerritoryDb> EmployeesTerritories { get; set; } = new List<EmployeeTerritoryDb>();
 
         public ICollection<OrderDb> Orders { get; set; } = new List<OrderDb>();
     }

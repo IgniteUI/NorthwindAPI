@@ -15,6 +15,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(createdRegion);
             createdRegion = DataHelper2.RegionService.GetById(createdRegion.RegionId);
+            Assert.IsNotNull(createdRegion);
             Assert.AreEqual(region.RegionId, createdRegion.RegionId);
             Assert.AreEqual(region.RegionDescription, createdRegion.RegionDescription);
         }
@@ -30,6 +31,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(updatedRegion);
             updatedRegion = DataHelper2.RegionService.GetById(updatedRegion.RegionId);
+            Assert.IsNotNull(updatedRegion);
             Assert.AreNotEqual(originalRegionDescription, updatedRegion.RegionDescription);
             Assert.AreEqual(region.RegionDescription, updatedRegion.RegionDescription);
         }

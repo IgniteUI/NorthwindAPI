@@ -1,9 +1,9 @@
-﻿namespace NorthwindCRUD.Models.Dtos
-{
-    using NorthwindCRUD.Models.Contracts;
-    using Swashbuckle.AspNetCore.Annotations;
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using NorthwindCRUD.Models.Contracts;
+using Swashbuckle.AspNetCore.Annotations;
 
+namespace NorthwindCRUD.Models.Dtos
+{
     public class EmployeeDto : IEmployee
     {
         [SwaggerSchema("Number automatically assigned to new employee.")]
@@ -20,7 +20,7 @@
         [SwaggerSchema("Employee's title")]
         public string Title { get; set; }
 
-        [SwaggerSchema("Title used in salutations")]        
+        [SwaggerSchema("Title used in salutations")]
         public string TitleOfCourtesy { get; set; }
 
         [SwaggerSchema("Employee's birth date", Format = "date")]
@@ -32,7 +32,7 @@
         public string AddressId { get; set; }
 
         public AddressDto Address { get; set; }
-        
+
         [SwaggerSchema("General information about employee's background.")]
         public string Notes { get; set; }
 

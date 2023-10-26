@@ -15,7 +15,7 @@ namespace NorthwindCRUD.Tests
 
             Assert.IsNotNull(createdSupplier);
             createdSupplier = DataHelper2.SupplierService.GetById(createdSupplier.SupplierId);
-
+            Assert.IsNotNull(createdSupplier);
             Assert.AreEqual(supplier.SupplierId, createdSupplier.SupplierId);
             Assert.AreEqual(supplier.CompanyName, createdSupplier.CompanyName);
             Assert.AreEqual(supplier.ContactName, createdSupplier.ContactName);
@@ -35,9 +35,9 @@ namespace NorthwindCRUD.Tests
             supplier.ContactTitle = "Updated Title";
 
             var updatedSupplier = DataHelper.SupplierService.Update(supplier);
-
             Assert.IsNotNull(updatedSupplier);
             updatedSupplier = DataHelper2.SupplierService.GetById(updatedSupplier.SupplierId);
+            Assert.IsNotNull(updatedSupplier);
             Assert.AreEqual(supplier.CompanyName, updatedSupplier.CompanyName);
             Assert.AreEqual(supplier.ContactName, updatedSupplier.ContactName);
             Assert.AreEqual(supplier.ContactTitle, updatedSupplier.ContactTitle);

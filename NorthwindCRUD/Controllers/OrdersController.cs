@@ -18,9 +18,9 @@
         private readonly ShipperService shipperService;
         private readonly ProductService productService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<OrdersController> logger;
 
-        public OrdersController(OrderService orderService, EmployeeService employeeService, CustomerService customerService, ShipperService shipperService, ProductService productService, IMapper mapper, ILogger logger)
+        public OrdersController(OrderService orderService, EmployeeService employeeService, CustomerService customerService, ShipperService shipperService, ProductService productService, IMapper mapper, ILogger<OrdersController> logger)
         {
             this.orderService = orderService;
             this.employeeService = employeeService;
@@ -93,7 +93,7 @@
             try
             {
                 var order = this.orderService.GetById(id);
-                if (order != null)
+                if (order != null && order.CustomerId != null)
                 {
                     var customer = this.customerService.GetById(order.CustomerId);
 
@@ -160,7 +160,6 @@
                 return StatusCode(500);
             }
         }
-
 
         [HttpGet("{id}/Products")]
         public ActionResult<ProductDto[]> GetProductsByOrderId(int id)

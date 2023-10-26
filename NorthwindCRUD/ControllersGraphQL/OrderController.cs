@@ -1,13 +1,12 @@
-﻿namespace NorthwindCRUD.Controllers
-{
-    using AutoMapper;
-    using GraphQL.AspNet.Attributes;
-    using GraphQL.AspNet.Controllers;
-    using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.Dtos;
-    using NorthwindCRUD.Models.InputModels;
-    using NorthwindCRUD.Services;
+﻿using AutoMapper;
+using GraphQL.AspNet.Attributes;
+using GraphQL.AspNet.Controllers;
+using NorthwindCRUD.Models.DbModels;
+using NorthwindCRUD.Models.Dtos;
+using NorthwindCRUD.Services;
 
+namespace NorthwindCRUD.Controllers
+{
     [GraphRoute("order")]
     public class OrderGraphController : GraphController
     {
@@ -28,9 +27,9 @@
             var orders = this.orderService.GetAll();
             return this.mapper.Map<OrderDb[], OrderDto[]>(orders);
         }
-        
+
         [Query]
-        public OrderDto GetById(int id)
+        public OrderDto? GetById(int id)
         {
             var order = this.orderService.GetById(id);
 
@@ -51,15 +50,15 @@
         }
 
         [Mutation]
-        public OrderDto Update(OrderDto model)
+        public OrderDto? Update(OrderDto model)
         {
             var mappedModel = this.mapper.Map<OrderDto, OrderDb>(model);
             var order = this.orderService.Update(mappedModel);
-            return this.mapper.Map<OrderDb, OrderDto>(order);
+            return order != null ? this.mapper.Map<OrderDb, OrderDto>(order) : null;
         }
 
         [Mutation]
-        public OrderDto Delete(int id)
+        public OrderDto? Delete(int id)
         {
             var order = this.orderService.Delete(id);
 

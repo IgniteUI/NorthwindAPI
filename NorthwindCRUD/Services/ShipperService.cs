@@ -17,7 +17,7 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Shippers.ToArray();
         }
 
-        public ShipperDb GetById(int id)
+        public ShipperDb? GetById(int id)
         {
             return this.dataContext.Shippers.FirstOrDefault(p => p.ShipperId == id);
         }
@@ -31,6 +31,7 @@ namespace NorthwindCRUD.Services
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.ShipperId = id;
 
             PropertyHelper<ShipperDb>.MakePropertiesEmptyIfNull(model);
@@ -41,13 +42,13 @@ namespace NorthwindCRUD.Services
             return shipperEntity.Entity;
         }
 
-        public ShipperDb Update(ShipperDb model)
+        public ShipperDb? Update(ShipperDb model)
         {
             var shipperEntity = this.dataContext.Shippers.FirstOrDefault(p => p.ShipperId == model.ShipperId);
             if (shipperEntity != null)
             {
                 shipperEntity.Phone = model.Phone != null ? model.Phone : shipperEntity.Phone;
-                shipperEntity.CompanyName= model.CompanyName != null ? model.CompanyName : shipperEntity.CompanyName;
+                shipperEntity.CompanyName = model.CompanyName != null ? model.CompanyName : shipperEntity.CompanyName;
 
                 this.dataContext.SaveChanges();
             }
@@ -55,7 +56,7 @@ namespace NorthwindCRUD.Services
             return shipperEntity;
         }
 
-        public ShipperDb Delete(int id)
+        public ShipperDb? Delete(int id)
         {
             var shipperEntity = this.GetById(id);
             if (shipperEntity != null)

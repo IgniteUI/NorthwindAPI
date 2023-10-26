@@ -18,7 +18,7 @@ namespace NorthwindCRUD.Controllers
         {
             this.categoryService = categoryService;
             this.mapper = mapper;
-            this.logger = logger;   
+            this.logger = logger;
         }
 
         [Query]
@@ -50,15 +50,16 @@ namespace NorthwindCRUD.Controllers
         }
 
         [Mutation]
-        public CategoryDto Update(CategoryDto model)
+        public CategoryDto? Update(CategoryDto model)
         {
             var mappedModel = this.mapper.Map<CategoryDto, CategoryDb>(model);
             var category = this.categoryService.Update(mappedModel);
-            return this.mapper.Map<CategoryDb, CategoryDto>(category);
+
+            return category != null ? this.mapper.Map<CategoryDb, CategoryDto>(category) : null;
         }
 
         [Mutation]
-        public CategoryDto Delete(int id)
+        public CategoryDto? Delete(int id)
         {
             var category = this.categoryService.Delete(id);
 
