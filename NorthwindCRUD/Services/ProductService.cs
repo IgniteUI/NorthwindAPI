@@ -45,12 +45,12 @@ namespace NorthwindCRUD.Services
         {
             if (this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             if (this.dataContext.Suppliers.FirstOrDefault(s => s.SupplierId == model.SupplierId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             var id = IdGenerator.CreateDigitsId();
@@ -75,12 +75,12 @@ namespace NorthwindCRUD.Services
         {
             if (this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             if (this.dataContext.Suppliers.FirstOrDefault(s => s.SupplierId == model.SupplierId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             var productEntity = this.dataContext.Products.FirstOrDefault(p => p.ProductId == model.ProductId);

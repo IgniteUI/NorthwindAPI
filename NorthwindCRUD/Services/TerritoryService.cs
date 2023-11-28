@@ -33,7 +33,7 @@ namespace NorthwindCRUD.Services
         {
             if (this.dataContext.Regions.FirstOrDefault(r => r.RegionId == model.RegionId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             var id = IdGenerator.CreateDigitsId().ToString(CultureInfo.InvariantCulture);
@@ -58,7 +58,7 @@ namespace NorthwindCRUD.Services
         {
             if (this.dataContext.Regions.FirstOrDefault(r => r.RegionId == model.RegionId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             var territoryEntity = this.dataContext.Territories.FirstOrDefault(p => p.TerritoryId == model.TerritoryId);
