@@ -76,17 +76,17 @@ namespace NorthwindCRUD.Services
         {
             if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId?.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             var id = IdGenerator.CreateDigitsId();
@@ -123,12 +123,12 @@ namespace NorthwindCRUD.Services
 
             if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             var orderEntity = this.dataContext.Orders

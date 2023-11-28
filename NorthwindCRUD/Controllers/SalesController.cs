@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NorthwindCRUD.Models.Dtos;
 using NorthwindCRUD.Services;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace NorthwindCRUD.Controllers
 {
@@ -41,8 +42,8 @@ namespace NorthwindCRUD.Controllers
         [Authorize]
         public ActionResult<SalesDto[]> GetSalesByCountry(
             string country,
-            [FromQuery] [Required] string startDate,
-            [FromQuery] [Required] string endDate)
+            [FromQuery] [Required] [DataType(DataType.Date)] [SwaggerParameter("Start date in YYYY-MM-DD format")] string startDate,
+            [FromQuery] [Required] [DataType(DataType.Date)] [SwaggerParameter("End date in YYYY-MM-DD format")] string endDate)
         {
             try
             {
