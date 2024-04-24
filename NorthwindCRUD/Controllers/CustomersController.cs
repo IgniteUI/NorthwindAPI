@@ -3,9 +3,11 @@
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using NorthwindCRUD;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -76,7 +78,9 @@
         }
 
         [HttpPost]
-        [Authorize]
+        [SwaggerResponse(400, "No! No! Your inputs do not pass validation!", typeof(Errors), "text/json")]
+        [SwaggerResponse(401, "No! No! Not authenticated!", typeof(AuthenticationError), "text/json")]
+        // [Authorize]
         public ActionResult<CustomerDto> Create(CustomerDto model)
         {
             try
