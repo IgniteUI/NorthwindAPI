@@ -78,8 +78,8 @@
         }
 
         [HttpPost]
-        [SwaggerResponse(400, "No! No! Your inputs do not pass validation!", typeof(Errors), "text/json")]
-        [SwaggerResponse(401, "No! No! Not authenticated!", typeof(CustomError), "text/json")]
+        [SwaggerResponse(400, "Your inputs do not pass validation!", typeof(Errors), "text/json")]
+        [SwaggerResponse(401, "Not authenticated!", typeof(CustomError), "text/json")]
 
         // [Authorize]
         public ActionResult<CustomerDto> Create(CustomerDto model)
@@ -131,8 +131,8 @@
         }
 
         [HttpDelete("{id}")]
-        [SwaggerResponse(401, "No! No! Not authenticated!", typeof(CustomError), "text/json")]
-        [SwaggerResponse(404, "No! No! Your client is not found!", typeof(CustomError), "text/json")]
+        [SwaggerResponse(401, "Not authenticated!", typeof(CustomError), "text/json")]
+        [SwaggerResponse(404, "Your client is not found!", typeof(CustomError), "text/json")]
 
         // [Authorize]
         public ActionResult<CustomerDto> Delete(string id)
