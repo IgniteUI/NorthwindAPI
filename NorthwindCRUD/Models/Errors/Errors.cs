@@ -1,10 +1,9 @@
-﻿namespace NorthwindCRUD
+﻿namespace NorthwindCRUD.Models.Errors
 {
     public class Errors
     {
         public Errors()
         {
-            ValidationError[] customErrors;
         }
 
         public ValidationError[] CustomErrors { get; set; }

@@ -3,9 +3,9 @@
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using NorthwindCRUD;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
+    using NorthwindCRUD.Models.Errors;
     using NorthwindCRUD.Services;
     using Swashbuckle.AspNetCore.Annotations;
 
@@ -79,7 +79,8 @@
 
         [HttpPost]
         [SwaggerResponse(400, "No! No! Your inputs do not pass validation!", typeof(Errors), "text/json")]
-        [SwaggerResponse(401, "No! No! Not authenticated!", typeof(AuthenticationError), "text/json")]
+        [SwaggerResponse(401, "No! No! Not authenticated!", typeof(CustomError), "text/json")]
+
         // [Authorize]
         public ActionResult<CustomerDto> Create(CustomerDto model)
         {
@@ -130,7 +131,10 @@
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [SwaggerResponse(401, "No! No! Not authenticated!", typeof(CustomError), "text/json")]
+        [SwaggerResponse(404, "No! No! Your client is not found!", typeof(CustomError), "text/json")]
+
+        // [Authorize]
         public ActionResult<CustomerDto> Delete(string id)
         {
             try
