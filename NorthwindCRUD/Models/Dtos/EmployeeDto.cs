@@ -7,7 +7,6 @@ namespace NorthwindCRUD.Models.Dtos
     public class EmployeeDto : IEmployee
     {
         [SwaggerSchema("Number automatically assigned to new employee.")]
-        [MinLength(8)] // Min length comes from IdGenerator.CreateDigitsId
         [Required]
         public int EmployeeId { get; set; }
 
