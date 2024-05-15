@@ -78,7 +78,7 @@
         }
 
         [HttpPost]
-        [SwaggerResponse(400, "Your inputs do not pass validation!", typeof(Errors), "text/json")]
+        [SwaggerResponse(400, "Invalid input data!", typeof(Errors), "text/json")]
         [SwaggerResponse(401, "Not authenticated!", typeof(CustomError), "text/json")]
 
         // [Authorize]
