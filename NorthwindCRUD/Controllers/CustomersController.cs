@@ -131,7 +131,7 @@
         }
 
         [HttpDelete("{id}")]
-        [SwaggerResponse(401, "Not authenticated!", typeof(CustomError), "text/json")]
+        [SwaggerResponse(401, "Unauthorized!", typeof(CustomError), "text/json")]
         [SwaggerResponse(404, "Your client is not found!", typeof(CustomError), "text/json")]
 
         // [Authorize]
