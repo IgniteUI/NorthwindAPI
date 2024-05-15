@@ -79,7 +79,7 @@
 
         [HttpPost]
         [SwaggerResponse(400, "Invalid input data!", typeof(Errors), "text/json")]
-        [SwaggerResponse(401, "Not authenticated!", typeof(CustomError), "text/json")]
+        [SwaggerResponse(401, "Unauthorized!", typeof(CustomError), "text/json")]
 
         // [Authorize]
         public ActionResult<CustomerDto> Create(CustomerDto model)
