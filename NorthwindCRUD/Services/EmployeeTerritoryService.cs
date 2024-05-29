@@ -1,24 +1,21 @@
-﻿namespace NorthwindCRUD.Services
+﻿using System.Globalization;
+using Microsoft.EntityFrameworkCore;
+using NorthwindCRUD.Constants;
+using NorthwindCRUD.Models.DbModels;
+
+namespace NorthwindCRUD.Services
 {
-    using AutoMapper;
-    using Microsoft.EntityFrameworkCore;
-    using NorthwindCRUD.Constants;
-    using NorthwindCRUD.Models.Contracts;
-    using NorthwindCRUD.Models.DbModels;
-
-
     public class EmployeeTerritoryService
     {
-        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public EmployeeTerritoryService(IMapper mapper, DataContext dataContext)
+        public EmployeeTerritoryService(DataContext dataContext)
         {
-            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 
-        public EmployeeDb[] GetEmployeesByTerritoryId(string id)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1011:Closing square brackets should be spaced correctly", Justification = "Need to return nullable type")]
+        public EmployeeDb[]? GetEmployeesByTerritoryId(string id)
         {
             var territory = this.dataContext.Territories
                 .Include(t => t.EmployeesTerritories)
@@ -33,10 +30,9 @@
             return null;
         }
 
-        
-        public TerritoryDb[] GetTeritoriesByEmployeeId(int id)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1011:Closing square brackets should be spaced correctly", Justification = "Need to return nullable type")]
+        public TerritoryDb[]? GetTeritoriesByEmployeeId(int id)
         {
-
             var employee = this.dataContext.Employees
                 .Include(c => c.Address)
                 .Include(c => c.EmployeesTerritories)
@@ -47,6 +43,7 @@
             {
                 return employee.EmployeesTerritories.Select(et => et.Territory).ToArray();
             }
+
             return null;
         }
 
@@ -54,18 +51,18 @@
         {
             if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId.ToString(CultureInfo.InvariantCulture)));
             }
 
             if (this.dataContext.Territories.FirstOrDefault(t => t.TerritoryId == model.TerritoryId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Territory), model.TerritoryId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Territory), model.TerritoryId.ToString()));
             }
 
             var employeeTerritory = new EmployeeTerritoryDb
             {
                 EmployeeId = model.EmployeeId,
-                TerritoryId = model.TerritoryId
+                TerritoryId = model.TerritoryId,
             };
 
             dataContext.EmployeesTerritories.Add(employeeTerritory);

@@ -1,9 +1,9 @@
-﻿namespace NorthwindCRUD.Models.DbModels
-{
-    using NorthwindCRUD.Models.Contracts;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using NorthwindCRUD.Models.Contracts;
 
+namespace NorthwindCRUD.Models.DbModels
+{
     public class AddressDb : IAddress
     {
         [Key]
@@ -27,6 +27,5 @@
         public ICollection<EmployeeDb> Employees { get; set; }
 
         public ICollection<OrderDb> Orders { get; set; }
-
     }
 }

@@ -4,17 +4,22 @@
 
     public static class PropertyHelper<T>
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "Need generic type here")]
         public static void MakePropertiesEmptyIfNull(T model)
         {
             if (model != null)
             {
-                foreach (PropertyInfo prop in model?.GetType()?.GetProperties())
+                var properties = model?.GetType()?.GetProperties();
+                if (properties != null)
                 {
-                    var value = prop.GetValue(model);
-                    var type = prop.PropertyType;
-                    if (value == null && type == typeof(string))
+                    foreach (PropertyInfo prop in properties)
                     {
-                        prop.SetValue(model, "");
+                        var value = prop.GetValue(model);
+                        var type = prop.PropertyType;
+                        if (value == null && type == typeof(string))
+                        {
+                            prop.SetValue(model, string.Empty);
+                        }
                     }
                 }
             }

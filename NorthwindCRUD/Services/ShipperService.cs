@@ -1,20 +1,14 @@
-﻿namespace NorthwindCRUD.Services
-{
-    using AutoMapper;
-    using Microsoft.EntityFrameworkCore;
-    using NorthwindCRUD.Helpers;
-    using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.Dtos;
+﻿using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Models.DbModels;
 
+namespace NorthwindCRUD.Services
+{
     public class ShipperService
     {
-
-        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public ShipperService(IMapper mapper, DataContext dataContext)
+        public ShipperService(DataContext dataContext)
         {
-            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 
@@ -23,7 +17,7 @@
             return this.dataContext.Shippers.ToArray();
         }
 
-        public ShipperDb GetById(int id)
+        public ShipperDb? GetById(int id)
         {
             return this.dataContext.Shippers.FirstOrDefault(p => p.ShipperId == id);
         }
@@ -37,6 +31,7 @@
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.ShipperId = id;
 
             PropertyHelper<ShipperDb>.MakePropertiesEmptyIfNull(model);
@@ -47,13 +42,13 @@
             return shipperEntity.Entity;
         }
 
-        public ShipperDb Update(ShipperDb model)
+        public ShipperDb? Update(ShipperDb model)
         {
             var shipperEntity = this.dataContext.Shippers.FirstOrDefault(p => p.ShipperId == model.ShipperId);
             if (shipperEntity != null)
             {
                 shipperEntity.Phone = model.Phone != null ? model.Phone : shipperEntity.Phone;
-                shipperEntity.CompanyName= model.CompanyName != null ? model.CompanyName : shipperEntity.CompanyName;
+                shipperEntity.CompanyName = model.CompanyName != null ? model.CompanyName : shipperEntity.CompanyName;
 
                 this.dataContext.SaveChanges();
             }
@@ -61,7 +56,7 @@
             return shipperEntity;
         }
 
-        public ShipperDb Delete(int id)
+        public ShipperDb? Delete(int id)
         {
             var shipperEntity = this.GetById(id);
             if (shipperEntity != null)

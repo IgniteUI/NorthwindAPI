@@ -1,16 +1,16 @@
-﻿namespace NorthwindCRUD.Models.DbModels
-{
-    using NorthwindCRUD.Models.Contracts;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using NorthwindCRUD.Models.Contracts;
 
+namespace NorthwindCRUD.Models.DbModels
+{
     public class CustomerDb : ICustomer
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string CustomerId { get; set; }
 
-        public string? CompanyName { get; set; }
+        public string CompanyName { get; set; }
 
         public string ContactName { get; set; }
 

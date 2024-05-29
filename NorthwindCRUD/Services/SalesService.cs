@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NorthwindCRUD.Models.DbModels;
+﻿using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 using NorthwindCRUD.Models.Dtos;
-using System;
-using System.Globalization;
 
 namespace NorthwindCRUD.Services
 {
@@ -21,6 +19,7 @@ namespace NorthwindCRUD.Services
             {
                 throw new ArgumentException("Category name is required.", nameof(categoryName));
             }
+
             var salesData = this.dataContext.OrderDetails
                 .Include(o => o.Order)
                 .Include(od => od.Product)
@@ -28,13 +27,13 @@ namespace NorthwindCRUD.Services
             .ToList();
 
             var filteredData = salesData
-                .Where(od => od.Product.Category.Name == categoryName)
+                .Where(od => od.Product.Category?.Name == categoryName)
             .ToList();
 
             if (orderYear != null)
             {
                 filteredData = salesData
-                .Where(od => od.Product.Category.Name == categoryName &&
+                .Where(od => od.Product.Category?.Name == categoryName &&
                             ConvertToOrderDate(od.Order.OrderDate).Year == orderYear)
                 .ToList();
             }
@@ -43,7 +42,7 @@ namespace NorthwindCRUD.Services
             {
                 ProductId = od.Product.ProductId,
                 QuantitySold = od.Quantity,
-                SaleAmount = od.Quantity * od.UnitPrice
+                SaleAmount = od.Quantity * od.UnitPrice,
             }).ToArray();
 
             return sales;
@@ -51,7 +50,6 @@ namespace NorthwindCRUD.Services
 
         public SalesDto[] RetrieveSalesDataByCountry(string startDate, string endDate, string country)
         {
-
             if (string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
             {
                 throw new ArgumentException("startDate and endDate are required.");
@@ -61,7 +59,8 @@ namespace NorthwindCRUD.Services
             {
                 throw new ArgumentException("Invalid date format for startDate or endDate.");
             }
-            string normalizedCountry = country.ToLower();
+
+            string normalizedCountry = country.ToLower(CultureInfo.InvariantCulture);
 
             var salesData = this.dataContext.OrderDetails
                 .Include(o => o.Order)
@@ -72,14 +71,14 @@ namespace NorthwindCRUD.Services
             .ToList();
 
             var filteredData = salesData
-            .Where(od => od.Order.ShipAddress.Country.ToLower() == normalizedCountry && DateTime.Parse(od.Order.OrderDate) >= parsedStartDate && DateTime.Parse(od.Order.RequiredDate) <= parsedEndDate)
+            .Where(od => od.Order.ShipAddress?.Country.ToLower(CultureInfo.InvariantCulture) == normalizedCountry && DateTime.Parse(od.Order.OrderDate, CultureInfo.InvariantCulture) >= parsedStartDate && DateTime.Parse(od.Order.RequiredDate, CultureInfo.InvariantCulture) <= parsedEndDate)
             .ToList();
 
             var sales = filteredData.Select(od => new SalesDto
             {
                 ProductId = od.Product.ProductId,
                 QuantitySold = od.Quantity,
-                SaleAmount = od.Quantity * od.UnitPrice
+                SaleAmount = od.Quantity * od.UnitPrice,
             }).ToArray();
 
             return sales;
@@ -91,6 +90,7 @@ namespace NorthwindCRUD.Services
             {
                throw new ArgumentException("Year is required.", nameof(year));
             }
+
             var salesData = this.dataContext.OrderDetails
                 .Include(o => o.Order)
                 .Include(od => od.Product)
@@ -99,7 +99,6 @@ namespace NorthwindCRUD.Services
             var filteredData = salesData
             .Where(od => ConvertToOrderDate(od.Order.OrderDate).Year == year)
             .ToList();
-
 
             if (startMonth != 0)
             {
@@ -117,7 +116,7 @@ namespace NorthwindCRUD.Services
             {
                 ProductId = od.Product.ProductId,
                 QuantitySold = od.Quantity,
-                SaleAmount = od.Quantity * od.UnitPrice
+                SaleAmount = od.Quantity * od.UnitPrice,
             }).ToArray();
 
             return sales;
@@ -129,6 +128,7 @@ namespace NorthwindCRUD.Services
             {
                 return result;
             }
+
             throw new ArgumentException("Invalid date format");
         }
     }

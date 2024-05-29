@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Models.DbModels;
-using System.Reflection;
 
 namespace NorthwindCRUD.Services
 {
@@ -21,7 +20,7 @@ namespace NorthwindCRUD.Services
                 .ToArray();
         }
 
-        public CustomerDb GetById(string id)
+        public CustomerDb? GetById(string id)
         {
             return this.dataContext.Customers
                 .Include(c => c.Address)
@@ -37,24 +36,28 @@ namespace NorthwindCRUD.Services
                 id = IdGenerator.CreateLetterId(6);
                 existWithId = this.GetById(id);
             }
+
             model.CustomerId = id;
 
             PropertyHelper<CustomerDb>.MakePropertiesEmptyIfNull(model);
 
             if (model.Address == null)
             {
-                var emptyAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == "");
-                model.Address = emptyAddress;
-                model.AddressId = emptyAddress.AddressId;
+                var emptyAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == string.Empty);
+                if (emptyAddress != null)
+                {
+                    model.Address = emptyAddress;
+                    model.AddressId = emptyAddress.AddressId;
+                }
             }
 
             var customerEntity = this.dataContext.Customers.Add(model);
             this.dataContext.SaveChanges();
-            
+
             return customerEntity.Entity;
         }
 
-        public CustomerDb Update(CustomerDb model)
+        public CustomerDb? Update(CustomerDb model)
         {
             var customerEntity = this.dataContext.Customers
                 .Include(c => c.Address)
@@ -91,7 +94,7 @@ namespace NorthwindCRUD.Services
             return customerEntity;
         }
 
-        public CustomerDb Delete(string id)
+        public CustomerDb? Delete(string id)
         {
             var customerEntity = this.GetById(id);
             if (customerEntity != null)

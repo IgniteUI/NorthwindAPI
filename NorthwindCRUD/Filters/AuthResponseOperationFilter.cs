@@ -8,26 +8,27 @@
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            var authAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
+            var authAttributes = context.MethodInfo?.DeclaringType?.GetCustomAttributes(true)
                 .Union(context.MethodInfo.GetCustomAttributes(true))
                 .OfType<AuthorizeAttribute>();
 
-            if (authAttributes.Any())
+            if (authAttributes != null && authAttributes.Any())
             {
                 var securityRequirement = new OpenApiSecurityRequirement()
-            {
                 {
-                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer",
+                            },
+                        },
+                        new List<string>()
                     },
-                    new List<string>()
-                }
-            };
+                };
+
                 operation.Security = new List<OpenApiSecurityRequirement> { securityRequirement };
                 operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
             }

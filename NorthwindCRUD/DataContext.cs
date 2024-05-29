@@ -3,27 +3,37 @@
     using Microsoft.EntityFrameworkCore;
     using NorthwindCRUD.Models.DbModels;
 
-    public class DataContext :  DbContext
+    public class DataContext : DbContext
     {
-        protected readonly IConfiguration Configuration;
-
-        public DataContext(DbContextOptions options) : base(options)
+        public DataContext(DbContextOptions options)
+            : base(options)
         {
-            
         }
 
         public DbSet<AddressDb> Addresses { get; set; }
+
         public DbSet<CategoryDb> Categories { get; set; }
+
         public DbSet<CustomerDb> Customers { get; set; }
+
         public DbSet<EmployeeDb> Employees { get; set; }
+
         public DbSet<OrderDb> Orders { get; set; }
+
         public DbSet<OrderDetailDb> OrderDetails { get; set; }
+
         public DbSet<UserDb> Users { get; set; }
+
         public DbSet<ProductDb> Products { get; set; }
+
         public DbSet<RegionDb> Regions { get; set; }
+
         public DbSet<ShipperDb> Shippers { get; set; }
+
         public DbSet<SupplierDb> Suppliers { get; set; }
+
         public DbSet<TerritoryDb> Territories { get; set; }
+
         public DbSet<EmployeeTerritoryDb> EmployeesTerritories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -88,7 +98,6 @@
                 .WithMany(t => t.EmployeesTerritories);
 
             //Composite Keys
-
             modelBuilder.Entity<EmployeeTerritoryDb>()
                 .HasKey(et => new { et.EmployeeId, et.TerritoryId });
 

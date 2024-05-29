@@ -15,9 +15,9 @@
         private readonly EmployeeTerritoryService employeeTerritoryService;
         private readonly OrderService ordersService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<EmployeesController> logger;
 
-        public EmployeesController(EmployeeService employeeService, EmployeeTerritoryService employeeTerritoryService, OrderService ordersService, IMapper mapper, ILogger logger)
+        public EmployeesController(EmployeeService employeeService, EmployeeTerritoryService employeeTerritoryService, OrderService ordersService, IMapper mapper, ILogger<EmployeesController> logger)
         {
             this.employeeService = employeeService;
             this.employeeTerritoryService = employeeTerritoryService;
@@ -123,6 +123,11 @@
             try
             {
                 var teritories = this.employeeTerritoryService.GetTeritoriesByEmployeeId(id);
+                if (teritories == null)
+                {
+                    return NotFound($"No territories for employee {id}");
+                }
+
                 return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(teritories));
             }
             catch (Exception error)
@@ -144,6 +149,7 @@
                     var employeeTerrirtory = this.employeeTerritoryService.AddTerritoryToEmployee(mappedModel);
                     return Ok(this.mapper.Map<EmployeeTerritoryDb, EmployeeTerritoryDto>(employeeTerrirtory));
                 }
+
                 return BadRequest(ModelState);
             }
             catch (InvalidOperationException exception)

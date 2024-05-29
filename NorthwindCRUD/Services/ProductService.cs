@@ -1,19 +1,16 @@
-﻿namespace NorthwindCRUD.Services
-{
-    using AutoMapper;
-    using NorthwindCRUD.Constants;
-    using NorthwindCRUD.Helpers;
-    using NorthwindCRUD.Models.DbModels;
+﻿using System.Globalization;
+using NorthwindCRUD.Constants;
+using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Models.DbModels;
 
+namespace NorthwindCRUD.Services
+{
     public class ProductService
     {
-
-        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public ProductService(IMapper mapper, DataContext dataContext)
+        public ProductService(DataContext dataContext)
         {
-            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 
@@ -22,7 +19,7 @@
             return this.dataContext.Products.ToArray();
         }
 
-        public ProductDb GetById(int id)
+        public ProductDb? GetById(int id)
         {
             return this.dataContext.Products.FirstOrDefault(p => p.ProductId == id);
         }
@@ -46,14 +43,14 @@
 
         public ProductDb Create(ProductDb model)
         {
-            if(this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
+            if (this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             if (this.dataContext.Suppliers.FirstOrDefault(s => s.SupplierId == model.SupplierId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             var id = IdGenerator.CreateDigitsId();
@@ -63,6 +60,7 @@
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.ProductId = id;
 
             PropertyHelper<ProductDb>.MakePropertiesEmptyIfNull(model);
@@ -73,16 +71,16 @@
             return productEntity.Entity;
         }
 
-        public ProductDb Update(ProductDb model)
+        public ProductDb? Update(ProductDb model)
         {
             if (this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Category), model.CategoryId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             if (this.dataContext.Suppliers.FirstOrDefault(s => s.SupplierId == model.SupplierId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             var productEntity = this.dataContext.Products.FirstOrDefault(p => p.ProductId == model.ProductId);
@@ -103,7 +101,7 @@
             return productEntity;
         }
 
-        public ProductDb Delete(int id)
+        public ProductDb? Delete(int id)
         {
             var productEntity = this.GetById(id);
             if (productEntity != null)

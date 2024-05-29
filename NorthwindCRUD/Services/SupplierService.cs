@@ -1,20 +1,14 @@
-﻿namespace NorthwindCRUD.Services
-{
-    using AutoMapper;
-    using Microsoft.EntityFrameworkCore;
-    using NorthwindCRUD.Helpers;
-    using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.Dtos;
+﻿using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Models.DbModels;
 
+namespace NorthwindCRUD.Services
+{
     public class SupplierService
     {
-
-        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public SupplierService(IMapper mapper, DataContext dataContext)
+        public SupplierService(DataContext dataContext)
         {
-            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 
@@ -23,7 +17,7 @@
             return this.dataContext.Suppliers.ToArray();
         }
 
-        public SupplierDb GetById(int id)
+        public SupplierDb? GetById(int id)
         {
             return this.dataContext.Suppliers.FirstOrDefault(p => p.SupplierId == id);
         }
@@ -37,6 +31,7 @@
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.SupplierId = id;
 
             PropertyHelper<SupplierDb>.MakePropertiesEmptyIfNull(model);
@@ -47,7 +42,7 @@
             return supplierEntity.Entity;
         }
 
-        public SupplierDb Update(SupplierDb model)
+        public SupplierDb? Update(SupplierDb model)
         {
             var supplierEntity = this.dataContext.Suppliers.FirstOrDefault(p => p.SupplierId == model.SupplierId);
             if (supplierEntity != null)
@@ -70,7 +65,7 @@
             return supplierEntity;
         }
 
-        public SupplierDb Delete(int id)
+        public SupplierDb? Delete(int id)
         {
             var supplierEntity = this.GetById(id);
             if (supplierEntity != null)

@@ -15,9 +15,9 @@
         private readonly ShipperService shipperService;
         private readonly OrderService orderService;
         private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly ILogger<ShippersController> logger;
 
-        public ShippersController(ShipperService shipperService, OrderService orderService, IMapper mapper, ILogger logger)
+        public ShippersController(ShipperService shipperService, OrderService orderService, IMapper mapper, ILogger<ShippersController> logger)
         {
             this.shipperService = shipperService;
             this.orderService = orderService;
@@ -38,7 +38,6 @@
                 logger.LogError(error.Message);
                 return StatusCode(500);
             }
-
         }
 
         [HttpGet("{id}")]

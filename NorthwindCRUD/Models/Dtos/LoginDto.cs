@@ -1,8 +1,8 @@
-﻿namespace NorthwindCRUD.Models.Dtos
-{
-    using NorthwindCRUD.Models.Contracts;
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using NorthwindCRUD.Models.Contracts;
 
+namespace NorthwindCRUD.Models.Dtos
+{
     public class LoginDto : IUser
     {
         [EmailAddress]

@@ -1,21 +1,16 @@
-﻿namespace NorthwindCRUD.Services
-{
-    using AutoMapper;
-    using Microsoft.EntityFrameworkCore;
-    using NorthwindCRUD.Constants;
-    using NorthwindCRUD.Helpers;
-    using NorthwindCRUD.Models.DbModels;
-    using NorthwindCRUD.Models.Dtos;
+﻿using System.Globalization;
+using NorthwindCRUD.Constants;
+using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Models.DbModels;
 
+namespace NorthwindCRUD.Services
+{
     public class TerritoryService
     {
-
-        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public TerritoryService(IMapper mapper, DataContext dataContext)
+        public TerritoryService(DataContext dataContext)
         {
-            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 
@@ -24,31 +19,31 @@
             return this.dataContext.Territories.ToArray();
         }
 
-        public TerritoryDb GetById(string id)
+        public TerritoryDb? GetById(string id)
         {
             return this.dataContext.Territories.FirstOrDefault(t => t.TerritoryId == id);
         }
 
-
         public TerritoryDb[] GetTerritoriesByRegionId(int id)
         {
             return this.dataContext.Territories.Where(t => t.RegionId == id).ToArray();
-        } 
+        }
 
         public TerritoryDb Create(TerritoryDb model)
         {
             if (this.dataContext.Regions.FirstOrDefault(r => r.RegionId == model.RegionId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId?.ToString(CultureInfo.InvariantCulture)));
             }
 
-            var id = IdGenerator.CreateDigitsId().ToString();
+            var id = IdGenerator.CreateDigitsId().ToString(CultureInfo.InvariantCulture);
             var existWithId = this.GetById(id);
             while (existWithId != null)
             {
-                id = IdGenerator.CreateDigitsId().ToString();
+                id = IdGenerator.CreateDigitsId().ToString(CultureInfo.InvariantCulture);
                 existWithId = this.GetById(id);
             }
+
             model.TerritoryId = id;
 
             PropertyHelper<TerritoryDb>.MakePropertiesEmptyIfNull(model);
@@ -59,11 +54,11 @@
             return territoryEntity.Entity;
         }
 
-        public TerritoryDb Update(TerritoryDb model)
+        public TerritoryDb? Update(TerritoryDb model)
         {
             if (this.dataContext.Regions.FirstOrDefault(r => r.RegionId == model.RegionId) == null)
             {
-                throw new InvalidOperationException(string.Format(StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId.ToString()));
+                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId?.ToString(CultureInfo.InvariantCulture)));
             }
 
             var territoryEntity = this.dataContext.Territories.FirstOrDefault(p => p.TerritoryId == model.TerritoryId);
@@ -78,7 +73,7 @@
             return territoryEntity;
         }
 
-        public TerritoryDb Delete(string id)
+        public TerritoryDb? Delete(string id)
         {
             var territoryEntity = this.GetById(id);
             if (territoryEntity != null)

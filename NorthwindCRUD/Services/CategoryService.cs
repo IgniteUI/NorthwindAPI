@@ -1,18 +1,14 @@
 ﻿namespace NorthwindCRUD.Services
 {
-    using AutoMapper;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
 
     public class CategoryService
     {
-
-        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public CategoryService(IMapper mapper, DataContext dataContext)
+        public CategoryService(DataContext dataContext)
         {
-            this.mapper = mapper;
             this.dataContext = dataContext;
         }
 
@@ -21,7 +17,7 @@
             return this.dataContext.Categories.ToArray();
         }
 
-        public CategoryDb GetById(int id)
+        public CategoryDb? GetById(int id)
         {
             return this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == id);
         }
@@ -35,6 +31,7 @@
                 id = IdGenerator.CreateDigitsId();
                 existWithId = this.GetById(id);
             }
+
             model.CategoryId = id;
 
             PropertyHelper<CategoryDb>.MakePropertiesEmptyIfNull(model);
@@ -45,7 +42,7 @@
             return categoryEntity.Entity;
         }
 
-        public CategoryDb Update(CategoryDb model)
+        public CategoryDb? Update(CategoryDb model)
         {
             var categoryEntity = this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId);
             if (categoryEntity != null)
@@ -60,7 +57,7 @@
             return categoryEntity;
         }
 
-        public CategoryDb Delete(int id)
+        public CategoryDb? Delete(int id)
         {
             var categoryEntity = this.GetById(id);
             if (categoryEntity != null)
