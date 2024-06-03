@@ -52,26 +52,35 @@ namespace NorthwindCRUD.Controllers
         [HttpGet("GetAllPagedProducts")]
         public ActionResult<ProductDtoCollection> GetAllProducts(int? skip, int? top)
         {
-            int skipRecordsAmount = skip ?? 0;
-            int currentSize = top ?? 0;
-
             try
             {
+                // Retrieve all products
                 var products = this.productService.GetAll();
                 var totalRecords = products.Length;
 
+                // Default skip and top if not provided
+                int skipRecordsAmount = skip ?? 0;
+                int currentSize = top ?? totalRecords;
+
+                // Apply pagination
                 var pagedProducts = products
                     .Skip(skipRecordsAmount)
                     .Take(currentSize)
                     .ToArray();
 
-                // Create a new ProductDtoCollection object
-                // TODO, return also Page size, Page and totalPages = (int)Math.Ceiling(totalRecords / (double)currentSize);
+                // Calculate total pages
+                int totalPages = (int)Math.Ceiling(totalRecords / (double)currentSize);
+
+                // Create and return the product collection
                 var productCollection = new ProductDtoCollection
                 {
                     // Check if both pageNumber and pageSize are null, if so, return all products
-                    Products = this.mapper.Map<ProductDb[], ProductDto[]>((skipRecordsAmount == 0 && currentSize == 0) ? products : pagedProducts),
+                    Products = this.mapper.Map<ProductDb[], ProductDto[]>(pagedProducts),
                     TotalRecordsCount = totalRecords,
+                    PageSize = currentSize,
+                    PageNumber = (skipRecordsAmount / currentSize) + 1,
+                    TotalPages = totalPages,
+
                 };
 
                 return Ok(productCollection);
