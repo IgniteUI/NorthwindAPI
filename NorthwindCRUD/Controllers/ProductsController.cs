@@ -43,6 +43,46 @@ namespace NorthwindCRUD.Controllers
             }
         }
 
+        /// <summary>
+        /// Fetches all products or a page of products based on the provided parameters.
+        /// </summary>
+        /// <param name="skip">Previously called pageNumber. The number of the page to fetch. If this parameter is not provided, all products are fetched.</param>
+        /// <param name="top">Previously called pageSize. The size of the page to fetch. If this parameter is not provided, all products are fetched.</param>
+        /// <returns>A ProductDtoCollection object containing the fetched products and the total record count.</returns>
+        [HttpGet("GetAllPagedProducts")]
+        public ActionResult<ProductDtoCollection> GetAllProducts(int? skip, int? top)
+        {
+            int skipRecordsAmount = skip ?? 0;
+            int currentSize = top ?? 0;
+
+            try
+            {
+                var products = this.productService.GetAll();
+                var totalRecords = products.Length;
+
+                var pagedProducts = products
+                    .Skip(skipRecordsAmount)
+                    .Take(currentSize)
+                    .ToArray();
+
+                // Create a new ProductDtoCollection object
+                // TODO, return also Page size, Page and totalPages = (int)Math.Ceiling(totalRecords / (double)currentSize);
+                var productCollection = new ProductDtoCollection
+                {
+                    // Check if both pageNumber and pageSize are null, if so, return all products
+                    Products = this.mapper.Map<ProductDb[], ProductDto[]>((skipRecordsAmount == 0 && currentSize == 0) ? products : pagedProducts),
+                    TotalRecordsCount = totalRecords,
+                };
+
+                return Ok(productCollection);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<ProductDto> GetById(int id)
         {

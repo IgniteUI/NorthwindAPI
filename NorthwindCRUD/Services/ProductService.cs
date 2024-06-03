@@ -29,6 +29,26 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Products.Where(p => p.CategoryId == id).ToArray();
         }
 
+        // New method for paging with category filter
+        public ProductDb[] GetPagedProductsByCategoryId(int categoryId, int pageNumber, int pageSize)
+        {
+            return this.dataContext.Products
+                                   .Where(p => p.CategoryId == categoryId)
+                                   .Skip((pageNumber - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .ToArray();
+        }
+
+        // New method for paging with supplier filter
+        public ProductDb[] GetPagedProductsBySupplierId(int supplierId, int pageNumber, int pageSize)
+        {
+            return this.dataContext.Products
+                                   .Where(p => p.SupplierId == supplierId)
+                                   .Skip((pageNumber - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .ToArray();
+        }
+
         public ProductDb[] GetAllBySupplierId(int id)
         {
             return this.dataContext.Products.Where(p => p.SupplierId == id).ToArray();
