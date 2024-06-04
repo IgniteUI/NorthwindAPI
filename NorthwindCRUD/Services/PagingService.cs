@@ -1,17 +1,26 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using NorthwindCRUD.Models.Dtos;
 
 namespace NorthwindCRUD.Services
 {
     public interface IPagingService
     {
-        PagedResultDto<T> GetPagedData<T>(IEnumerable<T> data, int? skip, int? top, string? orderBy);
+        PagedResultDto<TDto> GetPagedData<TEntity, TDto>(IEnumerable<TEntity> data, int? skip, int? top, string? orderBy);
     }
 
     public class PagingService : IPagingService
     {
-        public PagedResultDto<T> GetPagedData<T>(IEnumerable<T> data, int? skip, int? top, string? orderBy)
+        private readonly IMapper mapper;
+
+        public PagingService(IMapper mapper)
+        {
+            this.mapper = mapper;
+        }
+
+        public PagedResultDto<TDto> GetPagedData<TEntity, TDto>(IEnumerable<TEntity> data, int? skip, int? top, string? orderBy)
         {
             var dataArray = data.ToArray();
             var totalRecords = dataArray.Length;
@@ -27,7 +36,7 @@ namespace NorthwindCRUD.Services
                 var field = orderByParts[0];
                 var order = orderByParts.Length > 1 ? orderByParts[1] : "ASC";
 
-                var propertyInfo = typeof(T).GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var propertyInfo = typeof(TEntity).GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
                 if (propertyInfo != null)
                 {
@@ -46,9 +55,12 @@ namespace NorthwindCRUD.Services
             // Calculate total pages
             int totalPages = (int)Math.Ceiling(totalRecords / (double)currentSize);
 
-            return new PagedResultDto<T>
+            // Map the results to ProductDto
+            var pagedDataDtos = mapper.Map<TDto[]>(pagedData);
+
+            return new PagedResultDto<TDto>
             {
-                Items = pagedData,
+                Items = pagedDataDtos,
                 TotalRecordsCount = totalRecords,
                 PageSize = currentSize,
                 PageNumber = (skipRecordsAmount / currentSize) + 1,

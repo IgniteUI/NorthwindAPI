@@ -63,21 +63,9 @@ namespace NorthwindCRUD.Controllers
                 var products = this.productService.GetAll();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData(products, skip, top, orderBy);
+                var pagedResult = pagingService.GetPagedData<ProductDb, ProductDto>(products, skip, top, orderBy);
 
-                // Map the results to ProductDto
-                var productDtos = this.mapper.Map<ProductDto[]>(pagedResult.Items);
-
-                var result = new PagedResultDto<ProductDto>
-                {
-                    Items = productDtos,
-                    TotalRecordsCount = pagedResult.TotalRecordsCount,
-                    PageSize = pagedResult.PageSize,
-                    PageNumber = pagedResult.PageNumber,
-                    TotalPages = pagedResult.TotalPages,
-                };
-
-                return Ok(result);
+                return Ok(pagedResult);
             }
             catch (Exception error)
             {
