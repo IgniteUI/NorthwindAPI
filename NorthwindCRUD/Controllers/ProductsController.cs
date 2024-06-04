@@ -17,15 +17,17 @@ namespace NorthwindCRUD.Controllers
         private readonly CategoryService categoryService;
         private readonly OrderService orderService;
         private readonly SupplierService supplierService;
+        private readonly PagingService pagingService;
         private readonly IMapper mapper;
         private readonly ILogger<ProductsController> logger;
 
-        public ProductsController(ProductService productService, CategoryService categoryService, OrderService orderService, SupplierService supplierService, IMapper mapper, ILogger<ProductsController> logger)
+        public ProductsController(ProductService productService, CategoryService categoryService, OrderService orderService, SupplierService supplierService, PagingService pagingService, IMapper mapper, ILogger<ProductsController> logger)
         {
             this.productService = productService;
             this.categoryService = categoryService;
             this.orderService = orderService;
             this.supplierService = supplierService;
+            this.pagingService = pagingService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -51,57 +53,31 @@ namespace NorthwindCRUD.Controllers
         /// <param name="skip">Previously called pageNumber. The number of the page to fetch. If this parameter is not provided, all products are fetched.</param>
         /// <param name="top">Previously called pageSize. The size of the page to fetch. If this parameter is not provided, all products are fetched.</param>
         /// <param name="orderBy">The fields to order by, in the format "field1 asc, field2 desc". If not provided, defaults to no specific order.</param>
-        /// <returns>A PagedProductsDto object containing the fetched products and the total record count.</returns>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetAllPagedProducts")]
-        public ActionResult<PagedProductsDto> GetAllProducts(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<ProductDto>> GetAllProducts(int? skip, int? top, string? orderBy)
         {
             try
             {
                 // Retrieve all products
                 var products = this.productService.GetAll();
-                var totalRecords = products.Length;
 
-                // Default skip and top if not provided
-                int skipRecordsAmount = skip ?? 0;
-                int currentSize = top ?? totalRecords;
+                // Get paged data
+                var pagedResult = pagingService.GetPagedData(products, skip, top, orderBy);
 
-                // Apply ordering if specified
-                if (!string.IsNullOrEmpty(orderBy))
+                // Map the results to ProductDto
+                var productDtos = this.mapper.Map<ProductDto[]>(pagedResult.Items);
+
+                var result = new PagedResultDto<ProductDto>
                 {
-                    var orderByParts = orderBy.Split(' ');
-                    var field = orderByParts[0];
-                    var order = orderByParts.Length > 1 ? orderByParts[1] : "ASC";
-
-                    // Get the property info of the field to order by
-                    var propertyInfo = products.First().GetType().GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-
-                    // Use dynamic LINQ to sort based on field and order
-                    products = order.ToUpper(CultureInfo.InvariantCulture) == "DESC"
-                        ? products.OrderByDescending(e => propertyInfo?.GetValue(e, null)).ToArray()
-                        : products.OrderBy(e => propertyInfo?.GetValue(e, null)).ToArray();
-                }
-
-                // Apply pagination
-                var pagedProducts = products
-                    .Skip(skipRecordsAmount)
-                    .Take(currentSize)
-                    .ToArray();
-
-                // Calculate total pages
-                int totalPages = (int)Math.Ceiling(totalRecords / (double)currentSize);
-
-                // Create and return the product collection
-                var productCollection = new PagedProductsDto
-                {
-                    // Check if both pageNumber and pageSize are null, if so, return all products
-                    Products = this.mapper.Map<ProductDb[], ProductDto[]>(pagedProducts),
-                    TotalRecordsCount = totalRecords,
-                    PageSize = currentSize,
-                    PageNumber = (skipRecordsAmount / currentSize) + 1,
-                    TotalPages = totalPages,
+                    Items = productDtos,
+                    TotalRecordsCount = pagedResult.TotalRecordsCount,
+                    PageSize = pagedResult.PageSize,
+                    PageNumber = pagedResult.PageNumber,
+                    TotalPages = pagedResult.TotalPages,
                 };
 
-                return Ok(productCollection);
+                return Ok(result);
             }
             catch (Exception error)
             {
