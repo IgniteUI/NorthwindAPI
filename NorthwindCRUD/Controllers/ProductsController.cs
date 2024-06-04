@@ -1,5 +1,6 @@
 namespace NorthwindCRUD.Controllers
 {
+    using System.Globalization;
     using System.Reflection;
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
@@ -50,9 +51,9 @@ namespace NorthwindCRUD.Controllers
         /// <param name="skip">Previously called pageNumber. The number of the page to fetch. If this parameter is not provided, all products are fetched.</param>
         /// <param name="top">Previously called pageSize. The size of the page to fetch. If this parameter is not provided, all products are fetched.</param>
         /// <param name="orderBy">The fields to order by, in the format "field1 asc, field2 desc". If not provided, defaults to no specific order.</param>
-        /// <returns>A ProductDtoCollection object containing the fetched products and the total record count.</returns>
+        /// <returns>A PagedProductsDto object containing the fetched products and the total record count.</returns>
         [HttpGet("GetAllPagedProducts")]
-        public ActionResult<ProductDtoCollection> GetAllProducts(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedProductsDto> GetAllProducts(int? skip, int? top, string? orderBy)
         {
             try
             {
@@ -75,7 +76,7 @@ namespace NorthwindCRUD.Controllers
                     var propertyInfo = products.First().GetType().GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
                     // Use dynamic LINQ to sort based on field and order
-                    products = order.ToUpper() == "DESC"
+                    products = order.ToUpper(CultureInfo.InvariantCulture) == "DESC"
                         ? products.OrderByDescending(e => propertyInfo?.GetValue(e, null)).ToArray()
                         : products.OrderBy(e => propertyInfo?.GetValue(e, null)).ToArray();
                 }
@@ -90,7 +91,7 @@ namespace NorthwindCRUD.Controllers
                 int totalPages = (int)Math.Ceiling(totalRecords / (double)currentSize);
 
                 // Create and return the product collection
-                var productCollection = new ProductDtoCollection
+                var productCollection = new PagedProductsDto
                 {
                     // Check if both pageNumber and pageSize are null, if so, return all products
                     Products = this.mapper.Map<ProductDb[], ProductDto[]>(pagedProducts),
@@ -98,7 +99,6 @@ namespace NorthwindCRUD.Controllers
                     PageSize = currentSize,
                     PageNumber = (skipRecordsAmount / currentSize) + 1,
                     TotalPages = totalPages,
-
                 };
 
                 return Ok(productCollection);

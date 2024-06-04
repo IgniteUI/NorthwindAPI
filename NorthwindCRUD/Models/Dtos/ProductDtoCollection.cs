@@ -2,7 +2,7 @@
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class ProductDtoCollection
+    public class PagedProductsDto
     {
         //public List<ProductDto> Products { get; set; }
         public ICollection<ProductDto> Products { get; set; } = new List<ProductDto>();
