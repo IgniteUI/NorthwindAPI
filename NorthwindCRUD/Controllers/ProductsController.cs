@@ -1,5 +1,6 @@
 namespace NorthwindCRUD.Controllers
 {
+    using System.Reflection;
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -48,9 +49,10 @@ namespace NorthwindCRUD.Controllers
         /// </summary>
         /// <param name="skip">Previously called pageNumber. The number of the page to fetch. If this parameter is not provided, all products are fetched.</param>
         /// <param name="top">Previously called pageSize. The size of the page to fetch. If this parameter is not provided, all products are fetched.</param>
+        /// <param name="orderBy">The fields to order by, in the format "field1 asc, field2 desc". If not provided, defaults to no specific order.</param>
         /// <returns>A ProductDtoCollection object containing the fetched products and the total record count.</returns>
         [HttpGet("GetAllPagedProducts")]
-        public ActionResult<ProductDtoCollection> GetAllProducts(int? skip, int? top)
+        public ActionResult<ProductDtoCollection> GetAllProducts(int? skip, int? top, string? orderBy)
         {
             try
             {
@@ -61,6 +63,22 @@ namespace NorthwindCRUD.Controllers
                 // Default skip and top if not provided
                 int skipRecordsAmount = skip ?? 0;
                 int currentSize = top ?? totalRecords;
+
+                // Apply ordering if specified
+                if (!string.IsNullOrEmpty(orderBy))
+                {
+                    var orderByParts = orderBy.Split(' ');
+                    var field = orderByParts[0];
+                    var order = orderByParts.Length > 1 ? orderByParts[1] : "ASC";
+
+                    // Get the property info of the field to order by
+                    var propertyInfo = products.First().GetType().GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+                    // Use dynamic LINQ to sort based on field and order
+                    products = order.ToUpper() == "DESC"
+                        ? products.OrderByDescending(e => propertyInfo?.GetValue(e, null)).ToArray()
+                        : products.OrderBy(e => propertyInfo?.GetValue(e, null)).ToArray();
+                }
 
                 // Apply pagination
                 var pagedProducts = products
