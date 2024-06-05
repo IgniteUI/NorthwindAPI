@@ -70,7 +70,6 @@
             }
         }
 
-
         [HttpGet("{id}")]
         public ActionResult<EmployeeDto> GetById(int id)
         {
