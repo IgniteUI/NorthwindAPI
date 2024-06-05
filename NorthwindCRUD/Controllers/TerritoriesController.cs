@@ -15,14 +15,16 @@
         private readonly TerritoryService territoryService;
         private readonly RegionService regionService;
         private readonly EmployeeTerritoryService employeeTerritoryService;
+        private readonly PagingService pagingService;
         private readonly IMapper mapper;
         private readonly ILogger<TerritoriesController> logger;
 
-        public TerritoriesController(TerritoryService territoryService, EmployeeTerritoryService employeeTerritoryService, RegionService regionService, IMapper mapper, ILogger<TerritoriesController> logger)
+        public TerritoriesController(TerritoryService territoryService, EmployeeTerritoryService employeeTerritoryService, RegionService regionService, PagingService pagingService, IMapper mapper, ILogger<TerritoriesController> logger)
         {
             this.territoryService = territoryService;
             this.regionService = regionService;
             this.employeeTerritoryService = employeeTerritoryService;
+            this.pagingService = pagingService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -34,6 +36,33 @@
             {
                 var territories = this.territoryService.GetAll();
                 return Ok(this.mapper.Map<TerritoryDb[], TerritoryDto[]>(territories));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all territories or a page of territories based on the provided parameters.
+        /// </summary>
+        /// <param name="skip">The number of records to skip before starting to fetch the territories. If this parameter is not provided, fetching starts from the beginning.</param>
+        /// <param name="top">The maximum number of territories to fetch. If this parameter is not provided, all territories are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the territories by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedTerritories")]
+        public ActionResult<PagedResultDto<TerritoryDto>> GetAllTerritories(int? skip, int? top, string? orderBy)
+        {
+            try
+            {
+                // Retrieve all territories
+                var territories = this.territoryService.GetAll();
+
+                // Get paged data
+                var pagedResult = pagingService.GetPagedData<TerritoryDb, TerritoryDto>(territories, skip, top, orderBy);
+
+                return Ok(pagedResult);
             }
             catch (Exception error)
             {

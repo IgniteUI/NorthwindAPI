@@ -14,13 +14,15 @@
     {
         private readonly SupplierService supplierService;
         private readonly ProductService productService;
+        private readonly PagingService pagingService;
         private readonly IMapper mapper;
         private readonly ILogger<SuppliersController> logger;
 
-        public SuppliersController(SupplierService supplierService, ProductService productService, IMapper mapper, ILogger<SuppliersController> logger)
+        public SuppliersController(SupplierService supplierService, ProductService productService, PagingService pagingService, IMapper mapper, ILogger<SuppliersController> logger)
         {
             this.supplierService = supplierService;
             this.productService = productService;
+            this.pagingService = pagingService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -32,6 +34,33 @@
             {
                 var suppliers = this.supplierService.GetAll();
                 return Ok(this.mapper.Map<SupplierDb[], SupplierDto[]>(suppliers));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all suppliers or a page of suppliers based on the provided parameters.
+        /// </summary>
+        /// <param name="skip">The number of records to skip before starting to fetch the suppliers. If this parameter is not provided, fetching starts from the beginning.</param>
+        /// <param name="top">The maximum number of suppliers to fetch. If this parameter is not provided, all suppliers are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the suppliers by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedSuppliers")]
+        public ActionResult<PagedResultDto<SupplierDto>> GetAllSuppliers(int? skip, int? top, string? orderBy)
+        {
+            try
+            {
+                // Retrieve all suppliers
+                var suppliers = this.supplierService.GetAll();
+
+                // Get paged data
+                var pagedResult = pagingService.GetPagedData<SupplierDb, SupplierDto>(suppliers, skip, top, orderBy);
+
+                return Ok(pagedResult);
             }
             catch (Exception error)
             {
