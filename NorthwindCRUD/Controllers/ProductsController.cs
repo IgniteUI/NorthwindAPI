@@ -50,11 +50,11 @@ namespace NorthwindCRUD.Controllers
         /// <summary>
         /// Fetches all products or a page of products based on the provided parameters.
         /// </summary>
-        /// <param name="skip">Previously called pageNumber. The number of the page to fetch. If this parameter is not provided, all products are fetched.</param>
-        /// <param name="top">Previously called pageSize. The size of the page to fetch. If this parameter is not provided, all products are fetched.</param>
-        /// <param name="orderBy">The fields to order by, in the format "field1 asc, field2 desc". If not provided, defaults to no specific order.</param>
+        /// <param name="skip">The number of records to skip before starting to fetch the products. If this parameter is not provided, fetching starts from the beginning.</param>
+        /// <param name="top">The maximum number of products to fetch. If this parameter is not provided, all products are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the products by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
-        [HttpGet("GetAllPagedProducts")]
+        [HttpGet("GetPagedProducts")]
         public ActionResult<PagedResultDto<ProductDto>> GetAllProducts(int? skip, int? top, string? orderBy)
         {
             try

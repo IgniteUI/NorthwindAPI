@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -32,18 +33,7 @@ namespace NorthwindCRUD.Services
             // Apply ordering if specified
             if (!string.IsNullOrEmpty(orderBy))
             {
-                var orderByParts = orderBy.Split(' ');
-                var field = orderByParts[0];
-                var order = orderByParts.Length > 1 ? orderByParts[1] : "ASC";
-
-                var propertyInfo = typeof(TEntity).GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-
-                if (propertyInfo != null)
-                {
-                    dataArray = order.ToUpper(CultureInfo.InvariantCulture) == "DESC"
-                        ? dataArray.OrderByDescending(e => propertyInfo.GetValue(e, null)).ToArray()
-                        : dataArray.OrderBy(e => propertyInfo.GetValue(e, null)).ToArray();
-                }
+                dataArray = ApplyOrdering(dataArray.AsQueryable(), orderBy).ToArray();
             }
 
             // Apply pagination
@@ -66,6 +56,47 @@ namespace NorthwindCRUD.Services
                 PageNumber = (skipRecordsAmount / currentSize) + 1,
                 TotalPages = totalPages,
             };
+        }
+
+        private IQueryable<TEntity> ApplyOrdering<TEntity>(IQueryable<TEntity> source, string orderBy)
+        {
+            var orderParams = orderBy.Split(',');
+
+            IOrderedQueryable<TEntity>? orderedQuery = null;
+
+            foreach (var param in orderParams)
+            {
+                var trimmedParam = param.Trim();
+                var orderByParts = trimmedParam.Split(' ');
+                var field = orderByParts[0];
+                var order = orderByParts.Length > 1 ? orderByParts[1] : "asc";
+
+                var propertyInfo = typeof(TEntity).GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+                if (propertyInfo != null)
+                {
+                    var parameter = Expression.Parameter(typeof(TEntity), "x");
+                    var property = Expression.Property(parameter, propertyInfo);
+                    var lambda = Expression.Lambda(property, parameter);
+
+                    var methodName = order.ToUpper(CultureInfo.InvariantCulture) == "DESC"
+                        ? (orderedQuery == null ? "OrderByDescending" : "ThenByDescending")
+                        : (orderedQuery == null ? "OrderBy" : "ThenBy");
+
+                    var resultExpression = Expression.Call(
+                        typeof(Queryable),
+                        methodName,
+                        new Type[] { source.ElementType, property.Type },
+                        (orderedQuery ?? source).Expression,
+                        Expression.Quote(lambda));
+
+                    orderedQuery = (IOrderedQueryable<TEntity>)(orderedQuery == null
+                        ? source.Provider.CreateQuery<TEntity>(resultExpression)
+                        : orderedQuery.Provider.CreateQuery<TEntity>(resultExpression));
+                }
+            }
+
+            return orderedQuery ?? source;
         }
     }
 }
