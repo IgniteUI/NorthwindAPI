@@ -14,13 +14,15 @@
     {
         private readonly RegionService regionService;
         private readonly TerritoryService territoryService;
+        private readonly PagingService pagingService;
         private readonly IMapper mapper;
         private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(RegionService regionService, TerritoryService territoryService, IMapper mapper, ILogger<RegionsController> logger)
+        public RegionsController(RegionService regionService, TerritoryService territoryService, PagingService pagingService, IMapper mapper, ILogger<RegionsController> logger)
         {
             this.regionService = regionService;
             this.territoryService = territoryService;
+            this.pagingService = pagingService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -32,6 +34,33 @@
             {
                 var regions = this.regionService.GetAll();
                 return Ok(this.mapper.Map<RegionDb[], RegionDto[]>(regions));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all regions or a page of regions based on the provided parameters.
+        /// </summary>
+        /// <param name="skip">The number of records to skip before starting to fetch the regions. If this parameter is not provided, fetching starts from the beginning.</param>
+        /// <param name="top">The maximum number of regions to fetch. If this parameter is not provided, all regions are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the regions by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedRegions")]
+        public ActionResult<PagedResultDto<RegionDto>> GetAllRegions(int? skip, int? top, string? orderBy)
+        {
+            try
+            {
+                // Retrieve all regions
+                var regions = this.regionService.GetAll();
+
+                // Get paged data
+                var pagedResult = pagingService.GetPagedData<RegionDb, RegionDto>(regions, skip, top, orderBy);
+
+                return Ok(pagedResult);
             }
             catch (Exception error)
             {

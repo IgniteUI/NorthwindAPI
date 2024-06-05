@@ -14,13 +14,15 @@
     {
         private readonly ShipperService shipperService;
         private readonly OrderService orderService;
+        private readonly PagingService pagingService;
         private readonly IMapper mapper;
         private readonly ILogger<ShippersController> logger;
 
-        public ShippersController(ShipperService shipperService, OrderService orderService, IMapper mapper, ILogger<ShippersController> logger)
+        public ShippersController(ShipperService shipperService, OrderService orderService, PagingService pagingService, IMapper mapper, ILogger<ShippersController> logger)
         {
             this.shipperService = shipperService;
             this.orderService = orderService;
+            this.pagingService = pagingService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -32,6 +34,33 @@
             {
                 var shippers = this.shipperService.GetAll();
                 return Ok(this.mapper.Map<ShipperDb[], ShipperDto[]>(shippers));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all shippers or a page of shippers based on the provided parameters.
+        /// </summary>
+        /// <param name="skip">The number of records to skip before starting to fetch the shippers. If this parameter is not provided, fetching starts from the beginning.</param>
+        /// <param name="top">The maximum number of shippers to fetch. If this parameter is not provided, all shippers are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the shippers by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedShippers")]
+        public ActionResult<PagedResultDto<ShipperDto>> GetAllShippers(int? skip, int? top, string? orderBy)
+        {
+            try
+            {
+                // Retrieve all shippers
+                var shippers = this.shipperService.GetAll();
+
+                // Get paged data
+                var pagedResult = pagingService.GetPagedData<ShipperDb, ShipperDto>(shippers, skip, top, orderBy);
+
+                return Ok(pagedResult);
             }
             catch (Exception error)
             {

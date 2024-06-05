@@ -17,16 +17,18 @@
         private readonly CustomerService customerService;
         private readonly ShipperService shipperService;
         private readonly ProductService productService;
+        private readonly PagingService pagingService;
         private readonly IMapper mapper;
         private readonly ILogger<OrdersController> logger;
 
-        public OrdersController(OrderService orderService, EmployeeService employeeService, CustomerService customerService, ShipperService shipperService, ProductService productService, IMapper mapper, ILogger<OrdersController> logger)
+        public OrdersController(OrderService orderService, EmployeeService employeeService, CustomerService customerService, ShipperService shipperService, ProductService productService, PagingService pagingService, IMapper mapper, ILogger<OrdersController> logger)
         {
             this.orderService = orderService;
             this.employeeService = employeeService;
             this.customerService = customerService;
             this.shipperService = shipperService;
             this.productService = productService;
+            this.pagingService = pagingService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -38,6 +40,33 @@
             {
                 var orders = this.orderService.GetAll();
                 return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all orders or a page of orders based on the provided parameters.
+        /// </summary>
+        /// <param name="skip">The number of records to skip before starting to fetch the orders. If this parameter is not provided, fetching starts from the beginning.</param>
+        /// <param name="top">The maximum number of orders to fetch. If this parameter is not provided, all orders are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the orders by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedOrders")]
+        public ActionResult<PagedResultDto<OrderDto>> GetAllOrders(int? skip, int? top, string? orderBy)
+        {
+            try
+            {
+                // Retrieve all orders
+                var orders = this.orderService.GetAll();
+
+                // Get paged data
+                var pagedResult = pagingService.GetPagedData<OrderDb, OrderDto>(orders, skip, top, orderBy);
+
+                return Ok(pagedResult);
             }
             catch (Exception error)
             {

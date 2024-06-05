@@ -1,5 +1,7 @@
 namespace NorthwindCRUD.Controllers
 {
+    using System.Globalization;
+    using System.Reflection;
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -15,15 +17,17 @@ namespace NorthwindCRUD.Controllers
         private readonly CategoryService categoryService;
         private readonly OrderService orderService;
         private readonly SupplierService supplierService;
+        private readonly PagingService pagingService;
         private readonly IMapper mapper;
         private readonly ILogger<ProductsController> logger;
 
-        public ProductsController(ProductService productService, CategoryService categoryService, OrderService orderService, SupplierService supplierService, IMapper mapper, ILogger<ProductsController> logger)
+        public ProductsController(ProductService productService, CategoryService categoryService, OrderService orderService, SupplierService supplierService, PagingService pagingService, IMapper mapper, ILogger<ProductsController> logger)
         {
             this.productService = productService;
             this.categoryService = categoryService;
             this.orderService = orderService;
             this.supplierService = supplierService;
+            this.pagingService = pagingService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -35,6 +39,33 @@ namespace NorthwindCRUD.Controllers
             {
                 var products = this.productService.GetAll();
                 return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all products or a page of products based on the provided parameters.
+        /// </summary>
+        /// <param name="skip">The number of records to skip before starting to fetch the products. If this parameter is not provided, fetching starts from the beginning.</param>
+        /// <param name="top">The maximum number of products to fetch. If this parameter is not provided, all products are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the products by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedProducts")]
+        public ActionResult<PagedResultDto<ProductDto>> GetAllProducts(int? skip, int? top, string? orderBy)
+        {
+            try
+            {
+                // Retrieve all products
+                var products = this.productService.GetAll();
+
+                // Get paged data
+                var pagedResult = pagingService.GetPagedData<ProductDb, ProductDto>(products, skip, top, orderBy);
+
+                return Ok(pagedResult);
             }
             catch (Exception error)
             {
