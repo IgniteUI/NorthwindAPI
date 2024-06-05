@@ -23,8 +23,7 @@ namespace NorthwindCRUD.Services
 
         public PagedResultDto<TDto> GetPagedData<TEntity, TDto>(IEnumerable<TEntity> data, int? skip, int? top, string? orderBy)
         {
-            var dataArray = data.ToArray();
-            var totalRecords = dataArray.Length;
+            var totalRecords = data.Count();
 
             // Default skip and top if not provided
             int skipRecordsAmount = skip ?? 0;
@@ -33,11 +32,11 @@ namespace NorthwindCRUD.Services
             // Apply ordering if specified
             if (!string.IsNullOrEmpty(orderBy))
             {
-                dataArray = ApplyOrdering(dataArray.AsQueryable(), orderBy).ToArray();
+                data = ApplyOrdering(data.AsQueryable(), orderBy).ToArray();
             }
 
             // Apply pagination
-            var pagedData = dataArray
+            var pagedData = data
                 .Skip(skipRecordsAmount)
                 .Take(currentSize)
                 .ToArray();
@@ -52,7 +51,7 @@ namespace NorthwindCRUD.Services
             {
                 Items = pagedDataDtos,
                 TotalRecordsCount = totalRecords,
-                PageSize = currentSize,
+                PageSize = pagedDataDtos.Length,
                 PageNumber = (skipRecordsAmount / currentSize) + 1,
                 TotalPages = totalPages,
             };
