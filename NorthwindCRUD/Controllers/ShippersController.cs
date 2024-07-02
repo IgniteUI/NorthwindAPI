@@ -103,6 +103,25 @@
             }
         }
 
+        /// <summary>
+        /// Retrieves the total number of shippers.
+        /// </summary>
+        /// <returns>Total count of shippers as an integer.</returns>
+        [HttpGet("GetShippersCount")]
+        public ActionResult<int> GetShippersCount()
+        {
+            try
+            {
+                var count = shipperService.GetAllAsQueryable().Count();
+                return Ok(count);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<ShipperDto> GetById(int id)
         {

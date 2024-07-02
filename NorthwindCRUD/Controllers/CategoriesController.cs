@@ -102,6 +102,25 @@ namespace NorthwindCRUD.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves the total number of categories.
+        /// </summary>
+        /// <returns>Total count of categories as an integer.</returns>
+        [HttpGet("GetCategoriesCount")]
+        public ActionResult<int> GetCategoriesCount()
+        {
+            try
+            {
+                var count = categoryService.GetAllAsQueryable().Count();
+                return Ok(count);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<CategoryDto> GetById(int id)
         {

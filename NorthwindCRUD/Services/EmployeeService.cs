@@ -22,7 +22,7 @@
 
         public IQueryable<EmployeeDb> GetAllAsQueryable()
         {
-            return this.dataContext.Employees.AsQueryable();
+            return this.dataContext.Employees;
         }
 
         public EmployeeDb? GetById(int id)

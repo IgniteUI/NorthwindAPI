@@ -103,6 +103,25 @@
             }
         }
 
+        /// <summary>
+        /// Retrieves the total number of regions.
+        /// </summary>
+        /// <returns>Total count of regions as an integer.</returns>
+        [HttpGet("GetRegionsCount")]
+        public ActionResult<int> GetRegionsCount()
+        {
+            try
+            {
+                var count = regionService.GetAllAsQueryable().Count();
+                return Ok(count);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<RegionDto> GetById(int id)
         {

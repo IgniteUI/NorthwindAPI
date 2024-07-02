@@ -19,7 +19,7 @@ namespace NorthwindCRUD.Services
 
         public IQueryable<RegionDb> GetAllAsQueryable()
         {
-            return this.dataContext.Regions.AsQueryable();
+            return this.dataContext.Regions;
         }
 
         public RegionDb? GetById(int id)

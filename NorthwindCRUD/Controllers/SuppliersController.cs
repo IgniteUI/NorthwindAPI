@@ -103,6 +103,25 @@
             }
         }
 
+        /// <summary>
+        /// Retrieves the total number of suppliers.
+        /// </summary>
+        /// <returns>Total count of suppliers as an integer.</returns>
+        [HttpGet("GetSuppliersCount")]
+        public ActionResult<int> GetSuppliersCount()
+        {
+            try
+            {
+                var count = supplierService.GetAllAsQueryable().Count();
+                return Ok(count);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<SupplierDto> GetById(int id)
         {

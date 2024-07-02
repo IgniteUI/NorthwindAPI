@@ -102,6 +102,25 @@
             }
         }
 
+        /// <summary>
+        /// Retrieves the total number of customers.
+        /// </summary>
+        /// <returns>Total count of customers as an integer.</returns>
+        [HttpGet("GetCustomersCount")]
+        public ActionResult<int> GetCustomersCount()
+        {
+            try
+            {
+                var count = customerService.GetAllAsQueryable().Count();
+                return Ok(count);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<CustomerDto> GetById(string id)
         {

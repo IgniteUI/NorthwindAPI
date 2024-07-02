@@ -22,7 +22,7 @@ namespace NorthwindCRUD.Services
 
         public IQueryable<CustomerDb> GetAllAsQueryable()
         {
-            return this.dataContext.Customers.AsQueryable();
+            return this.dataContext.Customers;
         }
 
         public CustomerDb? GetById(string id)

@@ -20,7 +20,7 @@
 
         public IQueryable<CategoryDb> GetAllAsQueryable()
         {
-            return this.dataContext.Categories.AsQueryable();
+            return this.dataContext.Categories;
         }
 
         public CategoryDb? GetById(int id)

@@ -109,6 +109,25 @@
             }
         }
 
+        /// <summary>
+        /// Retrieves the total number of orders.
+        /// </summary>
+        /// <returns>Total count of orders as an integer.</returns>
+        [HttpGet("GetOrdersCount")]
+        public ActionResult<int> GetOrdersCount()
+        {
+            try
+            {
+                var count = orderService.GetAllAsQueryable().Count();
+                return Ok(count);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<OrderDto> GetById(int id)
         {

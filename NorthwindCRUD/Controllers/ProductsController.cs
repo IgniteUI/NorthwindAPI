@@ -108,6 +108,25 @@ namespace NorthwindCRUD.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves the total number of products.
+        /// </summary>
+        /// <returns>Total count of products as an integer.</returns>
+        [HttpGet("GetProductsCount")]
+        public ActionResult<int> GetProductsCount()
+        {
+            try
+            {
+                var count = productService.GetAllAsQueryable().Count();
+                return Ok(count);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<ProductDto> GetById(int id)
         {

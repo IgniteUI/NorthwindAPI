@@ -25,7 +25,7 @@ namespace NorthwindCRUD.Services
 
         public IQueryable<OrderDb> GetAllAsQueryable()
         {
-            return this.dataContext.Orders.AsQueryable();
+            return this.dataContext.Orders;
         }
 
         public OrderDb[] GetNOrders(int numberOfOrdersToRetrieve)

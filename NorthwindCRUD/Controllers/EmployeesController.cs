@@ -104,6 +104,27 @@
             }
         }
 
+
+        /// <summary>
+        /// Retrieves the total number of employees.
+        /// </summary>
+        /// <returns>Total count of employees as an integer.</returns>
+        [HttpGet("GetEmployeesCount")]
+        public ActionResult<int> GetEmployeesCount()
+        {
+            try
+            {
+                var count = employeeService.GetAllAsQueryable().Count();
+                return Ok(count);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+
         [HttpGet("{id}")]
         public ActionResult<EmployeeDto> GetById(int id)
         {

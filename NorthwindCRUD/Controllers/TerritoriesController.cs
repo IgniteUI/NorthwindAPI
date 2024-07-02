@@ -105,6 +105,25 @@
             }
         }
 
+        /// <summary>
+        /// Retrieves the total number of territories.
+        /// </summary>
+        /// <returns>Total count of territories as an integer.</returns>
+        [HttpGet("GetTerritoriesCount")]
+        public ActionResult<int> GetTerritoriesCount()
+        {
+            try
+            {
+                var count = territoryService.GetAllAsQueryable().Count();
+                return Ok(count);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<TerritoryDto> GetById(string id)
         {

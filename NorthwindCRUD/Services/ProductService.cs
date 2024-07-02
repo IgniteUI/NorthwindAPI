@@ -21,7 +21,7 @@ namespace NorthwindCRUD.Services
 
         public IQueryable<ProductDb> GetAllAsQueryable()
         {
-            return this.dataContext.Products.AsQueryable();
+            return this.dataContext.Products;
         }
 
         public ProductDb? GetById(int id)
