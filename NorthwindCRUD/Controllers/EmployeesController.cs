@@ -53,9 +53,9 @@
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetEmployeesWithSkip")]
         public ActionResult<PagedResultDto<EmployeeDto>> GetPagedEmployees(
-            [FromQuery][SwaggerParameter("The number of records to skip before starting to fetch the employees. If this parameter is not provided, fetching starts from the beginning.")] int? skip,
-            [FromQuery][SwaggerParameter("The maximum number of employees to fetch. If this parameter is not provided, all employees are fetched.")] int? top,
-            [FromQuery][SwaggerParameter("A comma-separated list of fields to order the employees by, along with the sort direction (e.g., 'field1 asc, field2 desc').")] string? orderBy)
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
             {

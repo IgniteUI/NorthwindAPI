@@ -14,7 +14,7 @@ namespace NorthwindCRUD.Services
             IQueryable<TEntity> query,
             int? skip = null,
             int? top = null,
-            int? page = null,
+            int? pageIndex = null,
             int? size = null,
             string? orderBy = null);
     }

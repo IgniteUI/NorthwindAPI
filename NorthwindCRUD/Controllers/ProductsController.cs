@@ -57,9 +57,9 @@ namespace NorthwindCRUD.Controllers
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedProducts")]
         public ActionResult<PagedResultDto<ProductDto>> GetAllProducts(
-            [FromQuery][SwaggerParameter("The number of records to skip before starting to fetch the products. If this parameter is not provided, fetching starts from the beginning.")] int? skip,
-            [FromQuery][SwaggerParameter("The maximum number of products to fetch. If this parameter is not provided, all products are fetched.")] int? top,
-            [FromQuery][SwaggerParameter("A comma-separated list of fields to order the products by, along with the sort direction (e.g., 'field1 asc, field2 desc').")] string? orderBy)
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
             {

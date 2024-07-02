@@ -54,9 +54,9 @@
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedTerritories")]
         public ActionResult<PagedResultDto<TerritoryDto>> GetAllTerritories(
-            [FromQuery][SwaggerParameter("The number of records to skip before starting to fetch the territories. If this parameter is not provided, fetching starts from the beginning.")] int? skip,
-            [FromQuery][SwaggerParameter("The maximum number of territories to fetch. If this parameter is not provided, all territories are fetched.")] int? top,
-            [FromQuery][SwaggerParameter("A comma-separated list of fields to order the territories by, along with the sort direction (e.g., 'field1 asc, field2 desc').")] string? orderBy)
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
             {

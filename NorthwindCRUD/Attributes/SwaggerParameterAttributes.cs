@@ -25,4 +25,20 @@ namespace NorthwindCRUD.Attributes
             {
             }
         }
+
+        public class SwaggerSkipParameterAttribute : SwaggerParameterAttribute
+        {
+            public SwaggerSkipParameterAttribute()
+                : base("The number of records to skip before starting to fetch them. If this parameter is not provided, fetching starts from the beginning.")
+            {
+            }
+        }
+
+        public class SwaggerTopParameterAttribute : SwaggerParameterAttribute
+        {
+            public SwaggerTopParameterAttribute()
+                : base("The maximum number of records to fetch. If this parameter is not provided, all records are fetched.")
+            {
+            }
+        }
 }
