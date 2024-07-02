@@ -10,7 +10,13 @@ namespace NorthwindCRUD.Services
 {
     public interface IPagingService
     {
-        PagedResultDto<TDto> FetchPagedDataWithSkip<TEntity, TDto>(IQueryable<TEntity> query, int? skip, int? top, string? orderBy);
+        PagedResultDto<TDto> FetchPagedData<TEntity, TDto>(
+            IQueryable<TEntity> query,
+            int? skip = null,
+            int? top = null,
+            int? page = null,
+            int? size = null,
+            string? orderBy = null);
     }
 
     public class PagingService : IPagingService
@@ -22,13 +28,30 @@ namespace NorthwindCRUD.Services
             this.mapper = mapper;
         }
 
-        public PagedResultDto<TDto> FetchPagedDataWithSkip<TEntity, TDto>(IQueryable<TEntity> query, int? skip, int? top, string? orderBy)
+        public PagedResultDto<TDto> FetchPagedData<TEntity, TDto>(
+            IQueryable<TEntity> query,
+            int? skip = null,
+            int? top = null,
+            int? pageIndex = null,
+            int? size = null,
+            string? orderBy = null)
         {
-            var totalRecords = query.Count();
+            // Determine if we're using skip/top or page/size
+            bool isPageSize = pageIndex.HasValue || size.HasValue;
 
-            // Default skip and top if not provided
+            int totalRecords = query.Count();
+
+            // Default values if not provided
             int skipRecordsAmount = skip ?? 0;
             int currentSize = top ?? totalRecords;
+
+            if (isPageSize)
+            {
+                int pageNumber = pageIndex ?? 0;
+                int pageSize = size ?? totalRecords;
+                skipRecordsAmount = pageNumber * pageSize;
+                currentSize = pageSize;
+            }
 
             // Apply ordering if specified
             if (!string.IsNullOrEmpty(orderBy))
@@ -45,7 +68,7 @@ namespace NorthwindCRUD.Services
             // Calculate total pages
             int totalPages = (int)Math.Ceiling(totalRecords / (double)currentSize);
 
-            // Map the results to ProductDto
+            // Map the results to TDto
             var pagedDataDtos = mapper.Map<TDto[]>(pagedData);
 
             return new PagedResultDto<TDto>
@@ -53,47 +76,7 @@ namespace NorthwindCRUD.Services
                 Items = pagedDataDtos,
                 TotalRecordsCount = totalRecords,
                 PageSize = currentSize,
-                PageNumber = (skipRecordsAmount / currentSize) + 1,
-                TotalPages = totalPages,
-            };
-        }
-
-        public PagedResultDto<TDto> FetchPagedDataWithPage<TEntity, TDto>(IEnumerable<TEntity> data, int? page, int? size, string? orderBy)
-        {
-            var dataArray = data.ToArray();
-            var totalRecords = dataArray.Length;
-
-            // Default page and size if not provided
-            int pageNumber = page ?? 1;
-            int pageSize = size ?? totalRecords;
-
-            // Calculate skip
-            int skipRecordsAmount = (pageNumber - 1) * pageSize;
-
-            // Apply ordering if specified
-            if (!string.IsNullOrEmpty(orderBy))
-            {
-                dataArray = ApplyOrdering(dataArray.AsQueryable(), orderBy).ToArray();
-            }
-
-            // Apply pagination
-            var pagedData = dataArray
-                .Skip(skipRecordsAmount)
-                .Take(pageSize)
-                .ToArray();
-
-            // Calculate total pages
-            int totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
-
-            // Map the results to ProductDto
-            var pagedDataDtos = mapper.Map<TDto[]>(pagedData);
-
-            return new PagedResultDto<TDto>
-            {
-                Items = pagedDataDtos,
-                TotalRecordsCount = totalRecords,
-                PageSize = pageSize,
-                PageNumber = pageNumber,
+                PageNumber = isPageSize ? ((skipRecordsAmount / currentSize) + 1) : ((skipRecordsAmount / currentSize) + 1),
                 TotalPages = totalPages,
             };
         }

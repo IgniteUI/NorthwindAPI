@@ -62,7 +62,37 @@
                 var regions = this.regionService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.FetchPagedDataWithSkip<RegionDb, RegionDto>(regions, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedData<RegionDb, RegionDto>(regions, skip, top, null, null, orderBy);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all regions or a page of regions based on the provided parameters.
+        /// </summary>
+        /// <param name="pageIndex">The page index of records to fetch. If this parameter is not provided, fetching starts from the beginning (page 0).</param>
+        /// <param name="size">The maximum number of records to fetch per page. If this parameter is not provided, all records are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the records by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedRegionsWithPage")]
+        public ActionResult<PagedResultDto<RegionDto>> GetPagedRegionsWithPage(
+            [FromQuery][Attributes.SwaggerPageParameter] int? pageIndex,
+            [FromQuery][Attributes.SwaggerSizeParameter] int? size,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
+        {
+            try
+            {
+                // Retrieve regions as Queryable
+                var regions = this.regionService.GetAllAsQueryable();
+
+                // Get paged data
+                var pagedResult = pagingService.FetchPagedData<RegionDb, RegionDto>(regions, null, null, pageIndex, size, orderBy);
 
                 return Ok(pagedResult);
             }
