@@ -2,9 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using NorthwindCRUD.Models.Dtos;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace NorthwindCRUD.Services
 {
