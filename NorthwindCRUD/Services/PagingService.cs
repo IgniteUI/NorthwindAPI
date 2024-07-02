@@ -4,12 +4,13 @@ using System.Reflection;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NorthwindCRUD.Models.Dtos;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace NorthwindCRUD.Services
 {
     public interface IPagingService
     {
-        PagedResultDto<TDto> GetPagedData<TEntity, TDto>(IEnumerable<TEntity> data, int? skip, int? top, string? orderBy);
+        PagedResultDto<TDto> FetchPagedDataWithSkip<TEntity, TDto>(IQueryable<TEntity> query, int? skip, int? top, string? orderBy);
     }
 
     public class PagingService : IPagingService
@@ -21,10 +22,9 @@ namespace NorthwindCRUD.Services
             this.mapper = mapper;
         }
 
-        public PagedResultDto<TDto> GetPagedData<TEntity, TDto>(IEnumerable<TEntity> data, int? skip, int? top, string? orderBy)
+        public PagedResultDto<TDto> FetchPagedDataWithSkip<TEntity, TDto>(IQueryable<TEntity> query, int? skip, int? top, string? orderBy)
         {
-            var dataArray = data.ToArray();
-            var totalRecords = dataArray.Length;
+            var totalRecords = query.Count();
 
             // Default skip and top if not provided
             int skipRecordsAmount = skip ?? 0;
@@ -33,11 +33,11 @@ namespace NorthwindCRUD.Services
             // Apply ordering if specified
             if (!string.IsNullOrEmpty(orderBy))
             {
-                dataArray = ApplyOrdering(dataArray.AsQueryable(), orderBy).ToArray();
+                query = ApplyOrdering(query, orderBy);
             }
 
             // Apply pagination
-            var pagedData = dataArray
+            var pagedData = query
                 .Skip(skipRecordsAmount)
                 .Take(currentSize)
                 .ToArray();
@@ -54,6 +54,46 @@ namespace NorthwindCRUD.Services
                 TotalRecordsCount = totalRecords,
                 PageSize = currentSize,
                 PageNumber = (skipRecordsAmount / currentSize) + 1,
+                TotalPages = totalPages,
+            };
+        }
+
+        public PagedResultDto<TDto> FetchPagedDataWithPage<TEntity, TDto>(IEnumerable<TEntity> data, int? page, int? size, string? orderBy)
+        {
+            var dataArray = data.ToArray();
+            var totalRecords = dataArray.Length;
+
+            // Default page and size if not provided
+            int pageNumber = page ?? 1;
+            int pageSize = size ?? totalRecords;
+
+            // Calculate skip
+            int skipRecordsAmount = (pageNumber - 1) * pageSize;
+
+            // Apply ordering if specified
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                dataArray = ApplyOrdering(dataArray.AsQueryable(), orderBy).ToArray();
+            }
+
+            // Apply pagination
+            var pagedData = dataArray
+                .Skip(skipRecordsAmount)
+                .Take(pageSize)
+                .ToArray();
+
+            // Calculate total pages
+            int totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+            // Map the results to ProductDto
+            var pagedDataDtos = mapper.Map<TDto[]>(pagedData);
+
+            return new PagedResultDto<TDto>
+            {
+                Items = pagedDataDtos,
+                TotalRecordsCount = totalRecords,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
                 TotalPages = totalPages,
             };
         }

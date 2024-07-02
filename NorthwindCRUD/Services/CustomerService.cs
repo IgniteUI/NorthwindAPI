@@ -20,6 +20,11 @@ namespace NorthwindCRUD.Services
                 .ToArray();
         }
 
+        public IQueryable<CustomerDb> GetAllAsQueryable()
+        {
+            return this.dataContext.Customers.AsQueryable();
+        }
+
         public CustomerDb? GetById(string id)
         {
             return this.dataContext.Customers

@@ -7,6 +7,7 @@
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -50,15 +51,18 @@
         /// <param name="orderBy">A comma-separated list of fields to order the suppliers by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedSuppliers")]
-        public ActionResult<PagedResultDto<SupplierDto>> GetAllSuppliers(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<SupplierDto>> GetAllSuppliers(
+            [FromQuery][SwaggerParameter("The number of records to skip before starting to fetch the suppliers. If this parameter is not provided, fetching starts from the beginning.")] int? skip,
+            [FromQuery][SwaggerParameter("The maximum number of suppliers to fetch. If this parameter is not provided, all suppliers are fetched.")] int? top,
+            [FromQuery][SwaggerParameter("A comma-separated list of fields to order the suppliers by, along with the sort direction (e.g., 'field1 asc, field2 desc').")] string? orderBy)
         {
             try
             {
                 // Retrieve all suppliers
-                var suppliers = this.supplierService.GetAll();
+                var suppliers = this.supplierService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<SupplierDb, SupplierDto>(suppliers, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedDataWithSkip<SupplierDb, SupplierDto>(suppliers, skip, top, orderBy);
 
                 return Ok(pagedResult);
             }

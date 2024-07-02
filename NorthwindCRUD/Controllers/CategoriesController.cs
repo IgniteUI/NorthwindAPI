@@ -6,6 +6,7 @@ namespace NorthwindCRUD.Controllers
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -49,15 +50,18 @@ namespace NorthwindCRUD.Controllers
         /// <param name="orderBy">A comma-separated list of fields to order the categories by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedCategories")]
-        public ActionResult<PagedResultDto<ProductDto>> GetPagedCategories(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<ProductDto>> GetPagedCategories(
+            [FromQuery][SwaggerParameter("The number of records to skip before starting to fetch the categories. If this parameter is not provided, fetching starts from the beginning.")] int? skip,
+            [FromQuery][SwaggerParameter("The maximum number of categories to fetch. If this parameter is not provided, all categories are fetched.")] int? top,
+            [FromQuery][SwaggerParameter("A comma-separated list of fields to order the categories by, along with the sort direction (e.g., 'field1 asc, field2 desc').")] string? orderBy)
         {
             try
             {
-                // Retrieve all categories
-                var categories = this.categoryService.GetAll();
+                // Retrieve categories as Queryable
+                var categories = this.categoryService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<CategoryDb, CategoryDto>(categories, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedDataWithSkip<CategoryDb, CategoryDto>(categories, skip, top, orderBy);
 
                 return Ok(pagedResult);
             }

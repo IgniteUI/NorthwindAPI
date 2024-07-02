@@ -6,6 +6,7 @@
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -51,15 +52,18 @@
         /// <param name="orderBy">A comma-separated list of fields to order the employees by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedEmployees")]
-        public ActionResult<PagedResultDto<EmployeeDto>> GetAllEmployees(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<EmployeeDto>> GetPagedEmployees(
+            [FromQuery][SwaggerParameter("The number of records to skip before starting to fetch the employees. If this parameter is not provided, fetching starts from the beginning.")] int? skip,
+            [FromQuery][SwaggerParameter("The maximum number of employees to fetch. If this parameter is not provided, all employees are fetched.")] int? top,
+            [FromQuery][SwaggerParameter("A comma-separated list of fields to order the employees by, along with the sort direction (e.g., 'field1 asc, field2 desc').")] string? orderBy)
         {
             try
             {
-                // Retrieve all employees
-                var employees = this.employeeService.GetAll();
+                // Retrieve all employees as Queryable
+                var employees = this.employeeService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<EmployeeDb, EmployeeDto>(employees, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedDataWithSkip<EmployeeDb, EmployeeDto>(employees, skip, top, orderBy);
 
                 return Ok(pagedResult);
             }

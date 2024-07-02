@@ -17,6 +17,11 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Suppliers.ToArray();
         }
 
+        public IQueryable<SupplierDb> GetAllAsQueryable()
+        {
+            return this.dataContext.Suppliers.AsQueryable();
+        }
+
         public SupplierDb? GetById(int id)
         {
             return this.dataContext.Suppliers.FirstOrDefault(p => p.SupplierId == id);

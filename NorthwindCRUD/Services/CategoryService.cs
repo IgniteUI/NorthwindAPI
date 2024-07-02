@@ -1,5 +1,6 @@
 ﻿namespace NorthwindCRUD.Services
 {
+    using Microsoft.EntityFrameworkCore;
     using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
 
@@ -15,6 +16,11 @@
         public CategoryDb[] GetAll()
         {
             return this.dataContext.Categories.ToArray();
+        }
+
+        public IQueryable<CategoryDb> GetAllAsQueryable()
+        {
+            return this.dataContext.Categories.AsQueryable();
         }
 
         public CategoryDb? GetById(int id)

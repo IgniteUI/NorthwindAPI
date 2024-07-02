@@ -7,6 +7,7 @@
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -50,15 +51,18 @@
         /// <param name="orderBy">A comma-separated list of fields to order the regions by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedRegions")]
-        public ActionResult<PagedResultDto<RegionDto>> GetAllRegions(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<RegionDto>> GetAllRegions(
+            [FromQuery][SwaggerParameter("The number of records to skip before starting to fetch the regions. If this parameter is not provided, fetching starts from the beginning.")] int? skip,
+            [FromQuery][SwaggerParameter("The maximum number of regions to fetch. If this parameter is not provided, all regions are fetched.")] int? top,
+            [FromQuery][SwaggerParameter("A comma-separated list of fields to order the regions by, along with the sort direction (e.g., 'field1 asc, field2 desc').")] string? orderBy)
         {
             try
             {
                 // Retrieve all regions
-                var regions = this.regionService.GetAll();
+                var regions = this.regionService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<RegionDb, RegionDto>(regions, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedDataWithSkip<RegionDb, RegionDto>(regions, skip, top, orderBy);
 
                 return Ok(pagedResult);
             }

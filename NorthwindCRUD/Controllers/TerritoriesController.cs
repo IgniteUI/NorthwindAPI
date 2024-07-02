@@ -7,6 +7,7 @@
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -52,15 +53,18 @@
         /// <param name="orderBy">A comma-separated list of fields to order the territories by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedTerritories")]
-        public ActionResult<PagedResultDto<TerritoryDto>> GetAllTerritories(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<TerritoryDto>> GetAllTerritories(
+            [FromQuery][SwaggerParameter("The number of records to skip before starting to fetch the territories. If this parameter is not provided, fetching starts from the beginning.")] int? skip,
+            [FromQuery][SwaggerParameter("The maximum number of territories to fetch. If this parameter is not provided, all territories are fetched.")] int? top,
+            [FromQuery][SwaggerParameter("A comma-separated list of fields to order the territories by, along with the sort direction (e.g., 'field1 asc, field2 desc').")] string? orderBy)
         {
             try
             {
                 // Retrieve all territories
-                var territories = this.territoryService.GetAll();
+                var territories = this.territoryService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<TerritoryDb, TerritoryDto>(territories, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedDataWithSkip<TerritoryDb, TerritoryDto>(territories, skip, top, orderBy);
 
                 return Ok(pagedResult);
             }

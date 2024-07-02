@@ -19,6 +19,11 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Territories.ToArray();
         }
 
+        public IQueryable<TerritoryDb> GetAllAsQueryable()
+        {
+            return this.dataContext.Territories.AsQueryable();
+        }
+
         public TerritoryDb? GetById(string id)
         {
             return this.dataContext.Territories.FirstOrDefault(t => t.TerritoryId == id);

@@ -17,6 +17,11 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Regions.ToArray();
         }
 
+        public IQueryable<RegionDb> GetAllAsQueryable()
+        {
+            return this.dataContext.Regions.AsQueryable();
+        }
+
         public RegionDb? GetById(int id)
         {
             return this.dataContext.Regions.FirstOrDefault(p => p.RegionId == id);

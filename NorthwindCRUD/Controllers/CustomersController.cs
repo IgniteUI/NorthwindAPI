@@ -6,6 +6,7 @@
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -49,15 +50,18 @@
         /// <param name="orderBy">A comma-separated list of fields to order the customers by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedCustomers")]
-        public ActionResult<PagedResultDto<CustomerDto>> GetAllCustomers(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<CustomerDto>> GetAllCustomers(
+            [FromQuery][SwaggerParameter("The number of records to skip before starting to fetch the customers. If this parameter is not provided, fetching starts from the beginning.")] int? skip,
+            [FromQuery][SwaggerParameter("The maximum number of customers to fetch. If this parameter is not provided, all customers are fetched.")] int? top,
+            [FromQuery][SwaggerParameter("A comma-separated list of fields to order the customers by, along with the sort direction (e.g., 'field1 asc, field2 desc').")] string? orderBy)
         {
             try
             {
                 // Retrieve all customers
-                var customers = this.customerService.GetAll();
+                var customers = this.customerService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<CustomerDb, CustomerDto>(customers, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedDataWithSkip<CustomerDb, CustomerDto>(customers, skip, top, orderBy);
 
                 return Ok(pagedResult);
             }
