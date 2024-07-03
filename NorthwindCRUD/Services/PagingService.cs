@@ -74,7 +74,7 @@ namespace NorthwindCRUD.Services
                 Items = pagedDataDtos,
                 TotalRecordsCount = totalRecords,
                 PageSize = currentSize,
-                PageNumber = isPageSize ? ((skipRecordsAmount / currentSize) + 1) : ((skipRecordsAmount / currentSize) + 1),
+                PageNumber = currentSize != 0 ? (isPageIndexAndSize ? (skipRecordsAmount / currentSize) : (skipRecordsAmount / currentSize) + 1) : default,
                 TotalPages = totalPages,
             };
         }
