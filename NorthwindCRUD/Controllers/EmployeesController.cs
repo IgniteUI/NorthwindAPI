@@ -104,7 +104,6 @@
             }
         }
 
-
         /// <summary>
         /// Retrieves the total number of employees.
         /// </summary>
@@ -123,7 +122,6 @@
                 return StatusCode(500);
             }
         }
-
 
         [HttpGet("{id}")]
         public ActionResult<EmployeeDto> GetById(int id)
