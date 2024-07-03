@@ -5,9 +5,7 @@
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
-    using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
-    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -114,12 +112,12 @@
         /// </summary>
         /// <returns>Total count of orders as an integer.</returns>
         [HttpGet("GetOrdersCount")]
-        public ActionResult<int> GetOrdersCount()
+        public ActionResult<CountResultDto> GetOrdersCount()
         {
             try
             {
                 var count = orderService.GetAllAsQueryable().Count();
-                return Ok(count);
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

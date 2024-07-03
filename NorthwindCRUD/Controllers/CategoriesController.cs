@@ -107,12 +107,12 @@ namespace NorthwindCRUD.Controllers
         /// </summary>
         /// <returns>Total count of categories as an integer.</returns>
         [HttpGet("GetCategoriesCount")]
-        public ActionResult<int> GetCategoriesCount()
+        public ActionResult<CountResultDto> GetCategoriesCount()
         {
             try
             {
                 var count = categoryService.GetAllAsQueryable().Count();
-                return Ok(count);
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

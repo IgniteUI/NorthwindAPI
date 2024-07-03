@@ -107,12 +107,12 @@
         /// </summary>
         /// <returns>Total count of customers as an integer.</returns>
         [HttpGet("GetCustomersCount")]
-        public ActionResult<int> GetCustomersCount()
+        public ActionResult<CountResultDto> GetCustomersCount()
         {
             try
             {
                 var count = customerService.GetAllAsQueryable().Count();
-                return Ok(count);
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

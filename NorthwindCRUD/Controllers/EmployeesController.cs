@@ -110,12 +110,12 @@
         /// </summary>
         /// <returns>Total count of employees as an integer.</returns>
         [HttpGet("GetEmployeesCount")]
-        public ActionResult<int> GetEmployeesCount()
+        public ActionResult<CountResultDto> GetEmployeesCount()
         {
             try
             {
                 var count = employeeService.GetAllAsQueryable().Count();
-                return Ok(count);
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

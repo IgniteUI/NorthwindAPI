@@ -108,12 +108,12 @@
         /// </summary>
         /// <returns>Total count of shippers as an integer.</returns>
         [HttpGet("GetShippersCount")]
-        public ActionResult<int> GetShippersCount()
+        public ActionResult<CountResultDto> GetShippersCount()
         {
             try
             {
                 var count = shipperService.GetAllAsQueryable().Count();
-                return Ok(count);
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

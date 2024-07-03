@@ -110,12 +110,12 @@
         /// </summary>
         /// <returns>Total count of territories as an integer.</returns>
         [HttpGet("GetTerritoriesCount")]
-        public ActionResult<int> GetTerritoriesCount()
+        public ActionResult<CountResultDto> GetTerritoriesCount()
         {
             try
             {
                 var count = territoryService.GetAllAsQueryable().Count();
-                return Ok(count);
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

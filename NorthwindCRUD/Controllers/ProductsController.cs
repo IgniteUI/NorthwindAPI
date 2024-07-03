@@ -113,12 +113,12 @@ namespace NorthwindCRUD.Controllers
         /// </summary>
         /// <returns>Total count of products as an integer.</returns>
         [HttpGet("GetProductsCount")]
-        public ActionResult<int> GetProductsCount()
+        public ActionResult<CountResultDto> GetProductsCount()
         {
             try
             {
                 var count = productService.GetAllAsQueryable().Count();
-                return Ok(count);
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

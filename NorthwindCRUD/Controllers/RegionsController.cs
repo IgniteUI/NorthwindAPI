@@ -108,12 +108,12 @@
         /// </summary>
         /// <returns>Total count of regions as an integer.</returns>
         [HttpGet("GetRegionsCount")]
-        public ActionResult<int> GetRegionsCount()
+        public ActionResult<CountResultDto> GetRegionsCount()
         {
             try
             {
                 var count = regionService.GetAllAsQueryable().Count();
-                return Ok(count);
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

@@ -108,12 +108,12 @@
         /// </summary>
         /// <returns>Total count of suppliers as an integer.</returns>
         [HttpGet("GetSuppliersCount")]
-        public ActionResult<int> GetSuppliersCount()
+        public ActionResult<CountResultDto> GetSuppliersCount()
         {
             try
             {
                 var count = supplierService.GetAllAsQueryable().Count();
-                return Ok(count);
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {
