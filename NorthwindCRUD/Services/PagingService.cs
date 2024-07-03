@@ -2,14 +2,19 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using NorthwindCRUD.Models.Dtos;
 
 namespace NorthwindCRUD.Services
 {
     public interface IPagingService
     {
-        PagedResultDto<TDto> GetPagedData<TEntity, TDto>(IEnumerable<TEntity> data, int? skip, int? top, string? orderBy);
+        PagedResultDto<TDto> FetchPagedData<TEntity, TDto>(
+            IQueryable<TEntity> query,
+            int? skip = null,
+            int? top = null,
+            int? pageIndex = null,
+            int? size = null,
+            string? orderBy = null);
     }
 
     public class PagingService : IPagingService
@@ -21,22 +26,39 @@ namespace NorthwindCRUD.Services
             this.mapper = mapper;
         }
 
-        public PagedResultDto<TDto> GetPagedData<TEntity, TDto>(IEnumerable<TEntity> data, int? skip, int? top, string? orderBy)
+        public PagedResultDto<TDto> FetchPagedData<TEntity, TDto>(
+            IQueryable<TEntity> query,
+            int? skip = null,
+            int? top = null,
+            int? pageIndex = null,
+            int? size = null,
+            string? orderBy = null)
         {
-            var totalRecords = data.Count();
+            // Determine if we're using skip/top or pageIndex/size
+            bool isPageIndexAndSize = pageIndex.HasValue || size.HasValue;
 
-            // Default skip and top if not provided
+            int totalRecords = query.Count();
+
+            // Default values if not provided
             int skipRecordsAmount = skip ?? 0;
             int currentSize = top ?? totalRecords;
+
+            if (isPageIndexAndSize)
+            {
+                int pageNumber = pageIndex ?? 0;
+                int pageSize = size ?? totalRecords;
+                skipRecordsAmount = pageNumber * pageSize;
+                currentSize = pageSize;
+            }
 
             // Apply ordering if specified
             if (!string.IsNullOrEmpty(orderBy))
             {
-                data = ApplyOrdering(data.AsQueryable(), orderBy).ToArray();
+                query = ApplyOrdering(query, orderBy);
             }
 
             // Apply pagination
-            var pagedData = data
+            var pagedData = query
                 .Skip(skipRecordsAmount)
                 .Take(currentSize)
                 .ToArray();
@@ -44,15 +66,15 @@ namespace NorthwindCRUD.Services
             // Calculate total pages
             int totalPages = (int)Math.Ceiling(totalRecords / (double)currentSize);
 
-            // Map the results to ProductDto
+            // Map the results to TDto
             var pagedDataDtos = mapper.Map<TDto[]>(pagedData);
 
             return new PagedResultDto<TDto>
             {
                 Items = pagedDataDtos,
                 TotalRecordsCount = totalRecords,
-                PageSize = pagedDataDtos.Length,
-                PageNumber = (skipRecordsAmount / currentSize) + 1,
+                PageSize = currentSize,
+                PageNumber = currentSize != 0 ? (isPageIndexAndSize ? (skipRecordsAmount / currentSize) : (skipRecordsAmount / currentSize) + 1) : default,
                 TotalPages = totalPages,
             };
         }

@@ -7,6 +7,7 @@
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -49,18 +50,70 @@
         /// <param name="top">The maximum number of shippers to fetch. If this parameter is not provided, all shippers are fetched.</param>
         /// <param name="orderBy">A comma-separated list of fields to order the shippers by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
-        [HttpGet("GetPagedShippers")]
-        public ActionResult<PagedResultDto<ShipperDto>> GetAllShippers(int? skip, int? top, string? orderBy)
+        [HttpGet("GetPagedShippersWithSkip")]
+        public ActionResult<PagedResultDto<ShipperDto>> GetPagedShippersWithSkip(
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
             {
                 // Retrieve all shippers
-                var shippers = this.shipperService.GetAll();
+                var shippers = this.shipperService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<ShipperDb, ShipperDto>(shippers, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedData<ShipperDb, ShipperDto>(shippers, skip, top, null, null, orderBy);
 
                 return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all shippers or a page of shippers based on the provided parameters.
+        /// </summary>
+        /// <param name="pageIndex">The page index of records to fetch. If this parameter is not provided, fetching starts from the beginning (page 0).</param>
+        /// <param name="size">The maximum number of records to fetch per page. If this parameter is not provided, all records are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the records by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedShippersWithPage")]
+        public ActionResult<PagedResultDto<ShipperDto>> GetPagedShippersWithPage(
+            [FromQuery][Attributes.SwaggerPageParameter] int? pageIndex,
+            [FromQuery][Attributes.SwaggerSizeParameter] int? size,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
+        {
+            try
+            {
+                // Retrieve shippers as Queryable
+                var shippers = this.shipperService.GetAllAsQueryable();
+
+                // Get paged data
+                var pagedResult = pagingService.FetchPagedData<ShipperDb, ShipperDto>(shippers, null, null, pageIndex, size, orderBy);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the total number of shippers.
+        /// </summary>
+        /// <returns>Total count of shippers as an integer.</returns>
+        [HttpGet("GetShippersCount")]
+        public ActionResult<CountResultDto> GetShippersCount()
+        {
+            try
+            {
+                var count = shipperService.GetAllAsQueryable().Count();
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

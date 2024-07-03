@@ -7,6 +7,7 @@
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -50,17 +51,69 @@
         /// <param name="orderBy">A comma-separated list of fields to order the suppliers by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedSuppliers")]
-        public ActionResult<PagedResultDto<SupplierDto>> GetAllSuppliers(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<SupplierDto>> GetAllSuppliers(
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
             {
                 // Retrieve all suppliers
-                var suppliers = this.supplierService.GetAll();
+                var suppliers = this.supplierService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<SupplierDb, SupplierDto>(suppliers, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedData<SupplierDb, SupplierDto>(suppliers, skip, top, null, null, orderBy);
 
                 return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all suppliers or a page of suppliers based on the provided parameters.
+        /// </summary>
+        /// <param name="pageIndex">The page index of records to fetch. If this parameter is not provided, fetching starts from the beginning (page 0).</param>
+        /// <param name="size">The maximum number of records to fetch per page. If this parameter is not provided, all records are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the records by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedSuppliersWithPage")]
+        public ActionResult<PagedResultDto<SupplierDto>> GetPagedSuppliersWithPage(
+            [FromQuery][Attributes.SwaggerPageParameter] int? pageIndex,
+            [FromQuery][Attributes.SwaggerSizeParameter] int? size,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
+        {
+            try
+            {
+                // Retrieve suppliers as Queryable
+                var suppliers = this.supplierService.GetAllAsQueryable();
+
+                // Get paged data
+                var pagedResult = pagingService.FetchPagedData<SupplierDb, SupplierDto>(suppliers, null, null, pageIndex, size, orderBy);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the total number of suppliers.
+        /// </summary>
+        /// <returns>Total count of suppliers as an integer.</returns>
+        [HttpGet("GetSuppliersCount")]
+        public ActionResult<CountResultDto> GetSuppliersCount()
+        {
+            try
+            {
+                var count = supplierService.GetAllAsQueryable().Count();
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

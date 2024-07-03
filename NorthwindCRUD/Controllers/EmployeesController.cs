@@ -6,6 +6,7 @@
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -50,18 +51,70 @@
         /// <param name="top">The maximum number of employees to fetch. If this parameter is not provided, all employees are fetched.</param>
         /// <param name="orderBy">A comma-separated list of fields to order the employees by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
-        [HttpGet("GetPagedEmployees")]
-        public ActionResult<PagedResultDto<EmployeeDto>> GetAllEmployees(int? skip, int? top, string? orderBy)
+        [HttpGet("GetEmployeesWithSkip")]
+        public ActionResult<PagedResultDto<EmployeeDto>> GetPagedEmployees(
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
             {
-                // Retrieve all employees
-                var employees = this.employeeService.GetAll();
+                // Retrieve all employees as Queryable
+                var employees = this.employeeService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<EmployeeDb, EmployeeDto>(employees, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedData<EmployeeDb, EmployeeDto>(employees, skip, top, null, null, orderBy);
 
                 return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all employees or a page of employees based on the provided parameters.
+        /// </summary>
+        /// <param name="pageIndex">The page index of records to fetch. If this parameter is not provided, fetching starts from the beginning (page 0).</param>
+        /// <param name="size">The maximum number of records to fetch per page. If this parameter is not provided, all records are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the records by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedEmployeesWithPage")]
+        public ActionResult<PagedResultDto<EmployeeDto>> GetPagedEmployeesWithPage(
+            [FromQuery][Attributes.SwaggerPageParameter] int? pageIndex,
+            [FromQuery][Attributes.SwaggerSizeParameter] int? size,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
+        {
+            try
+            {
+                // Retrieve employees as Queryable
+                var employees = this.employeeService.GetAllAsQueryable();
+
+                // Get paged data
+                var pagedResult = pagingService.FetchPagedData<EmployeeDb, EmployeeDto>(employees, null, null, pageIndex, size, orderBy);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the total number of employees.
+        /// </summary>
+        /// <returns>Total count of employees as an integer.</returns>
+        [HttpGet("GetEmployeesCount")]
+        public ActionResult<CountResultDto> GetEmployeesCount()
+        {
+            try
+            {
+                var count = employeeService.GetAllAsQueryable().Count();
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

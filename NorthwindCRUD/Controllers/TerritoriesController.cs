@@ -7,6 +7,7 @@
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -52,17 +53,69 @@
         /// <param name="orderBy">A comma-separated list of fields to order the territories by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedTerritories")]
-        public ActionResult<PagedResultDto<TerritoryDto>> GetAllTerritories(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<TerritoryDto>> GetAllTerritories(
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
             {
                 // Retrieve all territories
-                var territories = this.territoryService.GetAll();
+                var territories = this.territoryService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<TerritoryDb, TerritoryDto>(territories, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedData<TerritoryDb, TerritoryDto>(territories, skip, top, null, null, orderBy);
 
                 return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all territories or a page of territories based on the provided parameters.
+        /// </summary>
+        /// <param name="pageIndex">The page index of records to fetch. If this parameter is not provided, fetching starts from the beginning (page 0).</param>
+        /// <param name="size">The maximum number of records to fetch per page. If this parameter is not provided, all territories are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the territories by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedTerritoriesWithPage")]
+        public ActionResult<PagedResultDto<TerritoryDto>> GetPagedTerritoriesWithPage(
+            [FromQuery][Attributes.SwaggerPageParameter] int? pageIndex,
+            [FromQuery][Attributes.SwaggerSizeParameter] int? size,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
+        {
+            try
+            {
+                // Retrieve territories as Queryable
+                var territories = this.territoryService.GetAllAsQueryable();
+
+                // Get paged data
+                var pagedResult = pagingService.FetchPagedData<TerritoryDb, TerritoryDto>(territories, null, null, pageIndex, size, orderBy);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the total number of territories.
+        /// </summary>
+        /// <returns>Total count of territories as an integer.</returns>
+        [HttpGet("GetTerritoriesCount")]
+        public ActionResult<CountResultDto> GetTerritoriesCount()
+        {
+            try
+            {
+                var count = territoryService.GetAllAsQueryable().Count();
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

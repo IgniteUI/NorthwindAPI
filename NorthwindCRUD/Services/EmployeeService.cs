@@ -20,6 +20,11 @@
                 .ToArray();
         }
 
+        public IQueryable<EmployeeDb> GetAllAsQueryable()
+        {
+            return this.dataContext.Employees;
+        }
+
         public EmployeeDb? GetById(int id)
         {
             return this.dataContext.Employees.FirstOrDefault(c => c.EmployeeId == id);

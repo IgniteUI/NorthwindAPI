@@ -6,6 +6,7 @@
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -48,18 +49,70 @@
         /// <param name="top">The maximum number of customers to fetch. If this parameter is not provided, all customers are fetched.</param>
         /// <param name="orderBy">A comma-separated list of fields to order the customers by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
-        [HttpGet("GetPagedCustomers")]
-        public ActionResult<PagedResultDto<CustomerDto>> GetAllCustomers(int? skip, int? top, string? orderBy)
+        [HttpGet("GetCustomersWithSkip")]
+        public ActionResult<PagedResultDto<CustomerDto>> GetCustomersWithSkip(
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
             {
                 // Retrieve all customers
-                var customers = this.customerService.GetAll();
+                var customers = this.customerService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<CustomerDb, CustomerDto>(customers, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedData<CustomerDb, CustomerDto>(customers, skip, top, null, null, orderBy);
 
                 return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all customers or a page of customers based on the provided parameters.
+        /// </summary>
+        /// <param name="pageIndex">The page index of records to fetch. If this parameter is not provided, fetching starts from the beginning (page 0).</param>
+        /// <param name="size">The maximum number of records to fetch per page. If this parameter is not provided, all records are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the records by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetCustomersWithPage")]
+        public ActionResult<PagedResultDto<CustomerDto>> GetCustomersWithPage(
+            [FromQuery][Attributes.SwaggerPageParameter] int? pageIndex,
+            [FromQuery][Attributes.SwaggerSizeParameter] int? size,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
+        {
+            try
+            {
+                // Retrieve customers as Queryable
+                var customers = this.customerService.GetAllAsQueryable();
+
+                // Get paged data
+                var pagedResult = pagingService.FetchPagedData<CustomerDb, CustomerDto>(customers, null, null, pageIndex, size, orderBy);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the total number of customers.
+        /// </summary>
+        /// <returns>Total count of customers as an integer.</returns>
+        [HttpGet("GetCustomersCount")]
+        public ActionResult<CountResultDto> GetCustomersCount()
+        {
+            try
+            {
+                var count = customerService.GetAllAsQueryable().Count();
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {

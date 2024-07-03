@@ -19,6 +19,11 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Products.ToArray();
         }
 
+        public IQueryable<ProductDb> GetAllAsQueryable()
+        {
+            return this.dataContext.Products;
+        }
+
         public ProductDb? GetById(int id)
         {
             return this.dataContext.Products.FirstOrDefault(p => p.ProductId == id);

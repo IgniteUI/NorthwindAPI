@@ -5,7 +5,6 @@
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
-    using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
 
     [ApiController]
@@ -56,17 +55,69 @@
         /// <param name="orderBy">A comma-separated list of fields to order the orders by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedOrders")]
-        public ActionResult<PagedResultDto<OrderDto>> GetAllOrders(int? skip, int? top, string? orderBy)
+        public ActionResult<PagedResultDto<OrderDto>> GetAllOrders(
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
             {
                 // Retrieve all orders
-                var orders = this.orderService.GetAll();
+                var orders = this.orderService.GetAllAsQueryable();
 
                 // Get paged data
-                var pagedResult = pagingService.GetPagedData<OrderDb, OrderDto>(orders, skip, top, orderBy);
+                var pagedResult = pagingService.FetchPagedData<OrderDb, OrderDto>(orders, skip, top, null, null, orderBy);
 
                 return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Fetches all orders or a page of orders based on the provided parameters.
+        /// </summary>
+        /// <param name="pageIndex">The page index of records to fetch. If this parameter is not provided, fetching starts from the beginning (page 0).</param>
+        /// <param name="size">The maximum number of records to fetch per page. If this parameter is not provided, all records are fetched.</param>
+        /// <param name="orderBy">A comma-separated list of fields to order the records by, along with the sort direction (e.g., "field1 asc, field2 desc").</param>
+        /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
+        [HttpGet("GetPagedOrdersWithPage")]
+        public ActionResult<PagedResultDto<OrderDto>> GetPagedOrdersWithPage(
+            [FromQuery][Attributes.SwaggerPageParameter] int? pageIndex,
+            [FromQuery][Attributes.SwaggerSizeParameter] int? size,
+            [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
+        {
+            try
+            {
+                // Retrieve orders as Queryable
+                var orders = this.orderService.GetAllAsQueryable();
+
+                // Get paged data
+                var pagedResult = pagingService.FetchPagedData<OrderDb, OrderDto>(orders, null, null, pageIndex, size, orderBy);
+
+                return Ok(pagedResult);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the total number of orders.
+        /// </summary>
+        /// <returns>Total count of orders as an integer.</returns>
+        [HttpGet("GetOrdersCount")]
+        public ActionResult<CountResultDto> GetOrdersCount()
+        {
+            try
+            {
+                var count = orderService.GetAllAsQueryable().Count();
+                return new CountResultDto() { Count = count };
             }
             catch (Exception error)
             {
