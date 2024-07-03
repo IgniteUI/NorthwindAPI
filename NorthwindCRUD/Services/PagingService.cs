@@ -34,8 +34,8 @@ namespace NorthwindCRUD.Services
             int? size = null,
             string? orderBy = null)
         {
-            // Determine if we're using skip/top or page/size
-            bool isPageSize = pageIndex.HasValue || size.HasValue;
+            // Determine if we're using skip/top or pageIndex/size
+            bool isPageIndexAndSize = pageIndex.HasValue || size.HasValue;
 
             int totalRecords = query.Count();
 
@@ -43,7 +43,7 @@ namespace NorthwindCRUD.Services
             int skipRecordsAmount = skip ?? 0;
             int currentSize = top ?? totalRecords;
 
-            if (isPageSize)
+            if (isPageIndexAndSize)
             {
                 int pageNumber = pageIndex ?? 0;
                 int pageSize = size ?? totalRecords;
