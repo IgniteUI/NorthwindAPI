@@ -18,10 +18,13 @@ namespace NorthwindCRUD.Models.Contracts
         string RequiredDate { get; set; }
 
         Shipping? ShipVia { get; set; }
+        Shipping? ShipVia { get; set; }
 
         double Freight { get; set; }
 
         string ShipName { get; set; }
+
+        public bool Completed { get; set; }
 
         public bool Completed { get; set; }
 
