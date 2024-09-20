@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 using NorthwindCRUD.Filters;
 using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Services;
@@ -32,9 +34,13 @@ namespace NorthwindCRUD
             builder.Logging.AddConsole();
 
             builder.Services.AddControllers(options =>
-                                options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true)
-                            .AddNewtonsoftJson(options =>
-                                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            {
+                options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+            }).AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+            });
 
             builder.Services.AddEndpointsApiExplorer();
 
@@ -51,6 +57,7 @@ namespace NorthwindCRUD
                     Scheme = "bearer",
                 });
 
+                option.SchemaFilter<EnumSchemaFilter>();
                 option.OperationFilter<AuthResponsesOperationFilter>();
                 option.EnableAnnotations();
             });
