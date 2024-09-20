@@ -13,14 +13,14 @@ namespace NorthwindCRUD.Tests
         public DataHelper(DataContext dataContext)
         {
             this.dataContext = dataContext;
-            CategoryService = new CategoryService(dataContext);
-            CustomerService = new CustomerService(dataContext);
+            //CategoryService = new CategoryService(dataContext);
+            //CustomerService = new CustomerService(dataContext);
             EmployeeService = new EmployeeService(dataContext);
             ProductService = new ProductService(dataContext);
             SupplierService = new SupplierService(dataContext);
             RegionService = new RegionService(dataContext);
             TerritoryService = new TerritoryService(dataContext);
-            OrderService = new OrderService(dataContext);
+            //OrderService = new OrderService(dataContext);
             ShipperService = new ShipperService(dataContext);
             EmployeeTerritoryService = new EmployeeTerritoryService(dataContext);
             SalesService = new SalesService(dataContext);
@@ -115,7 +115,8 @@ namespace NorthwindCRUD.Tests
 
         internal CustomerDb CreateCustomer()
         {
-            return CustomerService.Create(GetCustomer());
+            return null;
+            //return CustomerService.Create(GetCustomer());
         }
 
         internal OrderDb CreateOrder(string? orderDate = null, string? country = null, ProductDb? product = null, int? quantity = null)

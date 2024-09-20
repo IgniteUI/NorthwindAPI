@@ -1,6 +1,6 @@
 ﻿namespace NorthwindCRUD.Models.DbModels
 {
-    public class EmployeeTerritoryDb
+    public class EmployeeTerritoryDb : IBaseDb
     {
         public int EmployeeId { get; set; }
 

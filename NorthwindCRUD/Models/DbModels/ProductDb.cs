@@ -4,7 +4,7 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class ProductDb : IProduct
+    public class ProductDb : IBaseDb, IProduct
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

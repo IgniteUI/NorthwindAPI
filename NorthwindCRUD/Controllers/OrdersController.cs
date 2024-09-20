@@ -179,7 +179,7 @@
 
                     if (customer != null)
                     {
-                        return this.mapper.Map<CustomerDb, CustomerDto>(customer);
+                        return customer;
                     }
                 }
 

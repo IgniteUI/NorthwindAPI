@@ -2,7 +2,7 @@
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class SupplierDto : ISupplier
+    public class SupplierDto : IBaseDto, ISupplier
     {
         public int SupplierId { get; set; }
 

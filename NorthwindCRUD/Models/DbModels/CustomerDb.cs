@@ -4,7 +4,7 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class CustomerDb : ICustomer
+    public class CustomerDb : IBaseDb, ICustomer
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -21,5 +21,10 @@ namespace NorthwindCRUD.Models.DbModels
         public AddressDb Address { get; set; }
 
         public ICollection<OrderDb> Orders { get; set; }
+
+        public string[] GetIncludes()
+        {
+            return new string[] { "Address" };
+        }
     }
 }

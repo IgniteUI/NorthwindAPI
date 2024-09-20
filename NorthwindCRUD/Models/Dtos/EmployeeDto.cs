@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class EmployeeDto : IEmployee
+    public class EmployeeDto : IBaseDto, IEmployee
     {
         [SwaggerSchema("Number automatically assigned to new employee.")]
         [Required]

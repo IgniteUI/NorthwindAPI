@@ -1,19 +1,23 @@
 ﻿using System.Globalization;
+using AutoMapper;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using NorthwindCRUD.Constants;
 using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Models.DbModels;
+using NorthwindCRUD.Models.Dtos;
 
 namespace NorthwindCRUD.Services
 {
     public class OrderService
     {
         private readonly DataContext dataContext;
+        private readonly IMapper mapper;
 
-        public OrderService(DataContext dataContext)
+        public OrderService(DataContext dataContext, IMapper mapper)
         {
             this.dataContext = dataContext;
+            this.mapper = mapper;
         }
 
         public OrderDb[] GetAll()
@@ -47,11 +51,11 @@ namespace NorthwindCRUD.Services
             return details;
         }
 
-        public OrderDb[] GetOrdersByCustomerId(string id)
+        public OrderDto[] GetOrdersByCustomerId(string id)
         {
-            return GetOrdersQuery()
+            return mapper.Map<OrderDto[]>(GetOrdersQuery()
                 .Where(o => o.CustomerId == id)
-                .ToArray();
+                .ToArray());
         }
 
         public OrderDb[] GetOrdersByEmployeeId(int id)

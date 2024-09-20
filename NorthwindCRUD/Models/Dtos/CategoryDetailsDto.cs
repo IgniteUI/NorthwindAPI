@@ -2,7 +2,7 @@
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class CategoryDetailsDto : CategoryDto, ICategoryDetail
+    public class CategoryDetailsDto : CategoryDto, IBaseDto, ICategoryDetail
     {
         public string Picture { get; set; }
     }

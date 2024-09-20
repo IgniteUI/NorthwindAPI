@@ -2,7 +2,7 @@
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class TerritoryDto : ITerritory
+    public class TerritoryDto : IBaseDto, ITerritory
     {
         public string TerritoryId { get; set; }
 

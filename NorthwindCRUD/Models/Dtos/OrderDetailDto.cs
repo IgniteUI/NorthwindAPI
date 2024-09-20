@@ -1,6 +1,6 @@
 ﻿namespace NorthwindCRUD.Models.Dtos
 {
-    public class OrderDetailDto
+    public class OrderDetailDto : IBaseDto
     {
         public int OrderId { get; set; }
 

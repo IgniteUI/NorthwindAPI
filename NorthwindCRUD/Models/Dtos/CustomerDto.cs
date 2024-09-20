@@ -3,7 +3,7 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class CustomerDto : ICustomer
+    public class CustomerDto : IBaseDto, ICustomer
     {
         public string CustomerId { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class RegionDto : IRegion
+    public class RegionDto : IBaseDto, IRegion
     {
         public int RegionId { get; set; }
 

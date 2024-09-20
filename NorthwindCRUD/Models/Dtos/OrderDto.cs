@@ -2,7 +2,7 @@
 {
     using NorthwindCRUD.Models.Contracts;
 
-    public class OrderDto : IOrder
+    public class OrderDto : IBaseDto, IOrder
     {
         public int OrderId { get; set; }
 

@@ -4,7 +4,7 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class ShipperDb : IShipper
+    public class ShipperDb : IBaseDb, IShipper
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

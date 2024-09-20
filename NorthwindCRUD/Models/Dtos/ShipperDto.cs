@@ -2,7 +2,7 @@
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class ShipperDto : IShipper
+    public class ShipperDto : IBaseDto, IShipper
     {
         public int ShipperId { get; set; }
 

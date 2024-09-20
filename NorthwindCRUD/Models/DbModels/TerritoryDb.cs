@@ -4,7 +4,7 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class TerritoryDb : ITerritory
+    public class TerritoryDb : IBaseDb, ITerritory
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

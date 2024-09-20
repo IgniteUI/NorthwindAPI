@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class OrderDb
+    public class OrderDb : IBaseDb
     {
-        public OrderDb()
-        {
-        }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

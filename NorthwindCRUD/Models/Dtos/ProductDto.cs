@@ -2,7 +2,7 @@
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class ProductDto : IProduct
+    public class ProductDto : IBaseDto, IProduct
     {
         public int ProductId { get; set; }
 

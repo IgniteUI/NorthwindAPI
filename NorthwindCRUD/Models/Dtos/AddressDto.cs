@@ -2,7 +2,7 @@
 {
     using NorthwindCRUD.Models.Contracts;
 
-    public class AddressDto : IAddress
+    public class AddressDto : IBaseDto, IAddress
     {
         public string Street { get; set; }
 

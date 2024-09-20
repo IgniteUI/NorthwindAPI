@@ -4,7 +4,7 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class AddressDb : IAddress
+    public class AddressDb : IBaseDb, IAddress
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
