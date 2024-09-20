@@ -5,6 +5,7 @@ namespace NorthwindCRUD.Models.Dtos
 {
     public class CategoryDto : ICategory
     {
+        [Range(1, int.MaxValue, ErrorMessage = "CategoryId must be greater than 0.")]
         public int CategoryId { get; set; }
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
