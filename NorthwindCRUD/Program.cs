@@ -58,6 +58,7 @@ namespace NorthwindCRUD
                 });
 
                 option.SchemaFilter<EnumSchemaFilter>();
+                option.SchemaFilter<EnumSchemaFilter>();
                 option.OperationFilter<AuthResponsesOperationFilter>();
                 option.EnableAnnotations();
             });
