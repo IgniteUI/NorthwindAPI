@@ -5,7 +5,6 @@ namespace NorthwindCRUD.Models.Dtos
 {
     public class ProductDto : IProduct
     {
-        [Required(ErrorMessage = "ProductId is required.")]
         public int ProductId { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "SupplierId must be a valid supplier ID.")]
