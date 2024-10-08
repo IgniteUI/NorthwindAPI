@@ -1,6 +1,5 @@
-﻿using NorthwindCRUD.Models.DbModels;
-using NorthwindCRUD.Models.Dtos;
-using NorthwindCRUD.Models.InputModels;
+﻿using NorthwindCRUD.Models.Dtos;
+using static NorthwindCRUD.Helpers.Enums;
 
 namespace NorthwindCRUD.Models.Contracts
 {
@@ -18,11 +17,13 @@ namespace NorthwindCRUD.Models.Contracts
 
         string RequiredDate { get; set; }
 
-        int ShipVia { get; set; }
+        Shipping? ShipVia { get; set; }
 
         double Freight { get; set; }
 
         string ShipName { get; set; }
+
+        public bool Completed { get; set; }
 
         AddressDto ShipAddress { get; set; }
     }

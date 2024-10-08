@@ -1,13 +1,12 @@
 ﻿namespace NorthwindCRUD.Controllers
 {
+    using System.ComponentModel.DataAnnotations;
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
-    using NorthwindCRUD.Models.InputModels;
     using NorthwindCRUD.Services;
-    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -52,8 +51,8 @@
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedSuppliers")]
         public ActionResult<PagedResultDto<SupplierDto>> GetAllSuppliers(
-            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
-            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerSkipParameter][Range(0, int.MaxValue)] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter][Range(0, int.MaxValue)] int? top,
             [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try

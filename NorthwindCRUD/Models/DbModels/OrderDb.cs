@@ -43,6 +43,8 @@ namespace NorthwindCRUD.Models.DbModels
 
         public string? ShipAddressId { get; set; }
 
+        public bool Completed { get; set; }
+
         public AddressDb? ShipAddress { get; set; }
     }
 }
