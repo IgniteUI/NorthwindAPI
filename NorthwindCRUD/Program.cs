@@ -127,7 +127,7 @@ namespace NorthwindCRUD
             builder.Services.AddTransient<TerritoryService>();
             builder.Services.AddTransient<SalesService>();
             builder.Services.AddTransient<PagingService>();
-           
+
             var app = builder.Build();
 
             // Necessary to detect if it's behind a load balancer, for example changing protocol, port or hostname
