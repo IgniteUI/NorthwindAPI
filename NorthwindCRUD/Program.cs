@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using NorthwindCRUD.Filters;
 using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Providers;
 using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD
@@ -74,36 +75,10 @@ namespace NorthwindCRUD
                                 });
             });
 
-            var dbProvider = builder.Configuration.GetConnectionString("Provider");
-
-            if (dbProvider == "SQLite")
+            builder.Services.AddDbContext<DataContext>((serviceProvider, options) =>
             {
-                // For SQLite in memory to be shared across multiple EF calls, we need to maintain a separate open connection.
-                // see post https://stackoverflow.com/questions/56319638/entityframeworkcore-sqlite-in-memory-db-tables-are-not-created
-                var keepAliveConnection = new SqliteConnection(builder.Configuration.GetConnectionString("SQLiteConnectionString"));
-                keepAliveConnection.Open();
-            }
-
-            builder.Services.AddDbContext<DataContext>(options =>
-            {
-                if (dbProvider == "SqlServer")
-                {
-                    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnectionString"));
-                }
-                else if (dbProvider == "InMemory")
-                {
-                    options.ConfigureWarnings(warnOpts =>
-                    {
-                        // InMemory doesn't support transactions and we're ok with it
-                        warnOpts.Ignore(InMemoryEventId.TransactionIgnoredWarning);
-                    });
-
-                    options.UseInMemoryDatabase(databaseName: builder.Configuration.GetConnectionString("InMemoryDBConnectionString"));
-                }
-                else if (dbProvider == "SQLite")
-                {
-                    options.UseSqlite(builder.Configuration.GetConnectionString("SQLiteConnectionString"));
-                }
+                var configurationProvider = serviceProvider.GetRequiredService<DbContextConfigurationProvider>();
+                configurationProvider.ConfigureOptions(options);
             });
 
             var config = new MapperConfiguration(cfg =>
@@ -135,8 +110,10 @@ namespace NorthwindCRUD
             });
 
             builder.Services.AddAuthorization();
-
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddMemoryCache();
             builder.Services.AddScoped<DBSeeder>();
+            builder.Services.AddScoped<DbContextConfigurationProvider>();
             builder.Services.AddTransient<CategoryService>();
             builder.Services.AddTransient<CustomerService>();
             builder.Services.AddTransient<EmployeeTerritoryService>();
@@ -150,7 +127,7 @@ namespace NorthwindCRUD
             builder.Services.AddTransient<TerritoryService>();
             builder.Services.AddTransient<SalesService>();
             builder.Services.AddTransient<PagingService>();
-
+           
             var app = builder.Build();
 
             // Necessary to detect if it's behind a load balancer, for example changing protocol, port or hostname
