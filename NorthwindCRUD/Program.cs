@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using NorthwindCRUD.Filters;
 using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Middlewares;
 using NorthwindCRUD.Providers;
 using NorthwindCRUD.Services;
 
@@ -132,7 +133,7 @@ namespace NorthwindCRUD
 
             // Necessary to detect if it's behind a load balancer, for example changing protocol, port or hostname
             app.UseForwardedHeaders();
-
+            app.UseMiddleware<TenantHeaderValidationMiddleware>();
             app.UseHttpsRedirection();
             app.UseDefaultFiles();
             app.UseStaticFiles();
