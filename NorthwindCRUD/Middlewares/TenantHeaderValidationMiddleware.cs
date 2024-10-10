@@ -6,11 +6,11 @@ namespace NorthwindCRUD.Middlewares
     {
         private const string TenantHeaderKey = "X-Tenant-ID";
 
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate next;
 
         public TenantHeaderValidationMiddleware(RequestDelegate next)
         {
-            _next = next;
+            this.next = next;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -24,7 +24,7 @@ namespace NorthwindCRUD.Middlewares
                 return;
             }
 
-            await _next(context);
+            await next(context);
         }
 
         private bool IsTenantValid(string tenantId)
