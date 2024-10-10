@@ -11,8 +11,6 @@ namespace NorthwindCRUD.Providers
         private const string TenantHeaderKey = "X-Tenant-ID";
         private const string DatabaseConnectionCacheKey = "Data-Connection-{0}";
 
-        private readonly TimeSpan connectionKeySlidingExpiration = TimeSpan.FromHours(24);
-
         private readonly IHttpContextAccessor context;
         private readonly IMemoryCache memoryCache;
         private readonly IConfiguration configuration;
@@ -34,13 +32,15 @@ namespace NorthwindCRUD.Providers
             }
             else if (dbProvider == "SQLite")
             {
-                var tenantId = context.HttpContext?.Request.Headers[TenantHeaderKey].FirstOrDefault() ?? DefaultTenantId;
-                var connectionString = string.Format(configuration.GetConnectionString("SQLiteConnectionString"), tenantId);
+                var tenantId = GetTenantId();
 
-                if (!memoryCache.TryGetValue(string.Format(DatabaseConnectionCacheKey, tenantId), out SqliteConnection connection))
+                var connectionString = this.GetSqlLiteConnectionString(tenantId);
+
+                var cacheKey = string.Format(DatabaseConnectionCacheKey, tenantId);
+
+                if (!memoryCache.TryGetValue(cacheKey, out SqliteConnection connection))
                 {
                     connection = new SqliteConnection(connectionString);
-                    var cacheKey = string.Format(DatabaseConnectionCacheKey, tenantId);
                     memoryCache.Set(cacheKey, connection, GetCacheConnectionEntryOptions());
                 }
 
@@ -68,14 +68,30 @@ namespace NorthwindCRUD.Providers
 
         private MemoryCacheEntryOptions GetCacheConnectionEntryOptions()
         {
+            var defaultAbsoluteCacheExpirationInHours = this.configuration.GetValue<int>("DefaultAbsoluteCacheExpirationInHours");
             var cacheEntryOptions = new MemoryCacheEntryOptions
             {
-                SlidingExpiration = this.connectionKeySlidingExpiration,
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(defaultAbsoluteCacheExpirationInHours),
             };
 
             cacheEntryOptions.RegisterPostEvictionCallback(CloseConnection);
 
             return cacheEntryOptions;
+        }
+
+        private string GetSqlLiteConnectionString(string tenantId)
+        {
+            var connectionStringTemplate = configuration.GetConnectionString("SQLiteConnectionString");
+            var unsanitizedConntectionString = string.Format(connectionStringTemplate, tenantId);
+            var connectionStringBuilder = new SqliteConnectionStringBuilder(unsanitizedConntectionString);
+            var sanitizedConntectionString = connectionStringBuilder.ToString();
+
+            return sanitizedConntectionString;
+        }
+
+        private string GetTenantId()
+        {
+            return context.HttpContext?.Request.Headers[TenantHeaderKey].FirstOrDefault() ?? DefaultTenantId;
         }
     }
 }
