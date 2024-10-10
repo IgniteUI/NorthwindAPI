@@ -10,12 +10,11 @@ namespace NorthwindCRUD.Filters
         {
             if (context.Type.IsEnum)
             {
-                var enumValues = Enum.GetValues(context.Type)
-                    .Cast<object>()
-                    .Select(e => new OpenApiString(e.ToString()))
+                schema.Type = "string";
+                schema.Enum = context.Type
+                    .GetEnumNames()
+                    .Select(name => new OpenApiString(name))
                     .ToList<IOpenApiAny>();
-
-                schema.Enum = enumValues;
             }
         }
     }
