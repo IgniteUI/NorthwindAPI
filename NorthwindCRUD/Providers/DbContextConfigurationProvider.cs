@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Globalization;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using NorthwindCRUD.Helpers;
@@ -34,7 +35,7 @@ namespace NorthwindCRUD.Providers
             {
                 var tenantId = GetTenantId();
 
-                var cacheKey = string.Format(DatabaseConnectionCacheKey, tenantId);
+                var cacheKey = string.Format(CultureInfo.InvariantCulture, DatabaseConnectionCacheKey, tenantId);
 
                 if (!memoryCache.TryGetValue(cacheKey, out SqliteConnection connection))
                 {
@@ -81,7 +82,7 @@ namespace NorthwindCRUD.Providers
         private string GetSqlLiteConnectionString(string tenantId)
         {
             var connectionStringTemplate = configuration.GetConnectionString("SQLiteConnectionString");
-            var unsanitizedConntectionString = string.Format(connectionStringTemplate, tenantId);
+            var unsanitizedConntectionString = string.Format(CultureInfo.InvariantCulture, connectionStringTemplate, tenantId);
             var connectionStringBuilder = new SqliteConnectionStringBuilder(unsanitizedConntectionString);
             var sanitizedConntectionString = connectionStringBuilder.ToString();
 
