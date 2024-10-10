@@ -34,12 +34,11 @@ namespace NorthwindCRUD.Providers
             {
                 var tenantId = GetTenantId();
 
-                var connectionString = this.GetSqlLiteConnectionString(tenantId);
-
                 var cacheKey = string.Format(DatabaseConnectionCacheKey, tenantId);
 
                 if (!memoryCache.TryGetValue(cacheKey, out SqliteConnection connection))
                 {
+                    var connectionString = this.GetSqlLiteConnectionString(tenantId);
                     connection = new SqliteConnection(connectionString);
                     memoryCache.Set(cacheKey, connection, GetCacheConnectionEntryOptions());
                 }
