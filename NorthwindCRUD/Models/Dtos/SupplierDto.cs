@@ -32,10 +32,10 @@ namespace NorthwindCRUD.Models.Dtos
         [StringLength(50, ErrorMessage = "Country cannot exceed 50 characters.")]
         public string? Country { get; set; }
 
-        [RegularExpression(@"^\+?[1-9]\d{1,14}$", ErrorMessage = "Phone number is not valid.")]
+        [RegularExpression(@"^\+?\(?\d{1,5}\)?[-.\s]?\(?\d{1,5}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,10}$", ErrorMessage = "Phone number is not valid.")]
         public string? Phone { get; set; }
 
-        [RegularExpression(@"^\+?[1-9]\d{1,14}$", ErrorMessage = "Fax number is not valid.")]
+        [RegularExpression(@"^\+?\(?\d{1,5}\)?[-.\s]?\(?\d{1,5}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,10}$", ErrorMessage = "Fax number is not valid.")]
         public string? Fax { get; set; }
 
         [RegularExpression(@"^https?:\/\/[^\s$.?#].[^\s]*$", ErrorMessage = "Home Page URL is not valid.")]

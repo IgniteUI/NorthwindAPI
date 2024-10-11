@@ -11,7 +11,7 @@ namespace NorthwindCRUD.Models.Dtos
         [StringLength(100, ErrorMessage = "Company Name cannot exceed 100 characters.")]
         public string CompanyName { get; set; }
 
-        [RegularExpression(@"^\+?[1-9]\d{1,14}$", ErrorMessage = "Phone number is not valid.")]
+        [RegularExpression(@"^\+?\(?\d{1,5}\)?[-.\s]?\(?\d{1,5}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,10}$", ErrorMessage = "Phone number is not valid.")]
         public string Phone { get; set; }
     }
 }
