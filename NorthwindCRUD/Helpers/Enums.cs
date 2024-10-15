@@ -14,6 +14,9 @@ namespace NorthwindCRUD.Helpers
 
             [EnumMember(Value = "AirCargo")]
             AirCargo,
+
+            [EnumMember(Value = "Mail")]
+            Mail,
         }
     }
 }
