@@ -67,6 +67,9 @@ public class QueryFilter : IQueryFilter
     public IQuery? SearchTree { get; set; }
 }
 
+/// <summary>
+/// A generic query executor that can be used to execute queries on IQueryable data sources.
+/// </summary>
 public static class QueryExecutor
 {
     public static TEntity[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query)
