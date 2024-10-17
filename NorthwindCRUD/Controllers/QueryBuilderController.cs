@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NorthwindCRUD;
 using NorthwindCRUD.Models.DbModels;
+using System.Globalization;
 
 public class QueryBuilderResult
 {
@@ -60,20 +61,21 @@ public class QueryBuilderController : ControllerBase
     public ActionResult<QueryBuilderResult> ExecuteQuery(Query query)
     {
         logger.LogInformation("Executing query for entity: {Entity}", query.Entity);
+        var t = query.Entity.ToLower(CultureInfo.InvariantCulture);
 #pragma warning disable CS8601 // Possible null reference assignment.
         return Ok(new QueryBuilderResult
         {
-            Addresses = query.Entity == "Addresses" ? dataContext.Addresses.Run(query) : null,
-            Categories = query.Entity == "Categories" ? dataContext.Categories.Run(query) : null,
-            Products = query.Entity == "Products" ? dataContext.Products.Run(query) : null,
-            Regions = query.Entity == "Regions" ? dataContext.Regions.Run(query) : null,
-            Territories = query.Entity == "Territories" ? dataContext.Territories.Run(query) : null,
-            Employees = query.Entity == "Employees" ? dataContext.Employees.Run(query) : null,
-            Customers = query.Entity == "Customers" ? dataContext.Customers.Run(query) : null,
-            Orders = query.Entity == "Orders" ? dataContext.Orders.Run(query) : null,
-            OrderDetails = query.Entity == "OrderDetails" ? dataContext.OrderDetails.Run(query) : null,
-            Shippers = query.Entity == "Shippers" ? dataContext.Shippers.Run(query) : null,
-            Suppliers = query.Entity == "Suppliers" ? dataContext.Suppliers.Run(query) : null,
+            Addresses = t == "addresses" ? dataContext.Addresses.Run(query) : null,
+            Categories = t == "categories" ? dataContext.Categories.Run(query) : null,
+            Products = t == "products" ? dataContext.Products.Run(query) : null,
+            Regions = t == "regions" ? dataContext.Regions.Run(query) : null,
+            Territories = t == "territories" ? dataContext.Territories.Run(query) : null,
+            Employees = t == "employees" ? dataContext.Employees.Run(query) : null,
+            Customers = t == "customers" ? dataContext.Customers.Run(query) : null,
+            Orders = t == "orders" ? dataContext.Orders.Run(query) : null,
+            OrderDetails = t == "orderdetails" ? dataContext.OrderDetails.Run(query) : null,
+            Shippers = t == "shippers" ? dataContext.Shippers.Run(query) : null,
+            Suppliers = t == "suppliers" ? dataContext.Suppliers.Run(query) : null,
         });
 #pragma warning restore CS8601 // Possible null reference assignment.
     }

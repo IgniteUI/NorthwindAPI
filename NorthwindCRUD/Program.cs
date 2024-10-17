@@ -12,6 +12,7 @@ using Newtonsoft.Json.Converters;
 using NorthwindCRUD.Filters;
 using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Services;
+using QueryBuilder;
 
 namespace NorthwindCRUD
 {
@@ -40,6 +41,9 @@ namespace NorthwindCRUD
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.Converters.Add(new QueryConverter());
+                options.SerializerSettings.Converters.Add(new QueryFilterConverter());
+                options.SerializerSettings.Converters.Add(new QueryFilterConditionConverter());
             });
 
             builder.Services.AddEndpointsApiExplorer();

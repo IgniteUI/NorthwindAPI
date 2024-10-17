@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
+using Newtonsoft.Json.Utilities;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 public enum FilterType
 {
@@ -36,11 +39,22 @@ public interface IQueryFilter
     public bool IgnoreCase { get; set; }
 
     [Required]
-    public string ConditionName { get; set; }
+    public IQueryFilterCondition Condition { get; set; }
 
     public object? SearchVal { get; set; }
 
     public IQuery? SearchTree { get; set; }
+}
+
+public interface IQueryFilterCondition
+{
+    [Required]
+    public string Name { get; set; }
+
+    [Required]
+    public bool IsUnary { get; set; }
+
+    public string IconName { get; set; }
 }
 
 public class Query : IQuery
@@ -60,11 +74,77 @@ public class QueryFilter : IQueryFilter
 
     public bool IgnoreCase { get; set; }
 
-    public string ConditionName { get; set; }
+    public IQueryFilterCondition Condition { get; set; }
 
     public object? SearchVal { get; set; }
 
     public IQuery? SearchTree { get; set; }
+}
+
+public class QueryFilterCondition : IQueryFilterCondition
+{
+    public string Name { get; set; }
+
+    public bool IsUnary { get; set; }
+
+    public string IconName { get; set; }
+}
+
+public class QueryConverter : JsonConverter
+{
+    public override bool CanConvert(Type objectType)
+    {
+        return objectType == typeof(IQuery);
+    }
+
+    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    {
+        // Specify how to deserialize to a concrete class
+        return serializer.Deserialize<Query>(reader);
+    }
+
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    {
+        serializer.Serialize(writer, value);
+    }
+}
+
+public class QueryFilterConverter : JsonConverter
+{
+    public override bool CanConvert(Type objectType)
+    {
+        return objectType == typeof(IQueryFilter);
+    }
+
+    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    {
+        // Specify how to deserialize to a concrete class
+        return serializer.Deserialize<QueryFilter>(reader);
+    }
+
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    {
+        serializer.Serialize(writer, value);
+    }
+}
+
+public class QueryFilterConditionConverter : JsonConverter
+{
+    public override bool CanConvert(Type objectType)
+    {
+        return objectType == typeof(IQueryFilterCondition);
+    }
+
+    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    {
+        // Specify how to deserialize to a concrete class
+        return serializer.Deserialize<QueryFilterCondition>(reader);
+    }
+
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    {
+        serializer.Serialize(writer, value);
+    }
 }
 
 /// <summary>
@@ -112,15 +192,40 @@ public static class QueryExecutor
     {
         var property = typeof(TEntity).GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{typeof(TEntity)}'");
         var left = Expression.Property(parameter, property);
-        var searchValue = Expression.Constant(Convert.ChangeType(filter.SearchVal, property.PropertyType, CultureInfo.InvariantCulture));
+        var targetType = property.PropertyType;
+        Expression searchValue;
+        if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+            targetType = Nullable.GetUnderlyingType(targetType);
+        }
+
+        if (filter.SearchVal is long longValue && targetType == typeof(int))
+        {
+            if (longValue >= int.MinValue && longValue <= int.MaxValue)
+            {
+                searchValue = Expression.Constant(Convert.ChangeType((int)longValue, targetType, CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                throw new OverflowException("The Int64 value is too large or too small to fit into an Int32.");
+            }
+        }
+        else
+        {
+            searchValue = Expression.Constant(Convert.ChangeType(filter.SearchVal, targetType, CultureInfo.InvariantCulture));
+        }
 #pragma warning disable CS8604 // Possible null reference argument.
-        Expression condition = filter.ConditionName.ToLower(CultureInfo.InvariantCulture) switch
+        Expression condition = filter.Condition.Name.ToLower(CultureInfo.InvariantCulture) switch
         {
             "equals" => Expression.Equal(left, searchValue),
+            "lessthan" => Expression.LessThan(left, searchValue),
+            "greaterthan" => Expression.GreaterThan(left, searchValue),
+            "lessthanorequal" => Expression.LessThanOrEqual(left, searchValue),
+            "greaterthanorequal" => Expression.GreaterThanOrEqual(left, searchValue),
             "contains" => Expression.Call(left, typeof(string).GetMethod("Contains", new[] { typeof(string) }), searchValue),
             "startswith" => Expression.Call(left, typeof(string).GetMethod("StartsWith", new[] { typeof(string) }), searchValue),
             "endswith" => Expression.Call(left, typeof(string).GetMethod("EndsWith", new[] { typeof(string) }), searchValue),
-            _ => throw new NotSupportedException($"Condition '{filter.ConditionName}' is not supported"),
+            _ => throw new NotSupportedException($"Condition '{filter.Condition.Name}' is not supported"),
         };
 #pragma warning restore CS8604 // Possible null reference argument.
         if (filter.IgnoreCase && left.Type == typeof(string))
