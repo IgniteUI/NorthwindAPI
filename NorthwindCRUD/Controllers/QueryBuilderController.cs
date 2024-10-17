@@ -8,38 +8,17 @@ using System.Globalization;
 
 public class QueryBuilderResult
 {
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public AddressDb[] Addresses { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public CategoryDb[] Categories { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public ProductDb[] Products { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public RegionDb[] Regions { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public TerritoryDb[] Territories { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public EmployeeDb[] Employees { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public CustomerDb[] Customers { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public OrderDb[] Orders { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public OrderDetailDb[] OrderDetails { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public ShipperDb[] Shippers { get; set; }
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public SupplierDb[] Suppliers { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public AddressDb[]? Addresses { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public CategoryDb[]? Categories { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ProductDb[]? Products { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public RegionDb[]? Regions { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public TerritoryDb[]? Territories { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public EmployeeDb[]? Employees { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public CustomerDb[]? Customers { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public OrderDb[]? Orders { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public OrderDetailDb[]? OrderDetails { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ShipperDb[]? Shippers { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public SupplierDb[]? Suppliers { get; set; }
 }
 
 [ApiController]
@@ -62,7 +41,6 @@ public class QueryBuilderController : ControllerBase
     {
         logger.LogInformation("Executing query for entity: {Entity}", query.Entity);
         var t = query.Entity.ToLower(CultureInfo.InvariantCulture);
-#pragma warning disable CS8601 // Possible null reference assignment.
         return Ok(new QueryBuilderResult
         {
             Addresses = t == "addresses" ? dataContext.Addresses.Run(query) : null,
@@ -77,6 +55,5 @@ public class QueryBuilderController : ControllerBase
             Shippers = t == "shippers" ? dataContext.Shippers.Run(query) : null,
             Suppliers = t == "suppliers" ? dataContext.Suppliers.Run(query) : null,
         });
-#pragma warning restore CS8601 // Possible null reference assignment.
     }
 }
