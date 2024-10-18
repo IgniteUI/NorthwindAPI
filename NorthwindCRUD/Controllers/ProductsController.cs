@@ -46,6 +46,22 @@ namespace NorthwindCRUD.Controllers
             }
         }
 
+        [HttpGet("GetAllAuthorized")]
+        [Authorize]
+        public ActionResult<OrderDto[]> GetAllAuthorized()
+        {
+            try
+            {
+                var products = this.productService.GetAll();
+                return Ok(this.mapper.Map<ProductDb[], ProductDto[]>(products));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         /// <summary>
         /// Fetches all products or a page of products based on the provided parameters.
         /// </summary>
@@ -112,6 +128,25 @@ namespace NorthwindCRUD.Controllers
         /// <returns>Total count of products as an integer.</returns>
         [HttpGet("GetProductsCount")]
         public ActionResult<CountResultDto> GetProductsCount()
+        {
+            try
+            {
+                var count = productService.GetAllAsQueryable().Count();
+                return new CountResultDto() { Count = count };
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the total number of products.
+        /// </summary>
+        /// <returns>Total count of products as an integer.</returns>
+        [HttpGet("GetProductsCountAuthorized")]
+        public ActionResult<CountResultDto> GetProductsCountAuthorized()
         {
             try
             {
