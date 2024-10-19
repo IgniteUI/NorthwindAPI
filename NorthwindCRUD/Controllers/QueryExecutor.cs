@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 public enum FilterType
@@ -113,14 +114,14 @@ public class QueryFilterConditionConverter : JsonConverter
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class QueryExecutor
 {
-    public static object[] Run(this IQueryable<object> source, IQuery query)
+    public static object[] Run(this IQueryable<object> source, IQuery query, DbContext db)
     {
-        return BuildQuery(source, query).ToArray();
+        return BuildQuery(source, query, db).ToArray();
     }
 
-    private static IQueryable<object> BuildQuery(IQueryable<object> source, IQuery query)
+    private static IQueryable<object> BuildQuery(IQueryable<object> source, IQuery query, DbContext db)
     {
-        var filterExpression = BuildExpression<object>(query.FilteringOperands, query.Operator);
+        var filterExpression = BuildExpression<object>(query.FilteringOperands, query.Operator, db);
         var filteredQuery = source.Where(filterExpression);
         if (query.ReturnFields != null && query.ReturnFields.Any())
         {
@@ -134,13 +135,13 @@ public static class QueryExecutor
         }
     }
 
-    private static Expression<Func<TEntity, bool>> BuildExpression<TEntity>(IQueryFilter[] filters, FilterType filterType)
+    private static Expression<Func<TEntity, bool>> BuildExpression<TEntity>(IQueryFilter[] filters, FilterType filterType, DbContext db)
     {
         var parameter = Expression.Parameter(typeof(TEntity), "entity");
         var finalExpression = null as Expression;
         foreach (var filter in filters)
         {
-            var expression = BuildConditionExpression<TEntity>(filter, parameter);
+            var expression = BuildConditionExpression<TEntity>(filter, parameter, db);
             if (finalExpression == null)
             {
                 finalExpression = expression;
@@ -158,13 +159,13 @@ public static class QueryExecutor
                 : (TEntity _) => true;
     }
 
-    private static Expression BuildConditionExpression<TEntity>(IQueryFilter filter, ParameterExpression parameter)
+    private static Expression BuildConditionExpression<TEntity>(IQueryFilter filter, ParameterExpression parameter, DbContext db)
     {
         var property         = typeof(TEntity).GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{typeof(TEntity)}'");
         var field            = Expression.Property(parameter, property);
         var targetType       = GetPropertyType(property);
         var searchValue      = GetSearchValue(filter.SearchVal, targetType);
-        var searchTree       = BuildSubquery(filter.SearchTree);
+        var searchTree       = BuildSubquery(filter.SearchTree, db);
         Expression condition = filter.Condition.Name switch
         {
             "null"                 => Expression.Equal(field, Expression.Constant(null, targetType)),
@@ -196,17 +197,17 @@ public static class QueryExecutor
         return condition;
     }
 
-    private static Expression BuildSubquery(IQuery? query)
+    private static Expression BuildSubquery(IQuery? query, DbContext db)
     {
-        if (query == null)
+        if (query == null || db == null)
         {
             return Expression.Constant(true);
         }
 
-        var parameter = Expression.Parameter(typeof(object), "entity");
-        var filterExpression = BuildExpression<object>(query.FilteringOperands, query.Operator);
-        var lambda = Expression.Lambda<Func<object, bool>>(filterExpression.Body, parameter);
-        return lambda.Body;
+        var dbSetProperty = db.GetType().GetProperty(query.Entity) ?? throw new InvalidOperationException($"Entity '{query.Entity}' not found in the DbContext.");
+        var dbSet = dbSetProperty.GetValue(db) as IQueryable<object> ?? throw new InvalidOperationException($"Unable to get IQueryable for entity '{query.Entity}'.");
+        var subquery = BuildQuery(dbSet, query, db);
+        return subquery.Expression;
     }
 
     private static Type GetPropertyType(PropertyInfo property)
@@ -249,7 +250,6 @@ public static class QueryExecutor
     }
 }
 
-[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1009:Closing parenthesis should be spaced correctly", Justification = "...")]
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class SqlGenerator
 {
@@ -304,6 +304,9 @@ public static class SqlGenerator
             "lessThan"             => $"{field} < {value}",
             "greaterThanOrEqualTo" => $"{field} >= {value}",
             "lessThanOrEqualTo"    => $"{field} <= {value}",
+            "all"                  => throw new NotImplementedException("Not implemented"),
+            "true"                 => $"{field} = TRUE",
+            "false"                => $"{field} = FALSE",
             _                      => throw new NotImplementedException($"Condition '{condition}' is not implemented"),
         };
     }
