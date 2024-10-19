@@ -1,11 +1,9 @@
 ﻿namespace QueryBuilder;
 
-using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 
 public enum FilterType
@@ -16,29 +14,22 @@ public enum FilterType
 
 public interface IQuery
 {
-    [Required]
     public string Entity { get; set; }
 
-    [Required]
     public string[] ReturnFields { get; set; }
 
-    [Required]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1716:Identifiers should not match keywords", Justification = "required name")]
+    [SuppressMessage("Naming", "CA1716:Identifiers should not match keywords", Justification = "required name")]
     public FilterType Operator { get; set; }
 
-    [Required]
     public IQueryFilter[] FilteringOperands { get; set; }
 }
 
 public interface IQueryFilter
 {
-    [Required]
     public string FieldName { get; set; }
 
-    [Required]
     public bool IgnoreCase { get; set; }
 
-    [Required]
     public IQueryFilterCondition Condition { get; set; }
 
     public object? SearchVal { get; set; }
@@ -48,10 +39,8 @@ public interface IQueryFilter
 
 public interface IQueryFilterCondition
 {
-    [Required]
     public string Name { get; set; }
 
-    [Required]
     public bool IsUnary { get; set; }
 
     public string IconName { get; set; }
@@ -92,59 +81,29 @@ public class QueryFilterCondition : IQueryFilterCondition
 
 public class QueryConverter : JsonConverter
 {
-    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(IQuery);
-    }
+    public override bool CanConvert(Type objectType) => objectType == typeof(IQuery);
 
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    {
-        // Specify how to deserialize to a concrete class
-        return serializer.Deserialize<Query>(reader);
-    }
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => serializer.Deserialize<Query>(reader);
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        serializer.Serialize(writer, value);
-    }
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => serializer.Serialize(writer, value);
 }
 
 public class QueryFilterConverter : JsonConverter
 {
-    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(IQueryFilter);
-    }
+    public override bool CanConvert(Type objectType) => objectType == typeof(IQueryFilter);
 
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    {
-        // Specify how to deserialize to a concrete class
-        return serializer.Deserialize<QueryFilter>(reader);
-    }
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => serializer.Deserialize<QueryFilter>(reader);
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        serializer.Serialize(writer, value);
-    }
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => serializer.Serialize(writer, value);
 }
 
 public class QueryFilterConditionConverter : JsonConverter
 {
-    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(IQueryFilterCondition);
-    }
+    public override bool CanConvert(Type objectType) => objectType == typeof(IQueryFilterCondition);
 
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    {
-        // Specify how to deserialize to a concrete class
-        return serializer.Deserialize<QueryFilterCondition>(reader);
-    }
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => serializer.Deserialize<QueryFilterCondition>(reader);
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        serializer.Serialize(writer, value);
-    }
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => serializer.Serialize(writer, value);
 }
 
 /// <summary>
@@ -152,16 +111,20 @@ public class QueryFilterConditionConverter : JsonConverter
 /// </summary>
 public static class QueryExecutor
 {
-    public static TEntity[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query)
+    public static object[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query)
     {
         var filterExpression = BuildExpression<TEntity>(query.FilteringOperands, query.Operator);
         var filteredQuery = source.Where(filterExpression);
         if (query.ReturnFields != null && query.ReturnFields.Any())
         {
-            // TODO: project required fields
+            var projectionExpression = BuildProjectionExpression<TEntity>(query.ReturnFields);
+            var projectedQuery = filteredQuery.Select(projectionExpression);
+            return projectedQuery.ToArray();
         }
-
-        return filteredQuery.ToArray();
+        else
+        {
+            return filteredQuery.ToArray() as object[];
+        }
     }
 
     private static Expression<Func<TEntity, bool>> BuildExpression<TEntity>(IQueryFilter[] filters, FilterType filterType)
@@ -190,31 +153,11 @@ public static class QueryExecutor
 
     private static Expression BuildConditionExpression<TEntity>(IQueryFilter filter, ParameterExpression parameter)
     {
-        var property = typeof(TEntity).GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{typeof(TEntity)}'");
+        var property = typeof(TEntity).GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
+            ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{typeof(TEntity)}'");
         var left = Expression.Property(parameter, property);
-        var targetType = property.PropertyType;
-        Expression searchValue;
-        if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
-        {
-            targetType = Nullable.GetUnderlyingType(targetType);
-        }
-
-        if (filter.SearchVal is long longValue && targetType == typeof(int))
-        {
-            if (longValue >= int.MinValue && longValue <= int.MaxValue)
-            {
-                searchValue = Expression.Constant(Convert.ChangeType((int)longValue, targetType, CultureInfo.InvariantCulture));
-            }
-            else
-            {
-                throw new OverflowException("The Int64 value is too large or too small to fit into an Int32.");
-            }
-        }
-        else
-        {
-            searchValue = Expression.Constant(Convert.ChangeType(filter.SearchVal, targetType, CultureInfo.InvariantCulture));
-        }
-#pragma warning disable CS8604 // Possible null reference argument.
+        var targetType = GetPropertyType(property);
+        var searchValue = GetSearchValue(filter.SearchVal, targetType);
         Expression condition = filter.Condition.Name.ToLower(CultureInfo.InvariantCulture) switch
         {
             "equals" => Expression.Equal(left, searchValue),
@@ -222,19 +165,57 @@ public static class QueryExecutor
             "greaterthan" => Expression.GreaterThan(left, searchValue),
             "lessthanorequal" => Expression.LessThanOrEqual(left, searchValue),
             "greaterthanorequal" => Expression.GreaterThanOrEqual(left, searchValue),
-            "contains" => Expression.Call(left, typeof(string).GetMethod("Contains", new[] { typeof(string) }), searchValue),
-            "startswith" => Expression.Call(left, typeof(string).GetMethod("StartsWith", new[] { typeof(string) }), searchValue),
-            "endswith" => Expression.Call(left, typeof(string).GetMethod("EndsWith", new[] { typeof(string) }), searchValue),
+            "contains" => Expression.Call(left, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue),
+            "startswith" => Expression.Call(left, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, searchValue),
+            "endswith" => Expression.Call(left, typeof(string).GetMethod("EndsWith", new[] { typeof(string) })!, searchValue),
             _ => throw new NotSupportedException($"Condition '{filter.Condition.Name}' is not supported"),
         };
-#pragma warning restore CS8604 // Possible null reference argument.
         if (filter.IgnoreCase && left.Type == typeof(string))
         {
-            // TODO: handle case sensitivity for string types
+            // TODO: Implement case-insensitive comparison
             // left = Expression.Call(left, "ToLower", null);
             // searchValue = Expression.Constant(((string)filter.SearchVal).ToLower(CultureInfo.InvariantCulture));
         }
 
         return condition;
+    }
+
+    private static Type GetPropertyType(PropertyInfo property)
+    {
+        var targetType = property.PropertyType;
+        if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+            return Nullable.GetUnderlyingType(targetType) ?? targetType;
+        }
+        else
+        {
+            return targetType;
+        }
+    }
+
+    private static Expression GetSearchValue(object? value, Type targetType)
+    {
+        if (value == null)
+        {
+            return Expression.Constant(null, targetType);
+        }
+
+        var nonNullableType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+        var convertedValue = Convert.ChangeType(value, nonNullableType, CultureInfo.InvariantCulture);
+        return Expression.Constant(convertedValue, targetType);
+    }
+
+    private static Expression<Func<TEntity, object>> BuildProjectionExpression<TEntity>(string[] returnFields)
+    {
+        var parameter = Expression.Parameter(typeof(TEntity), "entity");
+        var bindings = returnFields.Select(field =>
+        {
+            var property = typeof(TEntity).GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{field}' not found on type '{typeof(TEntity)}'");
+            var propertyAccess = Expression.Property(parameter, property);
+            return Expression.Bind(property, propertyAccess);
+        }).ToArray();
+
+        var body = Expression.MemberInit(Expression.New(typeof(TEntity)), bindings);
+        return Expression.Lambda<Func<TEntity, object>>(body, parameter);
     }
 }
