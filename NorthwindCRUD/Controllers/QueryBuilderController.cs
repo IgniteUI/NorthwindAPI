@@ -29,6 +29,7 @@ public class QueryBuilderResult
 
 [ApiController]
 [Route("[controller]")]
+[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public class QueryBuilderController : ControllerBase
 {
     private readonly DataContext dataContext;
@@ -45,7 +46,6 @@ public class QueryBuilderController : ControllerBase
     [HttpPost("ExecuteQuery")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
     public ActionResult<QueryBuilderResult> ExecuteQuery(Query query)
     {
         logger.LogInformation("Executing query for entity: {Entity}", query.Entity);
