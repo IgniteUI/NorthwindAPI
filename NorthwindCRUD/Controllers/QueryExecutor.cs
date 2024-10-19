@@ -113,19 +113,24 @@ public class QueryFilterConditionConverter : JsonConverter
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class QueryExecutor
 {
-    public static object[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query)
+    public static object[] Run(this IQueryable<object> source, IQuery query)
     {
-        var filterExpression = BuildExpression<TEntity>(query.FilteringOperands, query.Operator);
+        return BuildQuery(source, query).ToArray();
+    }
+
+    private static IQueryable<object> BuildQuery(IQueryable<object> source, IQuery query)
+    {
+        var filterExpression = BuildExpression<object>(query.FilteringOperands, query.Operator);
         var filteredQuery = source.Where(filterExpression);
         if (query.ReturnFields != null && query.ReturnFields.Any())
         {
-            var projectionExpression = BuildProjectionExpression<TEntity>(query.ReturnFields);
+            var projectionExpression = BuildProjectionExpression<object>(query.ReturnFields);
             var projectedQuery = filteredQuery.Select(projectionExpression);
-            return projectedQuery.ToArray();
+            return projectedQuery;
         }
         else
         {
-            return filteredQuery.ToArray() as object[];
+            return filteredQuery;
         }
     }
 
@@ -159,6 +164,7 @@ public static class QueryExecutor
         var field            = Expression.Property(parameter, property);
         var targetType       = GetPropertyType(property);
         var searchValue      = GetSearchValue(filter.SearchVal, targetType);
+        var searchTree       = BuildSubquery(filter.SearchTree);
         Expression condition = filter.Condition.Name switch
         {
             "null"                 => Expression.Equal(field, Expression.Constant(null, targetType)),
@@ -167,8 +173,8 @@ public static class QueryExecutor
             "notEmpty"             => Expression.NotEqual(field, Expression.Constant(string.Empty, targetType)), // TODO: Implement not empty condition
             "equals"               => Expression.Equal(field, searchValue),
             "doesNotEqual"         => Expression.NotEqual(field, searchValue),
-            "in"                   => throw new NotImplementedException("Not implemented"),
-            "notIn"                => throw new NotImplementedException("Not implemented"),
+            "in"                   => Expression.Call(typeof(Enumerable), "Contains", new[] { targetType }, searchTree, field),
+            "notIn"                => Expression.Not(Expression.Call(typeof(Enumerable), "Contains", new[] { targetType }, searchTree, field)),
             "contains"             => Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue),
             "doesNotContain"       => Expression.Not(Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue)),
             "startsWith"           => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, searchValue),
@@ -178,18 +184,29 @@ public static class QueryExecutor
             "greaterThanOrEqualTo" => Expression.GreaterThanOrEqual(field, searchValue),
             "lessThanOrEqualTo"    => Expression.LessThanOrEqual(field, searchValue),
             "all"                  => throw new NotImplementedException("Not implemented"),
-            "true"                 => Expression.Equal(field, Expression.Constant(true)),
-            "false"                => Expression.Equal(field, Expression.Constant(false)),
+            "true"                 => Expression.IsTrue(field),
+            "false"                => Expression.IsFalse(field),
             _                      => throw new NotImplementedException("Not implemented"),
         };
         if (filter.IgnoreCase && field.Type == typeof(string))
         {
             // TODO: Implement case-insensitive comparison
-            // left = Expression.Call(left, "ToLower", null);
-            // searchValue = Expression.Constant(((string)filter.SearchVal).ToLower(CultureInfo.InvariantCulture));
         }
 
         return condition;
+    }
+
+    private static Expression BuildSubquery(IQuery? query)
+    {
+        if (query == null)
+        {
+            return Expression.Constant(true);
+        }
+
+        var parameter = Expression.Parameter(typeof(object), "entity");
+        var filterExpression = BuildExpression<object>(query.FilteringOperands, query.Operator);
+        var lambda = Expression.Lambda<Func<object, bool>>(filterExpression.Body, parameter);
+        return lambda.Body;
     }
 
     private static Type GetPropertyType(PropertyInfo property)
