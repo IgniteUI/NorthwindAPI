@@ -109,6 +109,8 @@ public class QueryFilterConditionConverter : JsonConverter
 /// <summary>
 /// A generic query executor that can be used to execute queries on IQueryable data sources.
 /// </summary>
+[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1009:Closing parenthesis should be spaced correctly", Justification = "...")]
+[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class QueryExecutor
 {
     public static object[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query)
@@ -153,24 +155,34 @@ public static class QueryExecutor
 
     private static Expression BuildConditionExpression<TEntity>(IQueryFilter filter, ParameterExpression parameter)
     {
-        var property = typeof(TEntity).GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
-            ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{typeof(TEntity)}'");
-        var left = Expression.Property(parameter, property);
-        var targetType = GetPropertyType(property);
-        var searchValue = GetSearchValue(filter.SearchVal, targetType);
-        Expression condition = filter.Condition.Name.ToLower(CultureInfo.InvariantCulture) switch
+        var property         = typeof(TEntity).GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{typeof(TEntity)}'");
+        var field            = Expression.Property(parameter, property);
+        var targetType       = GetPropertyType(property);
+        var searchValue      = GetSearchValue(filter.SearchVal, targetType);
+        Expression condition = filter.Condition.Name switch
         {
-            "equals" => Expression.Equal(left, searchValue),
-            "lessthan" => Expression.LessThan(left, searchValue),
-            "greaterthan" => Expression.GreaterThan(left, searchValue),
-            "lessthanorequal" => Expression.LessThanOrEqual(left, searchValue),
-            "greaterthanorequal" => Expression.GreaterThanOrEqual(left, searchValue),
-            "contains" => Expression.Call(left, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue),
-            "startswith" => Expression.Call(left, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, searchValue),
-            "endswith" => Expression.Call(left, typeof(string).GetMethod("EndsWith", new[] { typeof(string) })!, searchValue),
-            _ => throw new NotSupportedException($"Condition '{filter.Condition.Name}' is not supported"),
+            "null"                 => Expression.Equal(field, Expression.Constant(null, targetType)),
+            "notNull"              => Expression.NotEqual(field, Expression.Constant(null, targetType)),
+            "empty"                => Expression.Equal(field, Expression.Constant(string.Empty, targetType)), // TODO: Implement empty condition
+            "notEmpty"             => Expression.NotEqual(field, Expression.Constant(string.Empty, targetType)), // TODO: Implement not empty condition
+            "equals"               => Expression.Equal(field, searchValue),
+            "doesNotEqual"         => Expression.NotEqual(field, searchValue),
+            "in"                   => throw new NotImplementedException("Not implemented"),
+            "notIn"                => throw new NotImplementedException("Not implemented"),
+            "contains"             => Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue),
+            "doesNotContain"       => Expression.Not(Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue)),
+            "startsWith"           => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, searchValue),
+            "endsWith"             => Expression.Call(field, typeof(string).GetMethod("EndsWith", new[] { typeof(string) })!, searchValue),
+            "greaterThan"          => Expression.GreaterThan(field, searchValue),
+            "lessThan"             => Expression.LessThan(field, searchValue),
+            "greaterThanOrEqualTo" => Expression.GreaterThanOrEqual(field, searchValue),
+            "lessThanOrEqualTo"    => Expression.LessThanOrEqual(field, searchValue),
+            "all"                  => throw new NotImplementedException("Not implemented"),
+            "true"                 => Expression.Equal(field, Expression.Constant(true)),
+            "false"                => Expression.Equal(field, Expression.Constant(false)),
+            _                      => throw new NotImplementedException("Not implemented"),
         };
-        if (filter.IgnoreCase && left.Type == typeof(string))
+        if (filter.IgnoreCase && field.Type == typeof(string))
         {
             // TODO: Implement case-insensitive comparison
             // left = Expression.Call(left, "ToLower", null);
