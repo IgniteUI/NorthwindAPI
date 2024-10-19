@@ -248,3 +248,63 @@ public static class QueryExecutor
         return Expression.Lambda<Func<TEntity, object>>(body, parameter);
     }
 }
+
+[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1009:Closing parenthesis should be spaced correctly", Justification = "...")]
+[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
+public static class SqlGenerator
+{
+    public static string GenerateSql(IQuery query)
+    {
+        var selectClause = BuildSelectClause(query);
+        var whereClause  = BuildWhereClause(query.FilteringOperands, query.Operator);
+        return $"{selectClause} {whereClause};";
+    }
+
+    private static string BuildSelectClause(IQuery query)
+    {
+        var fields = query.ReturnFields != null && query.ReturnFields.Any()
+            ? string.Join(", ", query.ReturnFields)
+            : "*";
+        return $"SELECT {fields} FROM {query.Entity}";
+    }
+
+    private static string BuildWhereClause(IQueryFilter[] filters, FilterType filterType)
+    {
+        if (filters == null || !filters.Any())
+        {
+            return string.Empty;
+        }
+
+        var conditions  = filters.Select(BuildCondition).ToArray();
+        var conjunction = filterType == FilterType.And ? " AND " : " OR ";
+        return $"WHERE {string.Join(conjunction, conditions)}";
+    }
+
+    private static string BuildCondition(IQueryFilter filter)
+    {
+        var field     = filter.FieldName;
+        var condition = filter.Condition.Name;
+        var value     = filter.SearchVal != null ? $"'{filter.SearchVal}'" : "NULL";
+        var subquery  = filter.SearchTree != null ? $"({GenerateSql(filter.SearchTree)})" : string.Empty;
+        return condition switch
+        {
+            "null"                 => $"{field} IS NULL",
+            "notNull"              => $"{field} IS NOT NULL",
+            "empty"                => $"{field} = ''",
+            "notEmpty"             => $"{field} <> ''",
+            "equals"               => $"{field} = {value}",
+            "doesNotEqual"         => $"{field} <> {value}",
+            "in"                   => $"{field} IN ({subquery})",
+            "notIn"                => $"{field} NOT IN ({subquery})",
+            "contains"             => $"{field} LIKE '%{filter.SearchVal}%'",
+            "doesNotContain"       => $"{field} NOT LIKE '%{filter.SearchVal}%'",
+            "startsWith"           => $"{field} LIKE '{filter.SearchVal}%'",
+            "endsWith"             => $"{field} LIKE '%{filter.SearchVal}'",
+            "greaterThan"          => $"{field} > {value}",
+            "lessThan"             => $"{field} < {value}",
+            "greaterThanOrEqualTo" => $"{field} >= {value}",
+            "lessThanOrEqualTo"    => $"{field} <= {value}",
+            _                      => throw new NotImplementedException($"Condition '{condition}' is not implemented"),
+        };
+    }
+}
