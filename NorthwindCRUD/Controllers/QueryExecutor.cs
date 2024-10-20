@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
+using AutoMapper.Internal;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -168,8 +169,8 @@ public static class QueryExecutor
         var searchTree       = BuildSubquery(filter.SearchTree, db);
         Expression condition = filter.Condition.Name switch
         {
-            "null"                 => Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())),
-            "notNull"              => Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())),
+            "null"                 => targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue()))    : Expression.Constant(false),
+            "notNull"              => targetType.IsNullableType() ? Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(true),
             "empty"                => Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())),
             "notEmpty"             => Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())),
             "equals"               => Expression.Equal(field, searchValue),
