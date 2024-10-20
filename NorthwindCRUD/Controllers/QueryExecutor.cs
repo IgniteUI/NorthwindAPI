@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 public enum FilterType
 {
@@ -114,25 +115,24 @@ public class QueryFilterConditionConverter : JsonConverter
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class QueryExecutor
 {
-    public static object[] Run(this IQueryable<object> source, IQuery query, DbContext db)
+    public static TEntity[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query, DbContext db)
     {
         return BuildQuery(source, query, db).ToArray();
     }
 
-    private static IQueryable<object> BuildQuery(IQueryable<object> source, IQuery query, DbContext db)
+    private static IQueryable<TEntity> BuildQuery<TEntity>(IQueryable<TEntity> source, IQuery query, DbContext db)
     {
-        var filterExpression = BuildExpression<object>(query.FilteringOperands, query.Operator, db);
+        var filterExpression = BuildExpression<TEntity>(query.FilteringOperands, query.Operator, db);
         var filteredQuery = source.Where(filterExpression);
-        if (query.ReturnFields != null && query.ReturnFields.Any())
-        {
-            var projectionExpression = BuildProjectionExpression<object>(query.ReturnFields);
-            var projectedQuery = filteredQuery.Select(projectionExpression);
-            return projectedQuery;
-        }
-        else
-        {
-            return filteredQuery;
-        }
+
+        // TODO: project requested columns
+        // if (query.ReturnFields != null && query.ReturnFields.Any())
+        // {
+        //     var projectionExpression = BuildProjectionExpression<object>(query.ReturnFields);
+        //     var projectedQuery = filteredQuery.Select(projectionExpression);
+        //     return projectedQuery;
+        // }
+        return filteredQuery;
     }
 
     private static Expression<Func<TEntity, bool>> BuildExpression<TEntity>(IQueryFilter[] filters, FilterType filterType, DbContext db)
@@ -163,15 +163,15 @@ public static class QueryExecutor
     {
         var property         = typeof(TEntity).GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{typeof(TEntity)}'");
         var field            = Expression.Property(parameter, property);
-        var targetType       = GetPropertyType(property);
+        var targetType       = property.PropertyType;
         var searchValue      = GetSearchValue(filter.SearchVal, targetType);
         var searchTree       = BuildSubquery(filter.SearchTree, db);
         Expression condition = filter.Condition.Name switch
         {
-            "null"                 => Expression.Equal(field, Expression.Constant(null, targetType)),
-            "notNull"              => Expression.NotEqual(field, Expression.Constant(null, targetType)),
-            "empty"                => Expression.Equal(field, Expression.Constant(string.Empty, targetType)), // TODO: Implement empty condition
-            "notEmpty"             => Expression.NotEqual(field, Expression.Constant(string.Empty, targetType)), // TODO: Implement not empty condition
+            "null"                 => Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())),
+            "notNull"              => Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())),
+            "empty"                => Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())),
+            "notEmpty"             => Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())),
             "equals"               => Expression.Equal(field, searchValue),
             "doesNotEqual"         => Expression.NotEqual(field, searchValue),
             "in"                   => Expression.Call(typeof(Enumerable), "Contains", new[] { targetType }, searchTree, field),
@@ -227,7 +227,7 @@ public static class QueryExecutor
     {
         if (value == null)
         {
-            return Expression.Constant(null, targetType);
+            return Expression.Constant(Activator.CreateInstance(targetType), targetType);
         }
 
         var nonNullableType = Nullable.GetUnderlyingType(targetType) ?? targetType;
