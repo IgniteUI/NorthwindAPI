@@ -211,11 +211,15 @@ public static class QueryExecutor
             return Expression.Constant(true);
         }
 
-        var dbSetProperty = db.GetType().GetProperty(query.Entity, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Entity '{query.Entity}' not found in the DbContext.");
-        var dbSet = dbSetProperty.GetValue(db) as IQueryable<object> ?? throw new InvalidOperationException($"Unable to get IQueryable for entity '{query.Entity}'.");
-        var subquery = BuildQuery(db, dbSet, query);
-        return subquery.Expression;
+        var dbSetProperty = db.GetType().GetProperty(query.Entity, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
+                          ?? throw new InvalidOperationException($"Entity '{query.Entity}' not found in the DbContext.");
+        var dbSet         = dbSetProperty.GetValue(db)
+                          ?? throw new InvalidOperationException($"Unable to get IQueryable for entity '{query.Entity}'.");
+        var buildQuery    = typeof(QueryExecutor).GetMethod(nameof(BuildQuery), BindingFlags.NonPublic | BindingFlags.Static)!.MakeGenericMethod(dbSet.GetType().GetGenericArguments()[0]);
+        var subquery      = buildQuery.Invoke(null, new object[] { db, dbSet, query }) as IQueryable;
+        return subquery!.Expression;
     }
+
 
     private static Expression GetSearchValue(object? value, Type targetType)
     {
