@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper.Internal;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -116,14 +117,18 @@ public class QueryFilterConditionConverter : JsonConverter
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class QueryExecutor
 {
-    public static TEntity[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query, DbContext db)
+    public static TEntity[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query)
     {
-        return BuildQuery(source, query, db).ToArray();
+        var infrastructure = source as IInfrastructure<IServiceProvider>;
+        var serviceProvider = infrastructure!.Instance;
+        var currentDbContext = serviceProvider.GetService(typeof(ICurrentDbContext)) as ICurrentDbContext;
+        var db = currentDbContext!.Context;
+        return BuildQuery(db, source, query).ToArray();
     }
 
-    private static IQueryable<TEntity> BuildQuery<TEntity>(IQueryable<TEntity> source, IQuery query, DbContext db)
+    private static IQueryable<TEntity> BuildQuery<TEntity>(DbContext db, IQueryable<TEntity> source, IQuery query)
     {
-        var filterExpression = BuildExpression<TEntity>(query.FilteringOperands, query.Operator, db);
+        var filterExpression = BuildExpression(db, source, query.FilteringOperands, query.Operator);
         var filteredQuery = source.Where(filterExpression);
 
         // TODO: project requested columns
@@ -136,13 +141,13 @@ public static class QueryExecutor
         return filteredQuery;
     }
 
-    private static Expression<Func<TEntity, bool>> BuildExpression<TEntity>(IQueryFilter[] filters, FilterType filterType, DbContext db)
+    private static Expression<Func<TEntity, bool>> BuildExpression<TEntity>(DbContext db, IQueryable<TEntity> source, IQueryFilter[] filters, FilterType filterType)
     {
         var parameter = Expression.Parameter(typeof(TEntity), "entity");
         var finalExpression = null as Expression;
         foreach (var filter in filters)
         {
-            var expression = BuildConditionExpression<TEntity>(filter, parameter, db);
+            var expression = BuildConditionExpression(db, source, filter, parameter);
             if (finalExpression == null)
             {
                 finalExpression = expression;
@@ -160,9 +165,10 @@ public static class QueryExecutor
                 : (TEntity _) => true;
     }
 
-    private static Expression BuildConditionExpression<TEntity>(IQueryFilter filter, ParameterExpression parameter, DbContext db)
+    private static Expression BuildConditionExpression<TEntity>(DbContext db, IQueryable<TEntity> source, IQueryFilter filter, ParameterExpression parameter)
     {
-        var property         = typeof(TEntity).GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{typeof(TEntity)}'");
+        var property         = source.ElementType.GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
+                             ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{source.ElementType}'");
         var field            = Expression.Property(parameter, property);
         var targetType       = property.PropertyType;
         var searchValue      = GetSearchValue(filter.SearchVal, targetType);
@@ -207,21 +213,8 @@ public static class QueryExecutor
 
         var dbSetProperty = db.GetType().GetProperty(query.Entity, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Entity '{query.Entity}' not found in the DbContext.");
         var dbSet = dbSetProperty.GetValue(db) as IQueryable<object> ?? throw new InvalidOperationException($"Unable to get IQueryable for entity '{query.Entity}'.");
-        var subquery = BuildQuery(dbSet, query, db);
+        var subquery = BuildQuery(db, dbSet, query);
         return subquery.Expression;
-    }
-
-    private static Type GetPropertyType(PropertyInfo property)
-    {
-        var targetType = property.PropertyType;
-        if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
-        {
-            return Nullable.GetUnderlyingType(targetType) ?? targetType;
-        }
-        else
-        {
-            return targetType;
-        }
     }
 
     private static Expression GetSearchValue(object? value, Type targetType)
