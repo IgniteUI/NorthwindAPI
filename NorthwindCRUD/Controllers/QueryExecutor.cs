@@ -172,7 +172,6 @@ public static class QueryExecutor
         var field            = Expression.Property(parameter, property);
         var targetType       = property.PropertyType;
         var searchValue      = GetSearchValue(filter.SearchVal, targetType);
-        var searchTree       = BuildSubquery(filter.SearchTree, db);
         Expression condition = filter.Condition.Name switch
         {
             "null"                 => targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue()))    : Expression.Constant(false),
@@ -181,8 +180,8 @@ public static class QueryExecutor
             "notEmpty"             => Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())),
             "equals"               => Expression.Equal(field, searchValue),
             "doesNotEqual"         => Expression.NotEqual(field, searchValue),
-            "in"                   => Expression.Call(typeof(Enumerable), "Contains", new[] { targetType }, searchTree, field),
-            "notIn"                => Expression.Not(Expression.Call(typeof(Enumerable), "Contains", new[] { targetType }, searchTree, field)),
+            "in"                   => BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType),
+            "notIn"                => Expression.Not(BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType)),
             "contains"             => Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue),
             "doesNotContain"       => Expression.Not(Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue)),
             "startsWith"           => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, searchValue),
@@ -204,7 +203,7 @@ public static class QueryExecutor
         return condition;
     }
 
-    private static Expression BuildSubquery(IQuery? query, DbContext db)
+    private static Expression BuildSubquery(DbContext db, IQuery? query, MemberExpression field, string fieldName, Type targetType)
     {
         if (query == null || db == null)
         {
@@ -213,13 +212,17 @@ public static class QueryExecutor
 
         var dbSetProperty = db.GetType().GetProperty(query.Entity, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
                           ?? throw new InvalidOperationException($"Entity '{query.Entity}' not found in the DbContext.");
-        var dbSet         = dbSetProperty.GetValue(db)
+        var dbSet = dbSetProperty.GetValue(db)
                           ?? throw new InvalidOperationException($"Unable to get IQueryable for entity '{query.Entity}'.");
-        var buildQuery    = typeof(QueryExecutor).GetMethod(nameof(BuildQuery), BindingFlags.NonPublic | BindingFlags.Static)!.MakeGenericMethod(dbSet.GetType().GetGenericArguments()[0]);
-        var subquery      = buildQuery.Invoke(null, new object[] { db, dbSet, query }) as IQueryable;
-        return subquery!.Expression;
+        var buildQuery = typeof(QueryExecutor).GetMethod(nameof(BuildQuery), BindingFlags.NonPublic | BindingFlags.Static)!.MakeGenericMethod(dbSet.GetType().GetGenericArguments()[0]);
+        var subquery = buildQuery.Invoke(null, new object[] { db, dbSet, query }) as IQueryable;
+        var parameter = Expression.Parameter(subquery!.ElementType, "x");
+        var property = Expression.Property(parameter, fieldName);
+        var lambda = Expression.Lambda(property, parameter);
+        var projectedSubquery = Expression.Call(typeof(Queryable), "Select", new Type[] { subquery.ElementType, property.Type }, subquery.Expression, lambda );
+        var containsMethod = typeof(Queryable).GetMethods().First(m => m.Name == "Contains" && m.GetParameters().Length == 2).MakeGenericMethod(property.Type);
+        return Expression.Call(containsMethod, projectedSubquery, field);
     }
-
 
     private static Expression GetSearchValue(object? value, Type targetType)
     {
