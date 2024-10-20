@@ -205,7 +205,7 @@ public static class QueryExecutor
             return Expression.Constant(true);
         }
 
-        var dbSetProperty = db.GetType().GetProperty(query.Entity) ?? throw new InvalidOperationException($"Entity '{query.Entity}' not found in the DbContext.");
+        var dbSetProperty = db.GetType().GetProperty(query.Entity, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Entity '{query.Entity}' not found in the DbContext.");
         var dbSet = dbSetProperty.GetValue(db) as IQueryable<object> ?? throw new InvalidOperationException($"Unable to get IQueryable for entity '{query.Entity}'.");
         var subquery = BuildQuery(dbSet, query, db);
         return subquery.Expression;
@@ -228,7 +228,7 @@ public static class QueryExecutor
     {
         if (value == null)
         {
-            return Expression.Constant(Activator.CreateInstance(targetType), targetType);
+            return Expression.Constant(targetType.GetDefaultValue());
         }
 
         var nonNullableType = Nullable.GetUnderlyingType(targetType) ?? targetType;
