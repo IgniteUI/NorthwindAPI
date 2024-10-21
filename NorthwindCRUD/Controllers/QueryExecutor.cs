@@ -172,12 +172,13 @@ public static class QueryExecutor
         var field            = Expression.Property(parameter, property);
         var targetType       = property.PropertyType;
         var searchValue      = GetSearchValue(filter.SearchVal, targetType);
+        var emptyValue       = GetEmptyValue(targetType);
         Expression condition = filter.Condition.Name switch
         {
             "null"                 => targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue()))    : Expression.Constant(false),
             "notNull"              => targetType.IsNullableType() ? Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(true),
-            "empty"                => Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())),
-            "notEmpty"             => Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())),
+            "empty"                => Expression.Equal(field, emptyValue),
+            "notEmpty"             => Expression.NotEqual(field, emptyValue),
             "equals"               => Expression.Equal(field, searchValue),
             "doesNotEqual"         => Expression.NotEqual(field, searchValue),
             "in"                   => BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType),
@@ -228,12 +229,17 @@ public static class QueryExecutor
     {
         if (value == null)
         {
-            return Expression.Constant(targetType == typeof(string) ? string.Empty : targetType.GetDefaultValue());
+            return GetEmptyValue(targetType);
         }
 
         var nonNullableType = Nullable.GetUnderlyingType(targetType) ?? targetType;
         var convertedValue = Convert.ChangeType(value, nonNullableType, CultureInfo.InvariantCulture);
         return Expression.Constant(convertedValue, targetType);
+    }
+
+    private static Expression GetEmptyValue(Type targetType)
+    {
+        return Expression.Constant(targetType == typeof(string) ? string.Empty : targetType.GetDefaultValue());
     }
 
     private static Expression<Func<TEntity, object>> BuildProjectionExpression<TEntity>(string[] returnFields)
