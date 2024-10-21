@@ -228,7 +228,7 @@ public static class QueryExecutor
     {
         if (value == null)
         {
-            return Expression.Constant(targetType.GetDefaultValue());
+            return Expression.Constant(targetType == typeof(string) ? string.Empty : targetType.GetDefaultValue());
         }
 
         var nonNullableType = Nullable.GetUnderlyingType(targetType) ?? targetType;
