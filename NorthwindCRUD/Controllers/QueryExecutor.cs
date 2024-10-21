@@ -177,8 +177,8 @@ public static class QueryExecutor
         {
             "null"                 => targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue()))    : Expression.Constant(false),
             "notNull"              => targetType.IsNullableType() ? Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(true),
-            "empty"                => Expression.Equal(field, emptyValue),
-            "notEmpty"             => Expression.NotEqual(field, emptyValue),
+            "empty"                => Expression.Or(Expression.Equal(field, emptyValue), targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(false)),
+            "notEmpty"             => Expression.And(Expression.NotEqual(field, emptyValue), targetType.IsNullableType() ? Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(true)),
             "equals"               => Expression.Equal(field, searchValue),
             "doesNotEqual"         => Expression.NotEqual(field, searchValue),
             "in"                   => BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType),
