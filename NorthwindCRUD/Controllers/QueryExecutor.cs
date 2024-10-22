@@ -30,15 +30,22 @@ public interface IQuery
 
 public interface IQueryFilter
 {
-    public string FieldName { get; set; }
+    // Basic condition
+    public string? FieldName { get; set; }
 
-    public bool IgnoreCase { get; set; }
+    public bool? IgnoreCase { get; set; }
 
-    public IQueryFilterCondition Condition { get; set; }
+    public IQueryFilterCondition? Condition { get; set; }
 
     public object? SearchVal { get; set; }
 
     public IQuery? SearchTree { get; set; }
+
+    // And/Or
+    [SuppressMessage("Naming", "CA1716:Identifiers should not match keywords", Justification = "required name")]
+    public FilterType? Operator { get; set; }
+
+    public IQueryFilter[] FilteringOperands { get; set; }
 }
 
 public interface IQueryFilterCondition
@@ -63,15 +70,21 @@ public class Query : IQuery
 
 public class QueryFilter : IQueryFilter
 {
-    public string FieldName { get; set; }
+    // Basic condition
+    public string? FieldName { get; set; }
 
-    public bool IgnoreCase { get; set; }
+    public bool? IgnoreCase { get; set; }
 
-    public IQueryFilterCondition Condition { get; set; }
+    public IQueryFilterCondition? Condition { get; set; }
 
     public object? SearchVal { get; set; }
 
     public IQuery? SearchTree { get; set; }
+
+    // And/Or
+    public FilterType? Operator { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public IQueryFilter[] FilteringOperands { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 }
 
 public class QueryFilterCondition : IQueryFilterCondition
@@ -114,7 +127,6 @@ public class QueryFilterConditionConverter : JsonConverter
 /// A generic query executor that can be used to execute queries on IQueryable data sources.
 /// </summary>
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1009:Closing parenthesis should be spaced correctly", Justification = "...")]
-[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class QueryExecutor
 {
     public static TEntity[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query)
@@ -167,41 +179,56 @@ public static class QueryExecutor
 
     private static Expression BuildConditionExpression<TEntity>(DbContext db, IQueryable<TEntity> source, IQueryFilter filter, ParameterExpression parameter)
     {
-        var property         = source.ElementType.GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
-                             ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{source.ElementType}'");
-        var field            = Expression.Property(parameter, property);
-        var targetType       = property.PropertyType;
-        var searchValue      = GetSearchValue(filter.SearchVal, targetType);
-        var emptyValue       = GetEmptyValue(targetType);
-        Expression condition = filter.Condition.Name switch
+        if (filter.FieldName is not null && filter.IgnoreCase is not null && filter.Condition is not null)
         {
-            "null"                 => targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue()))    : Expression.Constant(false),
-            "notNull"              => targetType.IsNullableType() ? Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(true),
-            "empty"                => Expression.Or(Expression.Equal(field, emptyValue), targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(false)),
-            "notEmpty"             => Expression.And(Expression.NotEqual(field, emptyValue), targetType.IsNullableType() ? Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(true)),
-            "equals"               => Expression.Equal(field, searchValue),
-            "doesNotEqual"         => Expression.NotEqual(field, searchValue),
-            "in"                   => BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType),
-            "notIn"                => Expression.Not(BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType)),
-            "contains"             => Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue),
-            "doesNotContain"       => Expression.Not(Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue)),
-            "startsWith"           => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, searchValue),
-            "endsWith"             => Expression.Call(field, typeof(string).GetMethod("EndsWith", new[] { typeof(string) })!, searchValue),
-            "greaterThan"          => Expression.GreaterThan(field, searchValue),
-            "lessThan"             => Expression.LessThan(field, searchValue),
-            "greaterThanOrEqualTo" => Expression.GreaterThanOrEqual(field, searchValue),
-            "lessThanOrEqualTo"    => Expression.LessThanOrEqual(field, searchValue),
-            "all"                  => throw new NotImplementedException("Not implemented"),
-            "true"                 => Expression.IsTrue(field),
-            "false"                => Expression.IsFalse(field),
-            _                      => throw new NotImplementedException("Not implemented"),
-        };
-        if (filter.IgnoreCase && field.Type == typeof(string))
-        {
-            // TODO: Implement case-insensitive comparison
-        }
+            var property = source.ElementType.GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
+                                 ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{source.ElementType}'");
+            var field = Expression.Property(parameter, property);
+            var targetType = property.PropertyType;
+            var searchValue = GetSearchValue(filter.SearchVal, targetType);
+            var emptyValue = GetEmptyValue(targetType);
+            Expression condition = filter.Condition.Name switch
+            {
+                "null" => targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(false),
+                "notNull" => targetType.IsNullableType() ? Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(true),
+                "empty" => Expression.Or(Expression.Equal(field, emptyValue), targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(false)),
+                "notEmpty" => Expression.And(Expression.NotEqual(field, emptyValue), targetType.IsNullableType() ? Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(true)),
+                "equals" => Expression.Equal(field, searchValue),
+                "doesNotEqual" => Expression.NotEqual(field, searchValue),
+                "in" => BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType),
+                "notIn" => Expression.Not(BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType)),
+                "contains" => Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue),
+                "doesNotContain" => Expression.Not(Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue)),
+                "startsWith" => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, searchValue),
+                "endsWith" => Expression.Call(field, typeof(string).GetMethod("EndsWith", new[] { typeof(string) })!, searchValue),
+                "greaterThan" => Expression.GreaterThan(field, searchValue),
+                "lessThan" => Expression.LessThan(field, searchValue),
+                "greaterThanOrEqualTo" => Expression.GreaterThanOrEqual(field, searchValue),
+                "lessThanOrEqualTo" => Expression.LessThanOrEqual(field, searchValue),
+                "all" => throw new NotImplementedException("Not implemented"),
+                "true" => Expression.IsTrue(field),
+                "false" => Expression.IsFalse(field),
+                _ => throw new NotImplementedException("Not implemented"),
+            };
+            if (filter.IgnoreCase.Value && field.Type == typeof(string))
+            {
+                // TODO: Implement case-insensitive comparison
+            }
 
-        return condition;
+            return condition;
+        }
+        else
+        {
+            var subexpressions = filter.FilteringOperands?.Select(f => BuildConditionExpression(db, source, f, parameter)).ToArray();
+            if (subexpressions == null || !subexpressions.Any())
+            {
+                return Expression.Constant(true);
+            }
+
+            return filter.Operator == FilterType.And
+                ? subexpressions.Aggregate(Expression.AndAlso)
+                : subexpressions.Aggregate(Expression.OrElse);
+        }
     }
 
     private static Expression BuildSubquery(DbContext db, IQuery? query, MemberExpression field, string fieldName, Type targetType)
@@ -290,7 +317,7 @@ public static class SqlGenerator
     private static string BuildCondition(IQueryFilter filter)
     {
         var field     = filter.FieldName;
-        var condition = filter.Condition.Name;
+        var condition = filter.Condition?.Name;
         var value     = filter.SearchVal != null ? $"'{filter.SearchVal}'" : "NULL";
         var subquery  = filter.SearchTree != null ? $"({GenerateSql(filter.SearchTree)})" : string.Empty;
         return condition switch
