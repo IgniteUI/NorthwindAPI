@@ -82,9 +82,9 @@ public class QueryFilter : IQueryFilter
     public IQuery? SearchTree { get; set; }
 
     // And/Or
-    public FilterType? Operator { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public FilterType? Operator { get; set; }
 
-    public IQueryFilter[] FilteringOperands { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public IQueryFilter[] FilteringOperands { get; set; }
 }
 
 public class QueryFilterCondition : IQueryFilterCondition
