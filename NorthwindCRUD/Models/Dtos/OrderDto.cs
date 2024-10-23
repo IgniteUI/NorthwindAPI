@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using NorthwindCRUD.Models.Contracts;
-using static NorthwindCRUD.Helpers.Enums;
-
-namespace NorthwindCRUD.Models.Dtos
+﻿namespace NorthwindCRUD.Models.Dtos
 {
-    public class OrderDto : IOrder
+    using System.ComponentModel.DataAnnotations;
+    using NorthwindCRUD.Models.Contracts;
+    using static NorthwindCRUD.Helpers.Enums;
+
+    public class OrderDto : IBaseDto, IOrder
     {
+        [Key]
         public int OrderId { get; set; }
 
         [Required(ErrorMessage = "CustomerId is required.")]

@@ -2,7 +2,7 @@
 {
     public interface ISupplier
     {
-        int SupplierId { get; set; }
+        int SupplierId { get; }
 
         string? CompanyName { get; set; }
 

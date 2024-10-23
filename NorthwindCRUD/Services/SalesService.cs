@@ -88,7 +88,7 @@ namespace NorthwindCRUD.Services
         {
             if (year == 0)
             {
-               throw new ArgumentException("Year is required.", nameof(year));
+                throw new ArgumentException("Year is required.", nameof(year));
             }
 
             var salesData = this.dataContext.OrderDetails

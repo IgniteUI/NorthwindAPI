@@ -3,7 +3,7 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class LoginDto : IUser
+    public class LoginDto : IBaseDto, IUser
     {
         [EmailAddress]
         public string Email { get; set; }

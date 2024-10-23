@@ -1,78 +1,24 @@
 ﻿namespace NorthwindCRUD.Services
 {
-    using Microsoft.EntityFrameworkCore;
-    using NorthwindCRUD.Helpers;
+    using AutoMapper;
     using NorthwindCRUD.Models.DbModels;
+    using NorthwindCRUD.Models.Dtos;
 
-    public class CategoryService
+    public class CategoryService : BaseDbService<CategoryDto, CategoryDb, int>
     {
-        private readonly DataContext dataContext;
+        private readonly IMapper mapper;
 
-        public CategoryService(DataContext dataContext)
+        public CategoryService(DataContext dataContext, IPagingService pagingService, IMapper mapper)
+            : base(dataContext, mapper, pagingService)
         {
-            this.dataContext = dataContext;
+            this.mapper = mapper;
         }
 
-        public CategoryDb[] GetAll()
+        public CategoryDetailsDto GetDetailsById(int id)
         {
-            return this.dataContext.Categories.ToArray();
-        }
+            var category = this.GetDbById(id);
 
-        public IQueryable<CategoryDb> GetAllAsQueryable()
-        {
-            return this.dataContext.Categories;
-        }
-
-        public CategoryDb? GetById(int id)
-        {
-            return this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == id);
-        }
-
-        public CategoryDb Create(CategoryDb model)
-        {
-            var id = IdGenerator.CreateDigitsId();
-            var existWithId = this.GetById(id);
-            while (existWithId != null)
-            {
-                id = IdGenerator.CreateDigitsId();
-                existWithId = this.GetById(id);
-            }
-
-            model.CategoryId = id;
-
-            PropertyHelper<CategoryDb>.MakePropertiesEmptyIfNull(model);
-
-            var categoryEntity = this.dataContext.Categories.Add(model);
-            this.dataContext.SaveChanges();
-
-            return categoryEntity.Entity;
-        }
-
-        public CategoryDb? Update(CategoryDb model)
-        {
-            var categoryEntity = this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId);
-            if (categoryEntity != null)
-            {
-                categoryEntity.Description = model.Description != null ? model.Description : categoryEntity.Description;
-                categoryEntity.Name = model.Name != null ? model.Name : categoryEntity.Name;
-                categoryEntity.Picture = model.Picture != null ? model.Picture : categoryEntity.Picture;
-
-                this.dataContext.SaveChanges();
-            }
-
-            return categoryEntity;
-        }
-
-        public CategoryDb? Delete(int id)
-        {
-            var categoryEntity = this.GetById(id);
-            if (categoryEntity != null)
-            {
-                this.dataContext.Categories.Remove(categoryEntity);
-                this.dataContext.SaveChanges();
-            }
-
-            return categoryEntity;
+            return mapper.Map<CategoryDetailsDto>(category);
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public interface IRegion
     {
-        int RegionId { get; set; }
+        int RegionId { get; }
 
         string RegionDescription { get; set; }
     }

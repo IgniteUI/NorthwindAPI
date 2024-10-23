@@ -3,8 +3,9 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class CategoryDto : ICategory
+    public class CategoryDto : IBaseDto, ICategory
     {
+        [Key]
         public int CategoryId { get; set; }
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]

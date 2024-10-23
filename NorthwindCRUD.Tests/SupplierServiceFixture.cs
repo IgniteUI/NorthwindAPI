@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Models.DbModels;
 
 namespace NorthwindCRUD.Tests
 {
@@ -7,47 +6,46 @@ namespace NorthwindCRUD.Tests
     public class SupplierServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldCreateSupplier()
+        public async Task ShouldCreateSupplier()
         {
             var supplier = DataHelper.GetSupplier();
 
-            var createdSupplier = DataHelper.SupplierService.Create(supplier);
+            var createdSupplier = await DataHelper.SupplierService.Create(supplier);
 
             Assert.IsNotNull(createdSupplier);
             createdSupplier = DataHelper2.SupplierService.GetById(createdSupplier.SupplierId);
             Assert.IsNotNull(createdSupplier);
-            Assert.AreEqual(supplier.SupplierId, createdSupplier.SupplierId);
             Assert.AreEqual(supplier.CompanyName, createdSupplier.CompanyName);
             Assert.AreEqual(supplier.ContactName, createdSupplier.ContactName);
         }
 
         [TestMethod]
-        public void ShouldUpdateSupplier()
+        public async Task ShouldUpdateSupplier()
         {
             var supplier = DataHelper.GetSupplier();
             string? originalCompanyName = supplier.CompanyName;
             string? originalContactName = supplier.ContactName;
             string? originalContactTitle = supplier.ContactTitle;
-            DataHelper.SupplierService.Create(supplier);
+            var insertedSupplier = await DataHelper.SupplierService.Create(supplier);
 
-            supplier.CompanyName = "Updated Supplier";
-            supplier.ContactName = "Updated Contact";
-            supplier.ContactTitle = "Updated Title";
+            insertedSupplier.CompanyName = "Updated Supplier";
+            insertedSupplier.ContactName = "Updated Contact";
+            insertedSupplier.ContactTitle = "Updated Title";
 
-            var updatedSupplier = DataHelper.SupplierService.Update(supplier);
+            var updatedSupplier = await DataHelper.SupplierService.Update(insertedSupplier, insertedSupplier.SupplierId);
             Assert.IsNotNull(updatedSupplier);
             updatedSupplier = DataHelper2.SupplierService.GetById(updatedSupplier.SupplierId);
             Assert.IsNotNull(updatedSupplier);
-            Assert.AreEqual(supplier.CompanyName, updatedSupplier.CompanyName);
-            Assert.AreEqual(supplier.ContactName, updatedSupplier.ContactName);
-            Assert.AreEqual(supplier.ContactTitle, updatedSupplier.ContactTitle);
+            Assert.AreEqual(insertedSupplier.CompanyName, updatedSupplier.CompanyName);
+            Assert.AreEqual(insertedSupplier.ContactName, updatedSupplier.ContactName);
+            Assert.AreEqual(insertedSupplier.ContactTitle, updatedSupplier.ContactTitle);
         }
 
         [TestMethod]
-        public void ShouldDeleteSupplier()
+        public async Task ShouldDeleteSupplier()
         {
             var supplier = DataHelper.GetSupplier();
-            DataHelper.SupplierService.Create(supplier);
+            await DataHelper.SupplierService.Create(supplier);
 
             DataHelper.SupplierService.Delete(supplier.SupplierId);
             var deletedSupplier = DataHelper2.SupplierService.GetById(supplier.SupplierId);
@@ -56,10 +54,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetAllSuppliers()
+        public async Task ShouldGetAllSuppliers()
         {
-            DataHelper.CreateSupplier();
-            DataHelper.CreateSupplier();
+            await DataHelper.CreateSupplier();
+            await DataHelper.CreateSupplier();
 
             var result = DataHelper2.SupplierService.GetAll();
 
@@ -68,15 +66,14 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetBySupplierId()
+        public async Task ShouldGetBySupplierId()
         {
             var supplier = DataHelper.GetSupplier();
-            DataHelper.SupplierService.Create(supplier);
+            var insertedSupplier = await DataHelper.SupplierService.Create(supplier);
 
-            var result = DataHelper2.SupplierService.GetById(supplier.SupplierId);
+            var result = DataHelper2.SupplierService.GetById(insertedSupplier.SupplierId);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(supplier.SupplierId, result.SupplierId);
             Assert.AreEqual(supplier.CompanyName, result.CompanyName);
             Assert.AreEqual(supplier.ContactName, result.ContactName);
         }

@@ -3,8 +3,9 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class ProductDto : IProduct
+    public class ProductDto : IBaseDto, IProduct
     {
+        [Key]
         public int ProductId { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "SupplierId must be a valid supplier ID.")]

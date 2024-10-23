@@ -6,11 +6,11 @@ namespace NorthwindCRUD.Tests
     public class TerritoryServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldCreateTerritory()
+        public async Task ShouldCreateTerritory()
         {
             var territory = DataHelper.GetTerritory();
 
-            var createdTerritory = DataHelper.CreateTerritory(territory);
+            var createdTerritory = await DataHelper.CreateTerritory(territory);
 
             Assert.IsNotNull(createdTerritory);
             createdTerritory = DataHelper2.TerritoryService.GetById(createdTerritory.TerritoryId);
@@ -21,15 +21,15 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldUpdateTerritory()
+        public async Task ShouldUpdateTerritory()
         {
             var territory = DataHelper.GetTerritory();
             string originalTerritoryDescription = territory.TerritoryDescription;
-            var createdTerritory = DataHelper.CreateTerritory(territory);
+            var createdTerritory = await DataHelper.CreateTerritory(territory);
 
             createdTerritory.TerritoryDescription = "Updated Territory";
 
-            var updatedTerritory = DataHelper.TerritoryService.Update(createdTerritory);
+            var updatedTerritory = await DataHelper.TerritoryService.Update(createdTerritory, createdTerritory.TerritoryId);
 
             Assert.IsNotNull(updatedTerritory);
             updatedTerritory = DataHelper2.TerritoryService.GetById(updatedTerritory.TerritoryId);
@@ -39,9 +39,9 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldDeleteTerritory()
+        public async Task ShouldDeleteTerritory()
         {
-            var territory = DataHelper.CreateTerritory();
+            var territory = await DataHelper.CreateTerritory();
             DataHelper.TerritoryService.Delete(territory.TerritoryId);
             var deletedTerritory = DataHelper2.TerritoryService.GetById(territory.TerritoryId);
 
@@ -49,10 +49,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldReturnAllTerritories()
+        public async Task ShouldReturnAllTerritories()
         {
-            DataHelper.CreateTerritory();
-            DataHelper.CreateTerritory();
+            await DataHelper.CreateTerritory();
+            await DataHelper.CreateTerritory();
 
             var result = DataHelper2.TerritoryService.GetAll();
 
@@ -61,9 +61,9 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldReturnTerritory()
+        public async Task ShouldReturnTerritory()
         {
-            var territory = DataHelper.CreateTerritory();
+            var territory = await DataHelper.CreateTerritory();
 
             var result = DataHelper2.TerritoryService.GetById(territory.TerritoryId);
 
