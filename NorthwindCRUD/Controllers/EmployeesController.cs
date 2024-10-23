@@ -58,7 +58,7 @@
         [HttpGet("{id}/Territories")]
         public ActionResult<EmployeeDto[]> GetTerritoriesByEmployeeId(int id)
         {
-            var territories = this.employeeTerritoryService.GetTeritoriesByEmployeeId(id);
+            var territories = this.employeeTerritoryService.GetTerritoriesByEmployeeId(id);
             if (territories == null)
             {
                 return NotFound($"No territories for employee {id}");
