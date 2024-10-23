@@ -6,15 +6,19 @@
 
     public class CategoryService : BaseDbService<CategoryDto, CategoryDb, int>
     {
+        private readonly IMapper mapper;
+
         public CategoryService(DataContext dataContext, IPagingService pagingService, IMapper mapper)
             : base(dataContext, mapper, pagingService)
         {
+            this.mapper = mapper;
         }
 
         public CategoryDetailsDto GetDetailsById(int id)
         {
             var category = this.GetDbById(id);
-            return this.mapper.Map<CategoryDetailsDto>(category);
+
+            return mapper.Map<CategoryDetailsDto>(category);
         }
     }
 }

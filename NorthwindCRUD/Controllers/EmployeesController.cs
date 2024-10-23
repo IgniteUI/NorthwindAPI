@@ -27,11 +27,11 @@
         [HttpGet("{id}/Superior")]
         public ActionResult<EmployeeDto> GetSuperiorById(int id)
         {
-            var employee = this.baseDbService.GetById(id);
+            var employee = this.employeeService.GetById(id);
 
             if (employee != null)
             {
-                var superior = this.baseDbService.GetById(employee.ReportsTo);
+                var superior = this.employeeService.GetById(employee.ReportsTo);
 
                 if (superior != null)
                 {

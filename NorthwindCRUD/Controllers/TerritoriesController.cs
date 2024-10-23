@@ -9,12 +9,14 @@
     [Route("[controller]")]
     public class TerritoriesController : BaseNorthwindAPIController<TerritoryDto, TerritoryDb, string>
     {
+        private readonly TerritoryService territoryService;
         private readonly RegionService regionService;
         private readonly EmployeeTerritoryService employeeTerritoryService;
 
         public TerritoriesController(TerritoryService territoryService, RegionService regionService, EmployeeTerritoryService employeeTerritoryService)
             : base(territoryService)
         {
+            this.territoryService = territoryService;
             this.regionService = regionService;
             this.employeeTerritoryService = employeeTerritoryService;
         }
@@ -34,7 +36,7 @@
         [HttpGet("{id}/Region")]
         public ActionResult<RegionDto[]> GetRegionByTerritory(string id)
         {
-            var territory = this.baseDbService.GetById(id);
+            var territory = this.territoryService.GetById(id);
             if (territory != null)
             {
                 var region = this.regionService.GetById(territory.RegionId ?? default);

@@ -13,9 +13,7 @@
 
         public EmployeeDto[] GetEmployeesByReportsTo(int id)
         {
-            return mapper.Map<EmployeeDto[]>(this.dataContext.Employees
-                .Where(c => c.ReportsTo == id)
-                .ToArray());
+            return this.GetAll().Where(c => c.ReportsTo == id).ToArray();
         }
     }
 }

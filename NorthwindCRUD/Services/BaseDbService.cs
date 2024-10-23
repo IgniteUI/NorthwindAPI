@@ -11,8 +11,8 @@ namespace NorthwindCRUD.Services
             where TDto : class, IBaseDto
             where TDb : class, IBaseDb, new()
     {
-        protected readonly DataContext dataContext;
-        protected readonly IMapper mapper;
+        private readonly DataContext dataContext;
+        private readonly IMapper mapper;
         private readonly IPagingService pagingService;
 
         public BaseDbService(DataContext dataContext, IMapper mapper, IPagingService pagingService)
@@ -165,7 +165,7 @@ namespace NorthwindCRUD.Services
             }
 
             TDb? dbResult = query.FirstOrDefault(entity =>
-                EF.Property<TId>(entity, keyProperty.Name)!.Equals(id));
+                EF.Property<TId>(entity, keyProperty.Name) !.Equals(id));
 
             return dbResult;
         }

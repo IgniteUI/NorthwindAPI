@@ -13,8 +13,8 @@ namespace NorthwindCRUD.Services
 
         public TerritoryDto[] GetTerritoriesByRegionId(int id)
         {
-            var territories = this.dataContext.Territories.Where(t => t.RegionId == id).ToArray();
-            return this.mapper.Map<TerritoryDto[]>(territories);
+            var territories = this.GetAll().Where(t => t.RegionId == id).ToArray();
+            return territories;
         }
     }
 }

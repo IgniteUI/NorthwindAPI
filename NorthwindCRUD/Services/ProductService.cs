@@ -13,20 +13,20 @@ namespace NorthwindCRUD.Services
 
         public ProductDto[] GetAllByCategoryId(int id)
         {
-            var products = this.dataContext.Products.Where(p => p.CategoryId == id).ToArray();
-            return mapper.Map<ProductDto[]>(products);
+            var products = this.GetAll().Where(p => p.CategoryId == id).ToArray();
+            return products;
         }
 
         public ProductDto[] GetAllBySupplierId(int id)
         {
-            var products = this.dataContext.Products.Where(p => p.SupplierId == id).ToArray();
-            return mapper.Map<ProductDto[]>(products);
+            var products = this.GetAll().Where(p => p.SupplierId == id).ToArray();
+            return products;
         }
 
         public ProductDto[] GetProductsByIds(int[] productIds)
         {
-            var products = this.dataContext.Products.Where(p => productIds.Contains(p.ProductId)).ToArray();
-            return mapper.Map<ProductDto[]>(products);
+            var products = this.GetAll().Where(p => productIds.Contains(p.ProductId)).ToArray();
+            return products;
         }
     }
 }

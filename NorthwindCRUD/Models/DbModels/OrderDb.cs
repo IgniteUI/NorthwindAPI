@@ -40,5 +40,10 @@ namespace NorthwindCRUD.Models.DbModels
         public bool Completed { get; set; }
 
         public AddressDb? ShipAddress { get; set; }
+
+        public string[] GetIncludes()
+        {
+            return new string[] { "Employee", "Customer", "Shipper" };
+        }
     }
 }

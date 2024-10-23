@@ -13,7 +13,7 @@ namespace NorthwindCRUD.Controllers
         where TDto : class, IBaseDto
         where TDb : class, IBaseDb, new()
     {
-        protected readonly BaseDbService<TDto, TDb, TId> baseDbService;
+        private readonly BaseDbService<TDto, TDb, TId> baseDbService;
 
         public BaseNorthwindAPIController(BaseDbService<TDto, TDb, TId> baseDbService)
         {

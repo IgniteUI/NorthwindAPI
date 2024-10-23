@@ -60,6 +60,8 @@ namespace NorthwindCRUD.Tests
             Assert.IsNotNull(product.CategoryId);
 
             var category = DataHelper2.CategoryService.GetById((int)product.CategoryId);
+
+            Assert.IsNotNull(category);
             SalesDto[] salesData = DataHelper2.SalesService.GetSalesDataByCategoryAndYear(category.Name, 2023);
 
             Assert.IsNotNull(salesData);

@@ -8,9 +8,14 @@ namespace NorthwindCRUD.Services
 {
     public class OrderService : BaseDbService<OrderDto, OrderDb, int>
     {
+        private readonly IMapper mapper;
+        private readonly DataContext dataContext;
+
         public OrderService(DataContext dataContext, IPagingService pagingService, IMapper mapper)
             : base(dataContext, mapper, pagingService)
         {
+            this.mapper = mapper;
+            this.dataContext = dataContext;
         }
 
         public OrderDto[] GetNOrders(int numberOfOrdersToRetrieve)
