@@ -1,39 +1,20 @@
 ﻿namespace NorthwindCRUD.Services
 {
     using AutoMapper;
-    using NorthwindCRUD.Helpers;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
 
-    public class CategoryService : BaseDbService<CategoryDto, CategoryDb>
+    public class CategoryService : BaseDbService<CategoryDto, CategoryDb, int>
     {
-        private readonly DataContext dataContext;
-        private readonly IPagingService pagingService;
-
         public CategoryService(DataContext dataContext, IPagingService pagingService, IMapper mapper)
             : base(dataContext, mapper, pagingService)
         {
-            this.dataContext = dataContext;
         }
 
-        public CategoryDb Create(CategoryDb model)
+        public CategoryDetailsDto GetDetailsById(int id)
         {
-            var id = IdGenerator.CreateDigitsId();
-            var existWithId = this.GetById(id);
-            while (existWithId != null)
-            {
-                id = IdGenerator.CreateDigitsId();
-                existWithId = this.GetById(id);
-            }
-
-            model.CategoryId = id;
-
-            PropertyHelper<CategoryDb>.MakePropertiesEmptyIfNull(model);
-
-            var categoryEntity = this.dataContext.Categories.Add(model);
-            this.dataContext.SaveChanges();
-
-            return categoryEntity.Entity;
+            var category = this.GetDbById(id);
+            return this.mapper.Map<CategoryDetailsDto>(category);
         }
     }
 }

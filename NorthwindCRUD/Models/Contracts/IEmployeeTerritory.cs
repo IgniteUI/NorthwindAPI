@@ -1,5 +1,3 @@
-using NorthwindCRUD.Models.DbModels;
-
 namespace NorthwindCRUD.Models.Contracts
 {
     public interface IEmployeeTerritory

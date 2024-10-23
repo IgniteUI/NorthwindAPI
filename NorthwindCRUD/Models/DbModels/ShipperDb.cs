@@ -7,7 +7,7 @@ namespace NorthwindCRUD.Models.DbModels
     public class ShipperDb : IBaseDb, IShipper
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShipperId { get; set; }
 
         public string CompanyName { get; set; }

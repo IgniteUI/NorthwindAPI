@@ -1,14 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using NorthwindCRUD.Models.Contracts;
+﻿using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
     public class AddressDb : IBaseDb, IAddress
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string AddressId { get; set; }
 
         public string Street { get; set; }
 
@@ -21,11 +16,5 @@ namespace NorthwindCRUD.Models.DbModels
         public string Country { get; set; }
 
         public string? Phone { get; set; }
-
-        public ICollection<CustomerDb> Customers { get; set; }
-
-        public ICollection<EmployeeDb> Employees { get; set; }
-
-        public ICollection<OrderDb> Orders { get; set; }
     }
 }

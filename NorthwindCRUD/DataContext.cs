@@ -10,7 +10,7 @@
         {
         }
 
-        public DbSet<AddressDb> Addresses { get; set; }
+        //public DbSet<AddressDb> Addresses { get; set; }
 
         public DbSet<CategoryDb> Categories { get; set; }
 
@@ -38,10 +38,6 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AddressDb>()
-                .Property(a => a.AddressId)
-                .ValueGeneratedOnAdd();
-
             modelBuilder.Entity<ProductDb>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
@@ -53,14 +49,10 @@
                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<CustomerDb>()
-                .HasOne(c => c.Address)
-                .WithMany(a => a.Customers)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OwnsOne(c => c.Address);
 
             modelBuilder.Entity<OrderDb>()
-                .HasOne(o => o.ShipAddress)
-                .WithMany(a => a.Orders)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OwnsOne(o => o.ShipAddress);
 
             modelBuilder.Entity<OrderDb>()
                 .HasOne(o => o.Customer)
@@ -80,9 +72,7 @@
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<EmployeeDb>()
-                .HasOne(e => e.Address)
-                .WithMany(a => a.Employees)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OwnsOne(e => e.Address);
 
             modelBuilder.Entity<TerritoryDb>()
                 .HasOne(t => t.Region)
@@ -97,12 +87,12 @@
                 .HasOne(et => et.Territory)
                 .WithMany(t => t.EmployeesTerritories);
 
-            //Composite Keys
             modelBuilder.Entity<EmployeeTerritoryDb>()
                 .HasKey(et => new { et.EmployeeId, et.TerritoryId });
 
             modelBuilder.Entity<OrderDetailDb>()
                 .HasKey(et => new { et.ProductId, et.OrderId });
         }
+
     }
 }

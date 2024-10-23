@@ -7,7 +7,7 @@ namespace NorthwindCRUD.Models.DbModels
     public class ProductDb : IBaseDb, IProduct
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProductId { get; set; }
 
         public int? SupplierId { get; set; }

@@ -7,7 +7,7 @@ namespace NorthwindCRUD.Models.DbModels
     public class SupplierDb : IBaseDb, ISupplier
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SupplierId { get; set; }
 
         public string? CompanyName { get; set; }

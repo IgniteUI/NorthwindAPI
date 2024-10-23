@@ -1,12 +1,10 @@
-﻿using NorthwindCRUD.Models.DbModels;
-using NorthwindCRUD.Models.Dtos;
-using NorthwindCRUD.Models.InputModels;
+﻿using NorthwindCRUD.Models.Dtos;
 
 namespace NorthwindCRUD.Models.Contracts
 {
     public interface IOrder
     {
-        int OrderId { get; set; }
+        int OrderId { get; }
 
         string CustomerId { get; set; }
 

@@ -1,9 +1,11 @@
 ﻿namespace NorthwindCRUD.Models.Dtos
 {
+    using System.ComponentModel.DataAnnotations;
     using NorthwindCRUD.Models.Contracts;
 
     public class OrderDto : IBaseDto, IOrder
     {
+        [Key]
         public int OrderId { get; set; }
 
         public string CustomerId { get; set; }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NorthwindCRUD.Models.DbModels;
 using NorthwindCRUD.Models.Dtos;
@@ -7,32 +6,24 @@ using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Controllers
 {
-    public class BaseController<TDto, TDb, TId> : ControllerBase
+    [ApiController]
+    [Route("[controller]")]
+    public class BaseNorthwindAPIController<TDto, TDb, TId> : ControllerBase
         where TDto : class, IBaseDto
         where TDb : class, IBaseDb, new()
     {
-        private readonly BaseDbService<TDto, TDb, string> baseDbService;
-        private readonly ILogger logger;
+        protected readonly BaseDbService<TDto, TDb, TId> baseDbService;
 
-        public BaseController(BaseDbService<TDto, TDb, string> baseDbService, ILogger logger)
+        public BaseNorthwindAPIController(BaseDbService<TDto, TDb, TId> baseDbService)
         {
             this.baseDbService = baseDbService;
-            this.logger = logger;
         }
 
         [HttpGet]
         public ActionResult<TDto[]> GetAll()
         {
-            try
-            {
-                var result = this.baseDbService.GetAll();
-                return Ok(result);
-            }
-            catch (Exception error)
-            {
-                logger.LogError(error.Message);
-                return StatusCode(500);
-            }
+            var result = this.baseDbService.GetAll();
+            return Ok(result);
         }
 
         /// <summary>
@@ -48,17 +39,9 @@ namespace NorthwindCRUD.Controllers
             [FromQuery][Attributes.SwaggerTopParameter] int? top,
             [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
-            try
-            {
-                var pagedResult = this.baseDbService.GetWithPageSkip(skip, top, null, null, orderBy);
+            var pagedResult = this.baseDbService.GetWithPageSkip(skip, top, null, null, orderBy);
 
-                return Ok(pagedResult);
-            }
-            catch (Exception error)
-            {
-                logger.LogError(error.Message);
-                return StatusCode(500);
-            }
+            return Ok(pagedResult);
         }
 
         /// <summary>
@@ -74,52 +57,60 @@ namespace NorthwindCRUD.Controllers
             [FromQuery][Attributes.SwaggerSizeParameter] int? size,
             [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
-            try
-            {
-                var pagedResult = this.baseDbService.GetWithPageSkip(null, null, pageIndex, size, orderBy);
-
-                return Ok(pagedResult);
-            }
-            catch (Exception error)
-            {
-                logger.LogError(error.Message);
-                return StatusCode(500);
-            }
+            var pagedResult = this.baseDbService.GetWithPageSkip(null, null, pageIndex, size, orderBy);
+            return Ok(pagedResult);
         }
 
         [HttpPost]
-        [HttpPut]
-        [Authorize]
-        public async Task<ActionResult<TDto>> UpsertAsync(TDto model)
+        //[Authorize]
+        public async Task<ActionResult<TDto>> Create(TDto model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var result = await this.baseDbService.Upsert(model);
+            var result = await this.baseDbService.Create(model);
+            return Ok(result);
+        }
+
+        //[HttpPut("{id}")]
+        ////[Authorize]
+        //public async Task<ActionResult<TDto>> Update(TDto model, TId id)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    var result = await this.baseDbService.Upsert(model, id);
+        //    return Ok(result);
+        //}
+
+        [HttpPut]
+        //[Authorize]
+        public async Task<ActionResult<TDto>> Update(TDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await this.baseDbService.Update(model);
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public ActionResult<TDto> GetById(TId id)
         {
-            try
-            {
-                var result = this.baseDbService.GetById(id);
+            var result = this.baseDbService.GetById(id);
 
-                if (result != null)
-                {
-                    return result;
-                }
-
-                return NotFound();
-            }
-            catch (Exception error)
+            if (result != null)
             {
-                logger.LogError(error.Message);
-                return StatusCode(500);
+                return result;
             }
+
+            return NotFound();
         }
 
         /// <summary>
@@ -130,6 +121,19 @@ namespace NorthwindCRUD.Controllers
         public ActionResult<CountResultDto> GetCustomersCount()
         {
             return this.baseDbService.GetCount();
+        }
+
+        [HttpDelete("{id}")]
+        //[Authorize]
+        public ActionResult<TDto> Delete(TId id)
+        {
+            var product = this.baseDbService.Delete(id);
+            if (product != null)
+            {
+                return Ok(product);
+            }
+
+            return NotFound();
         }
     }
 }

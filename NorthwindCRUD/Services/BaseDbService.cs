@@ -1,17 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Models.DbModels;
 using NorthwindCRUD.Models.Dtos;
 
 namespace NorthwindCRUD.Services
 {
     public abstract class BaseDbService<TDto, TDb, TId>
-        where TDto : class, IBaseDto
-        where TDb : class, IBaseDb, new()
+            where TDto : class, IBaseDto
+            where TDb : class, IBaseDb, new()
     {
-        private readonly DataContext dataContext;
-        private readonly IMapper mapper;
+        protected readonly DataContext dataContext;
+        protected readonly IMapper mapper;
         private readonly IPagingService pagingService;
 
         public BaseDbService(DataContext dataContext, IMapper mapper, IPagingService pagingService)
@@ -61,7 +62,7 @@ namespace NorthwindCRUD.Services
             return mapper.Map<TDto>(dbResult);
         }
 
-        private TDb GetDbById(TId id)
+        protected TDb GetDbById(TId id)
         {
             TDb dtoInstance = new TDb();
 
@@ -76,7 +77,7 @@ namespace NorthwindCRUD.Services
 
             if (keyProperty == null)
             {
-                throw new Exception("No key property found on entity");
+                throw new InvalidOperationException("No key property found on entity");
             }
 
             TDb? dbResult = query.FirstOrDefault(entity =>
@@ -94,47 +95,66 @@ namespace NorthwindCRUD.Services
             return pagedResult;
         }
 
-        public async Task<TDto> Upsert(TDto model)
+        public async Task<TDto> Update(TDto model)
+        {
+            var keyProperty = typeof(TDto).GetProperties()
+                .FirstOrDefault(p => Attribute.IsDefined(p, typeof(KeyAttribute)));
+
+            if (keyProperty == null)
+            {
+                throw new InvalidOperationException("No key property found on entity");
+            }
+
+            var keyValue = (TId)keyProperty.GetValue(model);
+
+            return await Update(model, keyValue);
+        }
+
+        public async Task<TDto> Update(TDto model, TId id)
         {
             if (model == null)
             {
                 throw new ArgumentNullException(nameof(model));
             }
 
-            // Find the key property using reflection (assumes you have a KeyAttribute defined)
+            var dbModel = mapper.Map<TDb>(model);
+
+            var existingEntity = GetDbById(id);
+            if (existingEntity == null)
+            {
+                throw new KeyNotFoundException($"Entity with id {id} not found.");
+            }
+
+            //todo improve
+            mapper.Map(dbModel, existingEntity, opts => opts.Items["IsPatch"] = true);
+
+            await dataContext.SaveChangesAsync();
+            var mappedResult = mapper.Map<TDto>(existingEntity);
+            return mappedResult;
+        }
+
+        public async Task<TDto> Create(TDto model)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            var dbModel = mapper.Map<TDb>(model);
+
             var keyProperty = typeof(TDb).GetProperties()
                 .FirstOrDefault(p => Attribute.IsDefined(p, typeof(KeyAttribute)));
 
-            if (keyProperty == null)
+            if (keyProperty != null && typeof(TId) == typeof(int))
             {
-                throw new InvalidOperationException($"Entity {typeof(TDb).Name} has no key property defined.");
+                keyProperty.SetValue(dbModel, 0);
             }
 
-            // Assuming your DTO has a property named "Id" that corresponds to the primary key
-            var dtoId = (int?)keyProperty.GetValue(model);
-
-            if (model == null || dtoId == 0)
-            {
-                // New entity (insert)
-                var newEntity = mapper.Map<TDb>(model);
-                await dataContext.Set<TDb>().AddAsync(newEntity);
-                await dataContext.SaveChangesAsync();
-                var mappedResult = mapper.Map<TDto>(newEntity);
-                return mappedResult;
-            }
-            else
-            {
-                var existingEntity = await dataContext.Set<TDto>().FindAsync(dtoId);
-                if (existingEntity == null)
-                {
-                    throw new Exception($"Entity with id {dtoId} not found.");
-                }
-
-                mapper.Map(model, existingEntity, opts => opts.Items["IsPatch"] = true);
-                await dataContext.SaveChangesAsync();
-                var mappedResult = mapper.Map<TDto>(existingEntity);
-                return mappedResult;
-            }
+            PropertyHelper<TDb>.MakePropertiesEmptyIfNull(dbModel);
+            var addedEntity = await dataContext.Set<TDb>().AddAsync(dbModel);
+            await dataContext.SaveChangesAsync();
+            var mappedResult = mapper.Map<TDto>(dbModel);
+            return mappedResult;
         }
 
         public CountResultDto GetCount()

@@ -6,10 +6,10 @@ namespace NorthwindCRUD.Tests
     public class EmployeeTerritoryServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldAddTerritoryToEmployee()
+        public async Task ShouldAddTerritoryToEmployee()
         {
-            var employeeId = DataHelper.CreateEmployee().EmployeeId;
-            var territoryId = DataHelper.CreateTerritory().TerritoryId;
+            var employeeId = (await DataHelper.CreateEmployee()).EmployeeId;
+            var territoryId = (await DataHelper.CreateTerritory()).TerritoryId;
 
             DataHelper.CreateEmployeeTerritory(employeeId, territoryId);
 
@@ -19,11 +19,11 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldReturnTerritoriesForEmployee()
+        public async Task ShouldReturnTerritoriesForEmployee()
         {
-            var employeeId = DataHelper.CreateEmployee().EmployeeId;
-            var territoryId1 = DataHelper.CreateTerritory().TerritoryId;
-            var territoryId2 = DataHelper.CreateTerritory().TerritoryId;
+            var employeeId = (await DataHelper.CreateEmployee()).EmployeeId;
+            var territoryId1 = (await DataHelper.CreateTerritory()).TerritoryId;
+            var territoryId2 = (await DataHelper.CreateTerritory()).TerritoryId;
 
             DataHelper.CreateEmployeeTerritory(employeeId, territoryId1);
             DataHelper.CreateEmployeeTerritory(employeeId, territoryId2);
@@ -37,11 +37,11 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldReturnEmployeesForTerritory()
+        public async Task ShouldReturnEmployeesForTerritory()
         {
-            var territoryId = DataHelper.CreateTerritory().TerritoryId;
-            var employeeId1 = DataHelper.CreateEmployee().EmployeeId;
-            var employeeId2 = DataHelper.CreateEmployee().EmployeeId;
+            var territoryId = (await DataHelper.CreateTerritory()).TerritoryId;
+            var employeeId1 = (await DataHelper.CreateEmployee()).EmployeeId;
+            var employeeId2 = (await DataHelper.CreateEmployee()).EmployeeId;
 
             DataHelper.CreateEmployeeTerritory(employeeId1, territoryId);
             DataHelper.CreateEmployeeTerritory(employeeId2, territoryId);

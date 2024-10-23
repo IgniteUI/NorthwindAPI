@@ -8,12 +8,12 @@
 
     [ApiController]
     [Route("[controller]")]
-    public class CustomersController : BaseController<CustomerDto, CustomerDb, string>
+    public class CustomersController : BaseNorthwindAPIController<CustomerDto, CustomerDb, string>
     {
         private readonly OrderService orderService;
 
-        public CustomersController(CustomerService customerService, OrderService orderService, PagingService pagingService, IMapper mapper, ILogger<CustomersController> logger)
-            : base(customerService, logger)
+        public CustomersController(CustomerService customerService, OrderService orderService, IMapper mapper, ILogger<CustomersController> logger)
+            : base(customerService)
         {
             this.orderService = orderService;
         }

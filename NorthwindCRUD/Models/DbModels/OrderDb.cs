@@ -5,9 +5,8 @@ namespace NorthwindCRUD.Models.DbModels
 {
     public class OrderDb : IBaseDb
     {
-
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
 
         public string? CustomerId { get; set; }
@@ -37,8 +36,6 @@ namespace NorthwindCRUD.Models.DbModels
         public int Quantity { get; set; }
 
         public float Discount { get; set; }
-
-        public string? ShipAddressId { get; set; }
 
         public AddressDb? ShipAddress { get; set; }
     }

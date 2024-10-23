@@ -7,7 +7,7 @@ namespace NorthwindCRUD.Models.DbModels
     public class CustomerDb : IBaseDb, ICustomer
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string CustomerId { get; set; }
 
         public string CompanyName { get; set; }
@@ -16,15 +16,8 @@ namespace NorthwindCRUD.Models.DbModels
 
         public string ContactTitle { get; set; }
 
-        public string AddressId { get; set; }
-
         public AddressDb Address { get; set; }
 
         public ICollection<OrderDb> Orders { get; set; }
-
-        public string[] GetIncludes()
-        {
-            return new string[] { "Address" };
-        }
     }
 }

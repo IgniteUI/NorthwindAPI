@@ -1,200 +1,66 @@
-﻿using System.Globalization;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using NorthwindCRUD.Constants;
-using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Models.DbModels;
 using NorthwindCRUD.Models.Dtos;
 
 namespace NorthwindCRUD.Services
 {
-    public class OrderService
+    public class OrderService : BaseDbService<OrderDto, OrderDb, int>
     {
-        private readonly DataContext dataContext;
-        private readonly IMapper mapper;
-
-        public OrderService(DataContext dataContext, IMapper mapper)
+        public OrderService(DataContext dataContext, IPagingService pagingService, IMapper mapper)
+            : base(dataContext, mapper, pagingService)
         {
-            this.dataContext = dataContext;
-            this.mapper = mapper;
         }
 
-        public OrderDb[] GetAll()
+        public OrderDto[] GetNOrders(int numberOfOrdersToRetrieve)
         {
-            return this.dataContext.Orders
-                .Include(c => c.ShipAddress)
-                .ToArray();
-        }
-
-        public IQueryable<OrderDb> GetAllAsQueryable()
-        {
-            return this.dataContext.Orders;
-        }
-
-        public OrderDb[] GetNOrders(int numberOfOrdersToRetrieve)
-        {
-            return this.dataContext.Orders
+            var oreders = this.dataContext.Orders
                 .Include(c => c.ShipAddress)
                 .Take(numberOfOrdersToRetrieve)
                 .ToArray();
+
+            return this.mapper.Map<OrderDto[]>(oreders);
         }
 
-        public OrderDb? GetById(int id)
-        {
-            return GetOrdersQuery().FirstOrDefault(c => c.OrderId == id);
-        }
-
-        public OrderDetailDb[] GetOrderDetailsById(int id)
+        public OrderDetailDto[] GetOrderDetailsById(int id)
         {
             var details = this.dataContext.OrderDetails.Where(o => o.OrderId == id).ToArray();
-            return details;
+            return this.mapper.Map<OrderDetailDto[]>(details);
         }
 
         public OrderDto[] GetOrdersByCustomerId(string id)
         {
-            return mapper.Map<OrderDto[]>(GetOrdersQuery()
+            return mapper.Map<OrderDto[]>(this.GetAllAsQueryable()
                 .Where(o => o.CustomerId == id)
                 .ToArray());
         }
 
-        public OrderDb[] GetOrdersByEmployeeId(int id)
+        public OrderDto[] GetOrdersByEmployeeId(int id)
         {
-            return GetOrdersQuery()
+            var oders = this.GetAllAsQueryable()
                 .Where(o => o.EmployeeId == id)
                 .ToArray();
+
+            return this.mapper.Map<OrderDto[]>(oders);
         }
 
-        public OrderDb[] GetOrdersByShipperId(int id)
+        public OrderDto[] GetOrdersByShipperId(int id)
         {
-            return GetOrdersQuery()
+            var oreders = this.GetAllAsQueryable()
                 .Where(o => o.ShipVia == id)
                 .ToArray();
+
+            return this.mapper.Map<OrderDto[]>(oreders);
         }
 
-        public OrderDetailDb[] GetOrderDetailsByProductId(int id)
+        public OrderDetailDto[] GetOrderDetailsByProductId(int id)
         {
             var details = this.dataContext.OrderDetails
                 .Where(o => o.ProductId == id)
                 .ToArray();
 
-            return details;
-        }
-
-        public OrderDb Create(OrderDb model)
-        {
-            if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId?.ToString(CultureInfo.InvariantCulture)));
-            }
-
-            if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId?.ToString(CultureInfo.InvariantCulture)));
-            }
-
-            if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId?.ToString(CultureInfo.InvariantCulture)));
-            }
-
-            var id = IdGenerator.CreateDigitsId();
-            var existWithId = this.GetById(id);
-            while (existWithId != null)
-            {
-                id = IdGenerator.CreateDigitsId();
-                existWithId = this.GetById(id);
-            }
-
-            model.OrderId = id;
-
-            PropertyHelper<OrderDb>.MakePropertiesEmptyIfNull(model);
-
-            if (model.ShipAddress == null)
-            {
-                var emptyAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == string.Empty);
-                model.ShipAddress = emptyAddress;
-                model.ShipAddressId = emptyAddress?.AddressId;
-            }
-
-            var orderEntity = this.dataContext.Orders.Add(model);
-            this.dataContext.SaveChanges();
-
-            return orderEntity.Entity;
-        }
-
-        public OrderDb? Update(OrderDb model)
-        {
-            if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Customer), model.CustomerId?.ToString()));
-            }
-
-            if (this.dataContext.Employees.FirstOrDefault(e => e.EmployeeId == model.EmployeeId) == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Employee), model.EmployeeId?.ToString(CultureInfo.InvariantCulture)));
-            }
-
-            if (this.dataContext.Shippers.FirstOrDefault(s => s.ShipperId == model.ShipperId) == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Shipper), model.ShipperId?.ToString(CultureInfo.InvariantCulture)));
-            }
-
-            var orderEntity = this.dataContext.Orders
-                .Include(c => c.ShipAddress)
-                .FirstOrDefault(e => e.OrderId == model.OrderId);
-
-            if (orderEntity != null)
-            {
-                orderEntity.OrderDate = model.OrderDate != null ? model.OrderDate : orderEntity.OrderDate;
-                orderEntity.RequiredDate = model.RequiredDate != null ? model.RequiredDate : orderEntity.RequiredDate;
-                orderEntity.ShipVia = model.ShipVia; // ShipVia has int type which can't be null
-                orderEntity.Freight = model.Freight; // Freight has double type which can't be null
-                orderEntity.ShipName = model.ShipName != null ? model.ShipName : orderEntity.ShipName;
-                orderEntity.EmployeeId = model.EmployeeId != null ? model.EmployeeId : orderEntity.EmployeeId;
-                orderEntity.CustomerId = model.CustomerId != null ? model.CustomerId : orderEntity.CustomerId;
-
-                if (model.ShipAddress != null)
-                {
-                    var newAddress = this.dataContext.Addresses.FirstOrDefault(a => a.Street == model.ShipAddress.Street);
-                    if (newAddress != null && orderEntity.ShipAddress != null)
-                    {
-                        orderEntity.ShipAddress.City = model.ShipAddress.City;
-                        orderEntity.ShipAddress.Region = model.ShipAddress.Region;
-                        orderEntity.ShipAddress.PostalCode = model.ShipAddress.PostalCode;
-                        orderEntity.ShipAddress.Country = model.ShipAddress.Country;
-                        orderEntity.ShipAddress.Phone = model.ShipAddress.Phone;
-                    }
-                    else
-                    {
-                        var employeeNewAddress = this.dataContext.Addresses.Add(model.ShipAddress);
-                        orderEntity.ShipAddress = employeeNewAddress.Entity;
-                        orderEntity.ShipAddressId = employeeNewAddress.Entity.AddressId;
-                    }
-                }
-
-                this.dataContext.SaveChanges();
-            }
-
-            return orderEntity;
-        }
-
-        public OrderDb? Delete(int id)
-        {
-            var orderEntity = this.GetById(id);
-            if (orderEntity != null)
-            {
-                this.dataContext.Orders.Remove(orderEntity);
-                this.dataContext.SaveChanges();
-            }
-
-            return orderEntity;
-        }
-
-        private IQueryable<OrderDb> GetOrdersQuery()
-        {
-            return this.dataContext.Orders
-                .Include(c => c.ShipAddress);
+            return this.mapper.Map<OrderDetailDto[]>(details);
         }
     }
 }

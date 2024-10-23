@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using GraphQL.AspNet.Attributes;
+﻿using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
 using NorthwindCRUD.Models.Dtos;
 using NorthwindCRUD.Services;
@@ -11,7 +10,7 @@ namespace NorthwindCRUD.Controllers
     {
         private readonly CustomerService customerService;
 
-        public CustomerGraphController(CustomerService customerService, IMapper mapper, ILogger logger)
+        public CustomerGraphController(CustomerService customerService)
         {
             this.customerService = customerService;
         }
@@ -33,13 +32,13 @@ namespace NorthwindCRUD.Controllers
         [Mutation]
         public async Task<CustomerDto> Create(CustomerDto model)
         {
-            return await this.customerService.Upsert(model);
+            return await this.customerService.Create(model);
         }
 
         [Mutation]
-        public async Task<CustomerDto?> UpdateAsync(CustomerDto model)
+        public async Task<CustomerDto?> Update(CustomerDto model)
         {
-            return await this.customerService.Upsert(model);
+            return await this.customerService.Update(model);
         }
 
         [Mutation]

@@ -5,6 +5,7 @@ namespace NorthwindCRUD.Models.Dtos
 {
     public class CustomerDto : IBaseDto, ICustomer
     {
+        [Key]
         public string CustomerId { get; set; }
 
         [Required]

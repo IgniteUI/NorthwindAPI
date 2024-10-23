@@ -7,7 +7,7 @@ namespace NorthwindCRUD.Models.DbModels
     public class CategoryDb : IBaseDb, ICategory, ICategoryDetail
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
         public int CategoryId { get; set; }
 

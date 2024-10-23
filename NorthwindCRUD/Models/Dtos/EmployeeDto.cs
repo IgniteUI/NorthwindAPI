@@ -6,6 +6,7 @@ namespace NorthwindCRUD.Models.Dtos
 {
     public class EmployeeDto : IBaseDto, IEmployee
     {
+        [Key]
         [SwaggerSchema("Number automatically assigned to new employee.")]
         [Required]
         public int EmployeeId { get; set; }
@@ -27,8 +28,6 @@ namespace NorthwindCRUD.Models.Dtos
 
         [SwaggerSchema("Employee's hire date", Format = "date")]
         public string HireDate { get; set; }
-
-        public string AddressId { get; set; }
 
         public AddressDto Address { get; set; }
 

@@ -1,9 +1,11 @@
-﻿using NorthwindCRUD.Models.Contracts;
+﻿using System.ComponentModel.DataAnnotations;
+using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.Dtos
 {
     public class ProductDto : IBaseDto, IProduct
     {
+        [Key]
         public int ProductId { get; set; }
 
         public int? SupplierId { get; set; }

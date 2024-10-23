@@ -121,10 +121,10 @@
                     {
                         if (order.ShipAddress != null)
                         {
-                            if (dbContext.Addresses.FirstOrDefault(a => a.Street == order.ShipAddress.Street) == null)
-                            {
-                                dbContext.Addresses.Add(order.ShipAddress);
-                            }
+                            //if (dbContext.Addresses.FirstOrDefault(a => a.Street == order.ShipAddress.Street) == null)
+                            //{
+                            //    dbContext.Addresses.Add(order.ShipAddress);
+                            //}
 
                             dbContext.Orders.Add(order);
                         }
@@ -159,10 +159,10 @@
                 {
                     foreach (var employee in parsedEmployees)
                     {
-                        if (dbContext.Addresses.FirstOrDefault(a => a.Street == employee.Address.Street) == null)
-                        {
-                            dbContext.Addresses.Add(employee.Address);
-                        }
+                        //if (dbContext.Addresses.FirstOrDefault(a => a.Street == employee.Address.Street) == null)
+                        //{
+                        //    dbContext.Addresses.Add(employee.Address);
+                        //}
 
                         dbContext.Employees.Add(employee);
                     }
@@ -187,10 +187,10 @@
 
                         if (existingCustomer == null)
                         {
-                            if (dbContext.Addresses.FirstOrDefault(a => a.Street == customer.Address.Street) == null)
-                            {
-                                dbContext.Addresses.Add(customer.Address);
-                            }
+                            //if (dbContext.Addresses.FirstOrDefault(a => a.Street == customer.Address.Street) == null)
+                            //{
+                            //    dbContext.Addresses.Add(customer.Address);
+                            //}
 
                             dbContext.Customers.Add(customer);
                         }

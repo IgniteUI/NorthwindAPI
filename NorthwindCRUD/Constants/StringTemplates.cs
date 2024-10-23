@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace NorthwindCRUD.Constants
+﻿namespace NorthwindCRUD.Constants
 {
     public class StringTemplates
     {
