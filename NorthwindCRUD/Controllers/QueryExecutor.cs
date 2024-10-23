@@ -142,15 +142,16 @@ public static class QueryExecutor
     {
         var filterExpression = BuildExpression(db, source, query.FilteringOperands, query.Operator);
         var filteredQuery = source.Where(filterExpression);
-
-        // TODO: project requested columns
-        // if (query.ReturnFields != null && query.ReturnFields.Any())
-        // {
-        //     var projectionExpression = BuildProjectionExpression<object>(query.ReturnFields);
-        //     var projectedQuery = filteredQuery.Select(projectionExpression);
-        //     return projectedQuery;
-        // }
-        return filteredQuery;
+        if (query.ReturnFields != null && query.ReturnFields.Any())
+        {
+            var projectionExpression = BuildProjectionExpression<TEntity>(query.ReturnFields);
+            var projectedQuery = filteredQuery.Select(projectionExpression);
+            return projectedQuery.Cast<TEntity>();
+        }
+        else
+        {
+            return filteredQuery;
+        }
     }
 
     private static Expression<Func<TEntity, bool>> BuildExpression<TEntity>(DbContext db, IQueryable<TEntity> source, IQueryFilter[] filters, FilterType filterType)
