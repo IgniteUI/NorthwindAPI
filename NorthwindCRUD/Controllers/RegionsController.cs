@@ -1,5 +1,7 @@
 ﻿namespace NorthwindCRUD.Controllers
 {
+    using AutoMapper;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;

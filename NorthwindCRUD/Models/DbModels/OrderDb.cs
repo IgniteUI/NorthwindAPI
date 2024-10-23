@@ -37,6 +37,8 @@ namespace NorthwindCRUD.Models.DbModels
 
         public float Discount { get; set; }
 
+        public bool Completed { get; set; }
+
         public AddressDb? ShipAddress { get; set; }
     }
 }
