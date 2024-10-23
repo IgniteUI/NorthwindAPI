@@ -6,7 +6,6 @@ namespace NorthwindCRUD.Services
 {
     public class ProductService : BaseDbService<ProductDto, ProductDb, int>
     {
-
         public ProductService(DataContext dataContext, IPagingService pagingService, IMapper mapper)
             : base(dataContext, mapper, pagingService)
         {

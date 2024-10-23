@@ -275,14 +275,14 @@ namespace NorthwindCRUD.Migrations
                 table: "Employees",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<string>(
                 name: "Address_Country",
                 table: "Employees",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<string>(
                 name: "Address_Phone",
@@ -295,21 +295,21 @@ namespace NorthwindCRUD.Migrations
                 table: "Employees",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<string>(
                 name: "Address_Region",
                 table: "Employees",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<string>(
                 name: "Address_Street",
                 table: "Employees",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<int>(
                 name: "ReportsTo",
@@ -339,7 +339,7 @@ namespace NorthwindCRUD.Migrations
                 table: "Customers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "",
+                defaultValue: string.Empty,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)",
                 oldNullable: true);
@@ -357,14 +357,14 @@ namespace NorthwindCRUD.Migrations
                 table: "Customers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<string>(
                 name: "Address_Country",
                 table: "Customers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<string>(
                 name: "Address_Phone",
@@ -377,21 +377,21 @@ namespace NorthwindCRUD.Migrations
                 table: "Customers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<string>(
                 name: "Address_Region",
                 table: "Customers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<string>(
                 name: "Address_Street",
                 table: "Customers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
@@ -423,14 +423,14 @@ namespace NorthwindCRUD.Migrations
                 table: "Categories",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.CreateTable(
                 name: "Regions",
                 columns: table => new
                 {
                     RegionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    RegionDescription = table.Column<string>(type: "TEXT", nullable: false)
+                    RegionDescription = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -443,7 +443,7 @@ namespace NorthwindCRUD.Migrations
                 {
                     ShipperId = table.Column<int>(type: "INTEGER", nullable: false),
                     CompanyName = table.Column<string>(type: "TEXT", nullable: false),
-                    Phone = table.Column<string>(type: "TEXT", nullable: false)
+                    Phone = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -466,7 +466,7 @@ namespace NorthwindCRUD.Migrations
                     Country = table.Column<string>(type: "TEXT", nullable: true),
                     Phone = table.Column<string>(type: "TEXT", nullable: true),
                     Fax = table.Column<string>(type: "TEXT", nullable: true),
-                    HomePage = table.Column<string>(type: "TEXT", nullable: true)
+                    HomePage = table.Column<string>(type: "TEXT", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -479,7 +479,7 @@ namespace NorthwindCRUD.Migrations
                 {
                     TerritoryId = table.Column<string>(type: "TEXT", nullable: false),
                     RegionId = table.Column<int>(type: "INTEGER", nullable: true),
-                    TerritoryDescription = table.Column<string>(type: "TEXT", nullable: false)
+                    TerritoryDescription = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -504,7 +504,7 @@ namespace NorthwindCRUD.Migrations
                     UnitsInStock = table.Column<int>(type: "INTEGER", nullable: true),
                     UnitsOnOrder = table.Column<int>(type: "INTEGER", nullable: true),
                     ReorderLevel = table.Column<int>(type: "INTEGER", nullable: true),
-                    Discontinued = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Discontinued = table.Column<bool>(type: "INTEGER", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -528,7 +528,7 @@ namespace NorthwindCRUD.Migrations
                 columns: table => new
                 {
                     EmployeeId = table.Column<int>(type: "INTEGER", nullable: false),
-                    TerritoryId = table.Column<string>(type: "TEXT", nullable: false)
+                    TerritoryId = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -555,7 +555,7 @@ namespace NorthwindCRUD.Migrations
                     ProductId = table.Column<int>(type: "INTEGER", nullable: false),
                     UnitPrice = table.Column<double>(type: "REAL", nullable: false),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    Discount = table.Column<float>(type: "REAL", nullable: false)
+                    Discount = table.Column<float>(type: "REAL", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -861,7 +861,7 @@ namespace NorthwindCRUD.Migrations
                 table: "Orders",
                 type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: "",
+                defaultValue: string.Empty,
                 oldClrType: typeof(string),
                 oldType: "TEXT",
                 oldNullable: true);
@@ -879,7 +879,7 @@ namespace NorthwindCRUD.Migrations
                 table: "Orders",
                 type: "nvarchar(450)",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AlterColumn<string>(
                 name: "TitleOfCourtesy",
@@ -958,7 +958,7 @@ namespace NorthwindCRUD.Migrations
                 table: "Employees",
                 type: "nvarchar(450)",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AlterColumn<string>(
                 name: "ContactTitle",
@@ -997,7 +997,7 @@ namespace NorthwindCRUD.Migrations
                 table: "Customers",
                 type: "nvarchar(450)",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
@@ -1034,7 +1034,7 @@ namespace NorthwindCRUD.Migrations
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Region = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 },
                 constraints: table =>
                 {

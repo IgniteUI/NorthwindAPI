@@ -119,15 +119,7 @@
                 {
                     foreach (var order in parsedOrders)
                     {
-                        if (order.ShipAddress != null)
-                        {
-                            //if (dbContext.Addresses.FirstOrDefault(a => a.Street == order.ShipAddress.Street) == null)
-                            //{
-                            //    dbContext.Addresses.Add(order.ShipAddress);
-                            //}
-
-                            dbContext.Orders.Add(order);
-                        }
+                        dbContext.Orders.Add(order);
                     }
 
                     dbContext.SaveChanges();
@@ -159,11 +151,6 @@
                 {
                     foreach (var employee in parsedEmployees)
                     {
-                        //if (dbContext.Addresses.FirstOrDefault(a => a.Street == employee.Address.Street) == null)
-                        //{
-                        //    dbContext.Addresses.Add(employee.Address);
-                        //}
-
                         dbContext.Employees.Add(employee);
                     }
 
@@ -187,11 +174,6 @@
 
                         if (existingCustomer == null)
                         {
-                            //if (dbContext.Addresses.FirstOrDefault(a => a.Street == customer.Address.Street) == null)
-                            //{
-                            //    dbContext.Addresses.Add(customer.Address);
-                            //}
-
                             dbContext.Customers.Add(customer);
                         }
                     }

@@ -77,7 +77,7 @@
             var order = this.orderService.GetById(id);
             if (order != null)
             {
-                var shipper = this.shipperService.GetById(order.ShipVia);
+                var shipper = this.shipperService.GetById(id);
 
                 if (shipper != null)
                 {

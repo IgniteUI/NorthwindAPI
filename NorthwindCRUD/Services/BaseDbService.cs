@@ -62,30 +62,6 @@ namespace NorthwindCRUD.Services
             return mapper.Map<TDto>(dbResult);
         }
 
-        protected TDb GetDbById(TId id)
-        {
-            TDb dtoInstance = new TDb();
-
-            IQueryable<TDb> query = this.dataContext.Set<TDb>();
-            foreach (var include in dtoInstance.GetIncludes())
-            {
-                query = query.Include(include);
-            }
-
-            var keyProperty = typeof(TDb).GetProperties()
-                .FirstOrDefault(p => Attribute.IsDefined(p, typeof(KeyAttribute)));
-
-            if (keyProperty == null)
-            {
-                throw new InvalidOperationException("No key property found on entity");
-            }
-
-            TDb? dbResult = query.FirstOrDefault(entity =>
-                EF.Property<TId>(entity, keyProperty.Name).Equals(id));
-
-            return dbResult;
-        }
-
         public PagedResultDto<TDto> GetWithPageSkip(int? skip = null, int? top = null, int? pageIndex = null, int? size = null, string? orderBy = null)
         {
             var query = GetAllAsQueryable();
@@ -105,9 +81,14 @@ namespace NorthwindCRUD.Services
                 throw new InvalidOperationException("No key property found on entity");
             }
 
-            var keyValue = (TId)keyProperty.GetValue(model);
+            var keyValue = keyProperty.GetValue(model);
 
-            return await Update(model, keyValue);
+            if (keyValue == null)
+            {
+                throw new InvalidOperationException("Key property value cannot be null");
+            }
+
+            return await Update(model, (TId)keyValue);
         }
 
         public async Task<TDto> Update(TDto model, TId id)
@@ -163,6 +144,30 @@ namespace NorthwindCRUD.Services
             {
                 Count = this.dataContext.Set<TDb>().Count(),
             };
+        }
+
+        protected TDb? GetDbById(TId id)
+        {
+            TDb dtoInstance = new TDb();
+
+            IQueryable<TDb> query = this.dataContext.Set<TDb>();
+            foreach (var include in dtoInstance.GetIncludes())
+            {
+                query = query.Include(include);
+            }
+
+            var keyProperty = typeof(TDb).GetProperties()
+                .FirstOrDefault(p => Attribute.IsDefined(p, typeof(KeyAttribute)));
+
+            if (keyProperty == null || string.IsNullOrEmpty(keyProperty.Name))
+            {
+                throw new InvalidOperationException("No key property found on entity");
+            }
+
+            TDb? dbResult = query.FirstOrDefault(entity =>
+                EF.Property<TId>(entity, keyProperty.Name)!.Equals(id));
+
+            return dbResult;
         }
     }
 }

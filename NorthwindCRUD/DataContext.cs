@@ -10,8 +10,6 @@
         {
         }
 
-        //public DbSet<AddressDb> Addresses { get; set; }
-
         public DbSet<CategoryDb> Categories { get; set; }
 
         public DbSet<CustomerDb> Customers { get; set; }
@@ -93,6 +91,5 @@
             modelBuilder.Entity<OrderDetailDb>()
                 .HasKey(et => new { et.ProductId, et.OrderId });
         }
-
     }
 }

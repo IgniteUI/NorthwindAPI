@@ -6,7 +6,6 @@ namespace NorthwindCRUD.Services
 {
     public class TerritoryService : BaseDbService<TerritoryDto, TerritoryDb, string>
     {
-
         public TerritoryService(DataContext dataContext, IPagingService pagingService, IMapper mapper)
             : base(dataContext, mapper, pagingService)
         {

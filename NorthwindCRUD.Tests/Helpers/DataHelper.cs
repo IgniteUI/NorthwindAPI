@@ -112,7 +112,6 @@ namespace NorthwindCRUD.Tests
             return mapper.Map<OrderDetailDto>(orderDetail);
         }
 
-
         internal async Task<SupplierDto> CreateSupplier()
         {
             var supplier = GetSupplier();
@@ -144,7 +143,6 @@ namespace NorthwindCRUD.Tests
             dataContext.Entry(mapper.Map<CustomerDb>(createdCustomer)).State = EntityState.Detached;
             return createdCustomer;
         }
-
 
         internal async Task<OrderDto> CreateOrder(string? orderDate = null, string? country = null, ProductDto? product = null, int? quantity = null)
         {

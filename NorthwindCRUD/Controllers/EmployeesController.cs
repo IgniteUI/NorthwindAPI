@@ -55,16 +55,16 @@
             return Ok(orders);
         }
 
-        [HttpGet("{id}/Teritories")]
-        public ActionResult<EmployeeDto[]> GetTeritoriesByEmployeeId(int id)
+        [HttpGet("{id}/Territories")]
+        public ActionResult<EmployeeDto[]> GetTerritoriesByEmployeeId(int id)
         {
-            var teritories = this.employeeTerritoryService.GetTeritoriesByEmployeeId(id);
-            if (teritories == null)
+            var territories = this.employeeTerritoryService.GetTeritoriesByEmployeeId(id);
+            if (territories == null)
             {
                 return NotFound($"No territories for employee {id}");
             }
 
-            return Ok(teritories);
+            return Ok(territories);
         }
 
         [HttpPost("Teritory")]
@@ -75,8 +75,8 @@
             {
                 if (ModelState.IsValid)
                 {
-                    var employeeTerrirtory = this.employeeTerritoryService.AddTerritoryToEmployee(model);
-                    return Ok(employeeTerrirtory);
+                    var employeeTerritory = this.employeeTerritoryService.AddTerritoryToEmployee(model);
+                    return Ok(employeeTerritory);
                 }
 
                 return BadRequest(ModelState);

@@ -36,7 +36,7 @@ namespace NorthwindCRUD.Services
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1011:Closing square brackets should be spaced correctly", Justification = "Need to return nullable type")]
-        public TerritoryDto[]? GetTeritoriesByEmployeeId(int id)
+        public TerritoryDto[]? GetTerritoriesByEmployeeId(int id)
         {
             var employee = this.dataContext.Employees
                 .Include(c => c.Address)

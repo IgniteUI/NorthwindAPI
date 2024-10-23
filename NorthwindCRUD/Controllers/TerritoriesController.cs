@@ -19,20 +19,6 @@
             this.employeeTerritoryService = employeeTerritoryService;
         }
 
-
-        //[HttpPost]
-        ////[Authorize]
-        //public override async Task<ActionResult<TerritoryDto>> CreateAsync(TerritoryDto model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var result = await this.baseDbService.Upsert(model, default);
-        //    return Ok(result);
-        //}
-
         [HttpGet("{id}/Employees")]
         public ActionResult<EmployeeDto[]> GetEmployeesByTerritory(string id)
         {

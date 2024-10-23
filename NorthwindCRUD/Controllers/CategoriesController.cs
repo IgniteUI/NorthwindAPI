@@ -1,7 +1,5 @@
 namespace NorthwindCRUD.Controllers
 {
-    using System.ComponentModel.DataAnnotations;
-    using AutoMapper;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
@@ -13,15 +11,12 @@ namespace NorthwindCRUD.Controllers
     {
         private readonly CategoryService categoryService;
         private readonly ProductService productService;
-        private readonly IMapper mapper;
-        private readonly ILogger<CategoriesController> logger;
 
-        public CategoriesController(CategoryService categoryService, ProductService productService, IMapper mapper, ILogger<CategoriesController> logger)
+        public CategoriesController(CategoryService categoryService, ProductService productService)
                  : base(categoryService)
         {
             this.categoryService = categoryService;
             this.productService = productService;
-            this.mapper = mapper;
         }
 
         [HttpGet("{id}/Details")]

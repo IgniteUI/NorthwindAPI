@@ -13,7 +13,7 @@ namespace NorthwindCRUD.Tests
 
             DataHelper.CreateEmployeeTerritory(employeeId, territoryId);
 
-            var territories = DataHelper2.EmployeeTerritoryService.GetTeritoriesByEmployeeId(employeeId);
+            var territories = DataHelper2.EmployeeTerritoryService.GetTerritoriesByEmployeeId(employeeId);
             Assert.IsNotNull(territories);
             Assert.IsTrue(territories.Any(t => t.TerritoryId == territoryId));
         }
@@ -28,7 +28,7 @@ namespace NorthwindCRUD.Tests
             DataHelper.CreateEmployeeTerritory(employeeId, territoryId1);
             DataHelper.CreateEmployeeTerritory(employeeId, territoryId2);
 
-            var territories = DataHelper2.EmployeeTerritoryService.GetTeritoriesByEmployeeId(employeeId);
+            var territories = DataHelper2.EmployeeTerritoryService.GetTerritoriesByEmployeeId(employeeId);
 
             Assert.IsNotNull(territories);
             Assert.AreEqual(2, territories.Length);

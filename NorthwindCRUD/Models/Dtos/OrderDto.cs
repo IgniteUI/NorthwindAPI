@@ -2,6 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
     using NorthwindCRUD.Models.Contracts;
+    using static NorthwindCRUD.Helpers.Enums;
 
     public class OrderDto : IBaseDto, IOrder
     {

@@ -1,7 +1,5 @@
 ﻿namespace NorthwindCRUD.Controllers
 {
-    using AutoMapper;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
@@ -22,7 +20,6 @@
         [HttpGet("{id}/Territories")]
         public ActionResult<CustomerDto> GetTerritoryByRegionId(int id)
         {
-
             var region = this.baseDbService.GetById(id);
             if (region != null)
             {

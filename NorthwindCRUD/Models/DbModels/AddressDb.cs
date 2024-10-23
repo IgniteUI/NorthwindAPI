@@ -4,7 +4,6 @@ namespace NorthwindCRUD.Models.DbModels
 {
     public class AddressDb : IBaseDb, IAddress
     {
-
         public string Street { get; set; }
 
         public string City { get; set; }

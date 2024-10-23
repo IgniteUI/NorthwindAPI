@@ -16,7 +16,6 @@ namespace NorthwindCRUD.Tests
             createdRegion = DataHelper2.RegionService.GetById(createdRegion.RegionId);
             Assert.IsNotNull(createdRegion);
             Assert.AreEqual(region.RegionDescription, createdRegion.RegionDescription);
-
         }
 
         [TestMethod]

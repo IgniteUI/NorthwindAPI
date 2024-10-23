@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests

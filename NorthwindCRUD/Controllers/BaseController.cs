@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NorthwindCRUD.Models.DbModels;
 using NorthwindCRUD.Models.Dtos;
@@ -26,6 +27,14 @@ namespace NorthwindCRUD.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetAllAuthorized")]
+        [Authorize]
+        public ActionResult<TDto[]> GetAllAuthorized()
+        {
+            var result = this.baseDbService.GetAll();
+            return Ok(result);
+        }
+
         /// <summary>
         /// Fetches all customers or a page of customers based on the provided parameters.
         /// </summary>
@@ -35,7 +44,7 @@ namespace NorthwindCRUD.Controllers
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetWithSkip")]
         public ActionResult<PagedResultDto<CustomerDto>> GetWithSkip(
-            [FromQuery][Attributes.SwaggerSkipParameter][Range(1, int.MaxValue, ErrorMessage = "Skip must be greater than 0.")] int? skip,
+            [FromQuery][Attributes.SwaggerSkipParameter][Range(0, int.MaxValue, ErrorMessage = "Skip must be greater than 0.")] int? skip,
             [FromQuery][Attributes.SwaggerTopParameter] int? top,
             [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
@@ -62,7 +71,7 @@ namespace NorthwindCRUD.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<TDto>> Create(TDto model)
         {
             if (!ModelState.IsValid)
@@ -74,21 +83,8 @@ namespace NorthwindCRUD.Controllers
             return Ok(result);
         }
 
-        //[HttpPut("{id}")]
-        ////[Authorize]
-        //public async Task<ActionResult<TDto>> Update(TDto model, TId id)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var result = await this.baseDbService.Upsert(model, id);
-        //    return Ok(result);
-        //}
-
         [HttpPut]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<TDto>> Update(TDto model)
         {
             if (!ModelState.IsValid)
@@ -114,17 +110,28 @@ namespace NorthwindCRUD.Controllers
         }
 
         /// <summary>
-        /// Retrieves the total number of customers.
+        /// Retrieves the total number of entities.
         /// </summary>
-        /// <returns>Total count of customers as an integer.</returns>
+        /// <returns>Total count of entities as an integer.</returns>
         [HttpGet("GetCount")]
-        public ActionResult<CountResultDto> GetCustomersCount()
+        public ActionResult<CountResultDto> GetCount()
+        {
+            return this.baseDbService.GetCount();
+        }
+
+        /// <summary>
+        /// Retrieves the total number of entities.
+        /// </summary>
+        /// <returns>Total count of entities as an integer.</returns>
+        [HttpGet("GetCountAuthorized")]
+        [Authorize]
+        public ActionResult<CountResultDto> GetCountAuthorized()
         {
             return this.baseDbService.GetCount();
         }
 
         [HttpDelete("{id}")]
-        //[Authorize]
+        [Authorize]
         public ActionResult<TDto> Delete(TId id)
         {
             var product = this.baseDbService.Delete(id);

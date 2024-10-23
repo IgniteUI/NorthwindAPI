@@ -14,6 +14,7 @@
         public ShippersController(ShipperService shipperService, OrderService orderService)
             : base(shipperService)
         {
+            this.orderService = orderService;
         }
 
         [HttpGet("{id}/Orders")]
