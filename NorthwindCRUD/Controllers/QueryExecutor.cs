@@ -8,6 +8,7 @@ using AutoMapper.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Newtonsoft.Json;
+using NorthwindCRUD;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 public enum FilterType
@@ -134,11 +135,11 @@ public static class QueryExecutor
         var infrastructure = source as IInfrastructure<IServiceProvider>;
         var serviceProvider = infrastructure!.Instance;
         var currentDbContext = serviceProvider.GetService(typeof(ICurrentDbContext)) as ICurrentDbContext;
-        var db = currentDbContext!.Context;
+        var db = currentDbContext!.Context as DataContext;
         return db is not null ? BuildQuery(db, source, query).ToArray() : Array.Empty<TEntity>();
     }
 
-    private static IQueryable<TEntity> BuildQuery<TEntity>(DbContext db, IQueryable<TEntity> source, IQuery? query)
+    private static IQueryable<TEntity> BuildQuery<TEntity>(DataContext db, IQueryable<TEntity> source, IQuery? query)
     {
         if (query is null)
         {
@@ -158,7 +159,7 @@ public static class QueryExecutor
         }
     }
 
-    private static Expression<Func<TEntity, bool>> BuildExpression<TEntity>(DbContext db, IQueryable<TEntity> source, IQueryFilter[] filters, FilterType filterType)
+    private static Expression<Func<TEntity, bool>> BuildExpression<TEntity>(DataContext db, IQueryable<TEntity> source, IQueryFilter[] filters, FilterType filterType)
     {
         var parameter = Expression.Parameter(typeof(TEntity), "entity");
         var finalExpression = null as Expression;
@@ -182,7 +183,7 @@ public static class QueryExecutor
                 : (TEntity _) => true;
     }
 
-    private static Expression BuildConditionExpression<TEntity>(DbContext db, IQueryable<TEntity> source, IQueryFilter filter, ParameterExpression parameter)
+    private static Expression BuildConditionExpression<TEntity>(DataContext db, IQueryable<TEntity> source, IQueryFilter filter, ParameterExpression parameter)
     {
         if (filter.FieldName is not null && filter.IgnoreCase is not null && filter.Condition is not null)
         {
@@ -236,7 +237,7 @@ public static class QueryExecutor
         }
     }
 
-    private static Expression BuildInExpression(DbContext db, IQuery? query, MemberExpression field)
+    private static Expression BuildInExpression(DataContext db, IQuery? query, MemberExpression field)
     {
         if (field.Type == typeof(string))
         {
@@ -274,14 +275,40 @@ public static class QueryExecutor
         }
     }
 
-    private static IEnumerable<dynamic> RunSubquery(DbContext db, IQuery? query)
+    private static IEnumerable<dynamic> RunSubquery(DataContext db, IQuery? query)
     {
-        var t = query?.Entity.ToLower(CultureInfo.InvariantCulture);
-        var p = db.GetType().GetProperty(t, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{t}' not found on type '{db.GetType()}'");
-        var q = p.GetValue(db) as IQueryable<dynamic>;
-        return q is null
-            ? Array.Empty<dynamic>()
-            : q.ToArray();
+        // var t = query?.Entity.ToLower(CultureInfo.InvariantCulture);
+        // var p = db.GetType().GetProperty(t, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{t}' not found on type '{db.GetType()}'");
+        // var q = p.GetValue(db) as IQueryable<dynamic>;
+        // return q is null ? Array.Empty<dynamic>() : q.Run(query).ToArray();
+        var t = query?.Entity.ToLower(CultureInfo.InvariantCulture) ?? string.Empty;
+        switch (t)
+        {
+            case "addresses":
+                return db.Suppliers.Run(query).ToArray();
+            case "categories":
+                return db.Categories.Run(query).ToArray();
+            case "products":
+                return db.Products.Run(query).ToArray();
+            case "regions":
+                return db.Regions.Run(query).ToArray();
+            case "territories":
+                return db.Territories.Run(query).ToArray();
+            case "employees":
+                return db.Employees.Run(query).ToArray();
+            case "customers":
+                return db.Customers.Run(query).ToArray();
+            case "orders":
+                return db.Orders.Run(query).ToArray();
+            case "orderdetails":
+                return db.OrderDetails.Run(query).ToArray();
+            case "shippers":
+                return db.Shippers.Run(query).ToArray();
+            case "suppliers":
+                return db.Suppliers.Run(query).ToArray();
+            default:
+                return Array.Empty<dynamic>();
+        }
     }
 
     private static dynamic? ProjectField(dynamic? obj, string field)
