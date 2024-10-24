@@ -129,24 +129,28 @@ public class QueryFilterConditionConverter : JsonConverter
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1009:Closing parenthesis should be spaced correctly", Justification = "...")]
 public static class QueryExecutor
 {
-    public static TEntity[] Run<TEntity>(this IQueryable<TEntity> source, IQuery query)
+    public static TEntity[] Run<TEntity>(this IQueryable<TEntity> source, IQuery? query)
     {
         var infrastructure = source as IInfrastructure<IServiceProvider>;
         var serviceProvider = infrastructure!.Instance;
         var currentDbContext = serviceProvider.GetService(typeof(ICurrentDbContext)) as ICurrentDbContext;
         var db = currentDbContext!.Context;
-        return BuildQuery(db, source, query).ToArray();
+        return db is not null ? BuildQuery(db, source, query).ToArray() : Array.Empty<TEntity>();
     }
 
-    private static IQueryable<TEntity> BuildQuery<TEntity>(DbContext db, IQueryable<TEntity> source, IQuery query)
+    private static IQueryable<TEntity> BuildQuery<TEntity>(DbContext db, IQueryable<TEntity> source, IQuery? query)
     {
+        if (query is null)
+        {
+            throw new InvalidOperationException("Null query");
+        }
+
         var filterExpression = BuildExpression(db, source, query.FilteringOperands, query.Operator);
         var filteredQuery = source.Where(filterExpression);
         if (query.ReturnFields != null && query.ReturnFields.Any())
         {
             var projectionExpression = BuildProjectionExpression<TEntity>(query.ReturnFields);
-            var projectedQuery = filteredQuery.Select(projectionExpression);
-            return projectedQuery.Cast<TEntity>();
+            return filteredQuery.Select(projectionExpression).Cast<TEntity>();
         }
         else
         {
@@ -196,8 +200,8 @@ public static class QueryExecutor
                 "notEmpty" => Expression.And(Expression.NotEqual(field, emptyValue), targetType.IsNullableType() ? Expression.NotEqual(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(true)),
                 "equals" => Expression.Equal(field, searchValue),
                 "doesNotEqual" => Expression.NotEqual(field, searchValue),
-                "in" => BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType),
-                "notIn" => Expression.Not(BuildSubquery(db, filter.SearchTree, field, filter.FieldName, targetType)),
+                "in" => BuildInExpression(db, filter.SearchTree, field),
+                "notIn" => Expression.Not(BuildInExpression(db, filter.SearchTree, field)),
                 "contains" => Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue),
                 "doesNotContain" => Expression.Not(Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue)),
                 "startsWith" => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, searchValue),
@@ -232,28 +236,61 @@ public static class QueryExecutor
         }
     }
 
-    private static Expression BuildSubquery(DbContext db, IQuery? query, MemberExpression field, string fieldName, Type targetType)
+    private static Expression BuildInExpression(DbContext db, IQuery? query, MemberExpression field)
     {
-        if (query == null || db == null)
+        if (field.Type == typeof(string))
         {
-            return Expression.Constant(true);
+            var d = RunSubquery(db, query).Select(x => (string)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
+            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(string) }, Expression.Constant(d), field);
         }
-
-        var dbSetProperty = db.GetType().GetProperty(query.Entity, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
-                          ?? throw new InvalidOperationException($"Entity '{query.Entity}' not found in the DbContext.");
-        var dbSet = dbSetProperty.GetValue(db)
-                          ?? throw new InvalidOperationException($"Unable to get IQueryable for entity '{query.Entity}'.");
-        var buildQuery = typeof(QueryExecutor).GetMethod(nameof(BuildQuery), BindingFlags.NonPublic | BindingFlags.Static)!.MakeGenericMethod(dbSet.GetType().GetGenericArguments()[0]);
-        var subquery = buildQuery.Invoke(null, new object[] { db, dbSet, query }) as IQueryable;
-        var parameter = Expression.Parameter(subquery!.ElementType, "x");
-        var property = Expression.Property(parameter, fieldName);
-        var lambda = Expression.Lambda(property, parameter);
-        var projectedSubquery = Expression.Call(typeof(Queryable), "Select", new Type[] { subquery.ElementType, property.Type }, subquery.Expression, lambda );
-        var containsMethod = typeof(Queryable).GetMethods().First(m => m.Name == "Contains" && m.GetParameters().Length == 2).MakeGenericMethod(property.Type);
-        return Expression.Call(containsMethod, projectedSubquery, field);
+        else if (field.Type == typeof(bool) || field.Type == typeof(bool?))
+        {
+            var d = RunSubquery(db, query).Select(x => (bool?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
+            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(bool?) }, Expression.Constant(d), field);
+        }
+        else if (field.Type == typeof(int) || field.Type == typeof(int?))
+        {
+            var d = RunSubquery(db, query).Select(x => (int?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
+            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(int?) }, Expression.Constant(d), field);
+        }
+        else if (field.Type == typeof(decimal) || field.Type == typeof(decimal?))
+        {
+            var d = RunSubquery(db, query).Select(x => (decimal?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
+            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(decimal?) }, Expression.Constant(d), field);
+        }
+        else if (field.Type == typeof(float) || field.Type == typeof(float?))
+        {
+            var d = RunSubquery(db, query).Select(x => (float?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
+            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(float?) }, Expression.Constant(d), field);
+        }
+        else if (field.Type == typeof(DateTime) || field.Type == typeof(DateTime?))
+        {
+            var d = RunSubquery(db, query).Select(x => (DateTime?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
+            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(DateTime) }, Expression.Constant(d), field);
+        }
+        else
+        {
+            throw new InvalidOperationException($"Type '{field.Type}' not supported for 'IN' operation");
+        }
     }
 
-    private static Expression GetSearchValue(object? value, Type targetType)
+    private static IEnumerable<dynamic> RunSubquery(DbContext db, IQuery? query)
+    {
+        var t = query?.Entity.ToLower(CultureInfo.InvariantCulture);
+        var p = db.GetType().GetProperty(t, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{t}' not found on type '{db.GetType()}'");
+        var q = p.GetValue(db) as IQueryable<dynamic>;
+        return q is null
+            ? Array.Empty<dynamic>()
+            : q.ToArray();
+    }
+
+    private static dynamic? ProjectField(dynamic? obj, string field)
+    {
+        var property = obj?.GetType().GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{field}' not found on type '{obj?.GetType()}'");
+        return property?.GetValue(obj);
+    }
+
+    private static Expression GetSearchValue(dynamic? value, Type targetType)
     {
         if (value == null)
         {
@@ -270,7 +307,7 @@ public static class QueryExecutor
         return Expression.Constant(targetType == typeof(string) ? string.Empty : targetType.GetDefaultValue());
     }
 
-    private static Expression<Func<TEntity, object>> BuildProjectionExpression<TEntity>(string[] returnFields)
+    private static Expression<Func<TEntity, dynamic>> BuildProjectionExpression<TEntity>(string[] returnFields)
     {
         var parameter = Expression.Parameter(typeof(TEntity), "entity");
         var bindings = returnFields.Select(field =>
@@ -281,7 +318,7 @@ public static class QueryExecutor
         }).ToArray();
 
         var body = Expression.MemberInit(Expression.New(typeof(TEntity)), bindings);
-        return Expression.Lambda<Func<TEntity, object>>(body, parameter);
+        return Expression.Lambda<Func<TEntity, dynamic>>(body, parameter);
     }
 }
 
