@@ -6,10 +6,10 @@ namespace NorthwindCRUD.Tests
     public class ProductServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldCreateProduct()
+        public async Task ShouldCreateProduct()
         {
             var product = DataHelper.GetProduct();
-            var createdProduct = DataHelper.CreateProduct(product);
+            var createdProduct = await DataHelper.CreateProduct(product);
 
             Assert.IsNotNull(createdProduct);
             createdProduct = DataHelper2.ProductService.GetById(createdProduct.ProductId);
@@ -19,15 +19,15 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldUpdateProduct()
+        public async Task ShouldUpdateProduct()
         {
-            var createdProduct = DataHelper.CreateProduct();
+            var createdProduct = await DataHelper.CreateProduct();
             double? originaUnitPrice = createdProduct.UnitPrice;
             double? originaUnitsInStock = createdProduct.UnitsInStock;
             createdProduct.UnitPrice = 15;
             createdProduct.UnitsInStock = 50;
 
-            var updatedProduct = DataHelper.ProductService.Update(createdProduct);
+            var updatedProduct = await DataHelper.ProductService.Update(createdProduct, createdProduct.ProductId);
 
             Assert.IsNotNull(updatedProduct);
             updatedProduct = DataHelper2.ProductService.GetById(updatedProduct.ProductId);
@@ -40,9 +40,9 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldDeleteProduct()
+        public async Task ShouldDeleteProduct()
         {
-            var createdProduct = DataHelper.CreateProduct();
+            var createdProduct = await DataHelper.CreateProduct();
 
             DataHelper.ProductService.Delete(createdProduct.ProductId);
             var deletedProduct = DataHelper2.ProductService.GetById(createdProduct.ProductId);
@@ -51,10 +51,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetAllProducts()
+        public async Task ShouldGetAllProducts()
         {
-            DataHelper.CreateProduct();
-            DataHelper.CreateProduct();
+            await DataHelper.CreateProduct();
+            await DataHelper.CreateProduct();
 
             var result = DataHelper2.ProductService.GetAll();
 
@@ -63,9 +63,9 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetProductById()
+        public async Task ShouldGetProductById()
         {
-            var createdProduct = DataHelper.CreateProduct();
+            var createdProduct = await DataHelper.CreateProduct();
             var result = DataHelper2.ProductService.GetById(createdProduct.ProductId);
 
             Assert.IsNotNull(result);

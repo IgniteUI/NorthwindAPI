@@ -3,8 +3,9 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class CustomerDto : ICustomer
+    public class CustomerDto : IBaseDto, ICustomer
     {
+        [Key]
         public string CustomerId { get; set; }
 
         [Required(ErrorMessage = "Company Name is required.")]

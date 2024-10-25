@@ -1,7 +1,10 @@
 ﻿using System.Data.Common;
+using AutoMapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NorthwindCRUD.Helpers;
+using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
 {
@@ -17,13 +20,19 @@ namespace NorthwindCRUD.Tests
         [TestInitialize]
         public void Initialize()
         {
+            var mappingConfigs = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<MappingProfiles>();
+            });
+            var mapper = mappingConfigs.CreateMapper();
+            var pagingService = new PagingService(mapper);
             DataContext context = GetInMemoryDatabaseContext();
             DataContext context2 = GetInMemoryDatabaseContext();
             Assert.AreNotEqual(context.GetHashCode(), context2.GetHashCode(), "Contexts instances should be different.");
             Assert.AreEqual(context.Database.GetDbConnection(), context2.Database.GetDbConnection(), "Contexts instances should have the same database connection.");
 
-            DataHelper = new DataHelper(context);
-            DataHelper2 = new DataHelper(context2);
+            DataHelper = new DataHelper(context, pagingService, mapper);
+            DataHelper2 = new DataHelper(context2, pagingService, mapper);
         }
 
         protected DataContext GetInMemoryDatabaseContext()

@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Models.DbModels;
 
 namespace NorthwindCRUD.Tests
 {
@@ -7,11 +6,11 @@ namespace NorthwindCRUD.Tests
     public class EmployeeServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldCreateEmployee()
+        public async Task ShouldCreateEmployee()
         {
-            EmployeeDb employee = DataHelper.GetEmployee();
+            var employee = DataHelper.GetEmployee();
 
-            var createdEmployee = DataHelper.EmployeeService.Create(employee);
+            var createdEmployee = await DataHelper.EmployeeService.Create(employee);
 
             Assert.IsNotNull(createdEmployee);
             createdEmployee = DataHelper2.EmployeeService.GetById(createdEmployee.EmployeeId);
@@ -22,14 +21,14 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldUpdateEmployee()
+        public async Task ShouldUpdateEmployee()
         {
             var employee = DataHelper.GetEmployee();
             string originalTitle = employee.Title;
-            var createdEmployee = DataHelper.EmployeeService.Create(employee);
+            var createdEmployee = await DataHelper.EmployeeService.Create(employee);
 
             createdEmployee.Title = "Director";
-            var updatedEmployee = DataHelper.EmployeeService.Update(createdEmployee);
+            var updatedEmployee = await DataHelper.EmployeeService.Update(createdEmployee, createdEmployee.EmployeeId);
 
             Assert.IsNotNull(updatedEmployee);
             updatedEmployee = DataHelper2.EmployeeService.GetById(updatedEmployee.EmployeeId);
@@ -39,10 +38,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldDeleteEmployee()
+        public async Task ShouldDeleteEmployee()
         {
             var employee = DataHelper.GetEmployee();
-            var createdEmployee = DataHelper.EmployeeService.Create(employee);
+            var createdEmployee = await DataHelper.EmployeeService.Create(employee);
 
             DataHelper.EmployeeService.Delete(createdEmployee.EmployeeId);
             var deletedEmployee = DataHelper2.EmployeeService.GetById(createdEmployee.EmployeeId);
@@ -51,10 +50,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldReturnAllEmployees()
+        public async Task ShouldReturnAllEmployees()
         {
-            DataHelper.EmployeeService.Create(DataHelper.GetEmployee());
-            DataHelper.EmployeeService.Create(DataHelper.GetEmployee());
+            await DataHelper.EmployeeService.Create(DataHelper.GetEmployee());
+            await DataHelper.EmployeeService.Create(DataHelper.GetEmployee());
 
             var result = DataHelper2.EmployeeService.GetAll();
 
@@ -63,19 +62,19 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldReturnEmployeesByReportsTo()
+        public async Task ShouldReturnEmployeesByReportsTo()
         {
             var manager = DataHelper.GetEmployee();
 
-            var createdManager = DataHelper.EmployeeService.Create(manager);
+            var createdManager = await DataHelper.EmployeeService.Create(manager);
             var employee1 = DataHelper.GetEmployee();
             employee1.ReportsTo = createdManager.EmployeeId;
 
             var employee2 = DataHelper.GetEmployee();
             employee2.ReportsTo = createdManager.EmployeeId;
 
-            var createdEmployee1 = DataHelper.EmployeeService.Create(employee1);
-            var createdEmployee2 = DataHelper.EmployeeService.Create(employee2);
+            var createdEmployee1 = await DataHelper.EmployeeService.Create(employee1);
+            var createdEmployee2 = await DataHelper.EmployeeService.Create(employee2);
 
             var result = DataHelper.EmployeeService.GetEmployeesByReportsTo(createdManager.EmployeeId);
             Assert.IsNotNull(result);
@@ -84,11 +83,11 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldReturnEmployeeById()
+        public async Task ShouldReturnEmployeeById()
         {
             var employee = DataHelper.GetEmployee();
 
-            var createdEmployee = DataHelper.EmployeeService.Create(employee);
+            var createdEmployee = await DataHelper.EmployeeService.Create(employee);
 
             var result = DataHelper.EmployeeService.GetById(createdEmployee.EmployeeId);
 

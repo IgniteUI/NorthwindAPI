@@ -6,10 +6,10 @@ namespace NorthwindCRUD.Tests
     public class CategoryServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldCreateCategory()
+        public async Task ShouldCreateCategory()
         {
             var category = DataHelper.GetCategory();
-            var createdCategory = DataHelper.CategoryService.Create(category);
+            var createdCategory = await DataHelper.CategoryService.Create(category);
 
             Assert.IsNotNull(createdCategory);
             createdCategory = DataHelper2.CategoryService.GetById(createdCategory.CategoryId);
@@ -19,16 +19,16 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldUpdateCategory()
+        public async Task ShouldUpdateCategory()
         {
             var category = DataHelper.GetCategory();
             string orignalName = category.Name;
             string orignalDescription = category.Description;
-            var createdCategory = DataHelper.CategoryService.Create(category);
+            var createdCategory = await DataHelper.CategoryService.Create(category);
 
             createdCategory.Name = "Updated Category";
             createdCategory.Description = "Updated Description";
-            var updatedCategory = DataHelper.CategoryService.Update(createdCategory);
+            var updatedCategory = await DataHelper.CategoryService.Update(createdCategory, createdCategory.CategoryId);
 
             Assert.IsNotNull(updatedCategory);
             updatedCategory = DataHelper2.CategoryService.GetById(updatedCategory.CategoryId);
@@ -40,11 +40,11 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldDeleteCategory()
+        public async Task ShouldDeleteCategory()
         {
             var category = DataHelper.GetCategory();
 
-            var createdCategory = DataHelper.CategoryService.Create(category);
+            var createdCategory = await DataHelper.CategoryService.Create(category);
 
             DataHelper.CategoryService.Delete(createdCategory.CategoryId);
             var deletedCategory = DataHelper2.CategoryService.GetById(createdCategory.CategoryId);
@@ -53,10 +53,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldReturnAllCategories()
+        public async Task ShouldReturnAllCategories()
         {
-            DataHelper.CategoryService.Create(DataHelper.GetCategory());
-            DataHelper.CategoryService.Create(DataHelper.GetCategory());
+            await DataHelper.CategoryService.Create(DataHelper.GetCategory());
+            await DataHelper.CategoryService.Create(DataHelper.GetCategory());
             var result = DataHelper2.CategoryService.GetAll();
 
             Assert.IsNotNull(result);

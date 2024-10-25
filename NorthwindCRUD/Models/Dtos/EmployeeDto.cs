@@ -4,8 +4,9 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class EmployeeDto : IEmployee
+    public class EmployeeDto : IBaseDto, IEmployee
     {
+        [Key]
         [SwaggerSchema("Number automatically assigned to new employee.")]
         public int EmployeeId { get; set; }
 
@@ -35,8 +36,6 @@ namespace NorthwindCRUD.Models.Dtos
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [SwaggerSchema("Employee's hire date")]
         public string HireDate { get; set; }
-
-        public string AddressId { get; set; }
 
         public AddressDto Address { get; set; }
 

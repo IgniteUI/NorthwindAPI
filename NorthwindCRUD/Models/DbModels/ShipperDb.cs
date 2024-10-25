@@ -4,10 +4,10 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class ShipperDb : IShipper
+    public class ShipperDb : IBaseDb, IShipper
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShipperId { get; set; }
 
         public string CompanyName { get; set; }

@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NorthwindCRUD.Models.Contracts;
 using NorthwindCRUD.Models.DbModels;
+using NorthwindCRUD.Models.Dtos;
 using NorthwindCRUD.Services;
 
 namespace NorthwindCRUD.Tests
@@ -9,20 +11,22 @@ namespace NorthwindCRUD.Tests
     public class DataHelper
     {
         private DataContext dataContext;
+        private IMapper mapper;
 
-        public DataHelper(DataContext dataContext)
+        public DataHelper(DataContext dataContext, IPagingService pagingService, IMapper mapper)
         {
+            this.mapper = mapper;
             this.dataContext = dataContext;
-            CategoryService = new CategoryService(dataContext);
-            CustomerService = new CustomerService(dataContext);
-            EmployeeService = new EmployeeService(dataContext);
-            ProductService = new ProductService(dataContext);
-            SupplierService = new SupplierService(dataContext);
-            RegionService = new RegionService(dataContext);
-            TerritoryService = new TerritoryService(dataContext);
-            OrderService = new OrderService(dataContext);
-            ShipperService = new ShipperService(dataContext);
-            EmployeeTerritoryService = new EmployeeTerritoryService(dataContext);
+            CustomerService = new CustomerService(dataContext, pagingService, mapper);
+            EmployeeService = new EmployeeService(dataContext, pagingService, mapper);
+            ProductService = new ProductService(dataContext, pagingService, mapper);
+            SupplierService = new SupplierService(dataContext, pagingService, mapper);
+            RegionService = new RegionService(dataContext, pagingService, mapper);
+            TerritoryService = new TerritoryService(dataContext, pagingService, mapper);
+            OrderService = new OrderService(dataContext, pagingService, mapper);
+            ShipperService = new ShipperService(dataContext, pagingService, mapper);
+            EmployeeTerritoryService = new EmployeeTerritoryService(dataContext, mapper);
+            CategoryService = new CategoryService(dataContext, pagingService, mapper);
             SalesService = new SalesService(dataContext);
         }
 
@@ -48,82 +52,104 @@ namespace NorthwindCRUD.Tests
 
         public EmployeeTerritoryService EmployeeTerritoryService { get; set; }
 
-        internal static CategoryDb GetCategory()
+        internal CategoryDto GetCategory()
         {
-            return GetJsonContent<CategoryDb>("categories.json").GetRandomElement();
+            var categores = GetJsonContent<CategoryDb>("categories.json").GetRandomElement();
+            return mapper.Map<CategoryDto>(categores);
         }
 
-        internal static CustomerDb GetCustomer()
+        internal CustomerDto GetCustomer()
         {
-            return GetJsonContent<CustomerDb>("customers.json").GetRandomElement();
+            var customer = GetJsonContent<CustomerDb>("customers.json").GetRandomElement();
+            return mapper.Map<CustomerDto>(customer);
         }
 
-        internal static EmployeeDb GetEmployee()
+        internal EmployeeDto GetEmployee()
         {
-            return GetJsonContent<EmployeeDb>("employees.json").GetRandomElement();
+            var employee = GetJsonContent<EmployeeDb>("employees.json").GetRandomElement();
+            return mapper.Map<EmployeeDto>(employee);
         }
 
-        internal static ProductDb GetProduct()
+        internal ProductDto GetProduct()
         {
-            return GetJsonContent<ProductDb>("products.json").GetRandomElement();
+            var product = GetJsonContent<ProductDb>("products.json").GetRandomElement();
+            return mapper.Map<ProductDto>(product);
         }
 
-        internal static SupplierDb GetSupplier()
+        internal SupplierDto GetSupplier()
         {
-            return GetJsonContent<SupplierDb>("suppliers.json").GetRandomElement();
+            var supplier = GetJsonContent<SupplierDb>("suppliers.json").GetRandomElement();
+            return mapper.Map<SupplierDto>(supplier);
         }
 
-        internal static ShipperDb GetShipper()
+        internal ShipperDto GetShipper()
         {
-            return GetJsonContent<ShipperDb>("shippers.json").GetRandomElement();
+            var shipper = GetJsonContent<ShipperDb>("shippers.json").GetRandomElement();
+            return mapper.Map<ShipperDto>(shipper);
         }
 
-        internal static TerritoryDb GetTerritory()
+        internal TerritoryDto GetTerritory()
         {
-            return GetJsonContent<TerritoryDb>("territories.json").GetRandomElement();
+            var territory = GetJsonContent<TerritoryDb>("territories.json").GetRandomElement();
+            return mapper.Map<TerritoryDto>(territory);
         }
 
-        internal static RegionDb GetRegion()
+        internal RegionDto GetRegion()
         {
-            return GetJsonContent<RegionDb>("regions.json").GetRandomElement();
+            var region = GetJsonContent<RegionDb>("regions.json").GetRandomElement();
+            return mapper.Map<RegionDto>(region);
         }
 
-        internal OrderDb GetOrder()
+        internal OrderDto GetOrder()
         {
-            return GetJsonContent<OrderDb>("orders.json").GetRandomElement();
+            var order = GetJsonContent<OrderDb>("orders.json").GetRandomElement();
+            return mapper.Map<OrderDto>(order);
         }
 
-        internal OrderDetailDb GetOrderDetail()
+        internal OrderDetailDto GetOrderDetail()
         {
-            return GetJsonContent<OrderDetailDb>("orderDetails.json").GetRandomElement();
+            var orderDetail = GetJsonContent<OrderDetailDb>("orderDetails.json").GetRandomElement();
+            return mapper.Map<OrderDetailDto>(orderDetail);
         }
 
-        internal SupplierDb CreateSupplier()
+        internal async Task<SupplierDto> CreateSupplier()
         {
-            return SupplierService.Create(GetSupplier());
+            var supplier = GetSupplier();
+            var createdSupplier = await SupplierService.Create(supplier);
+            dataContext.Entry(mapper.Map<SupplierDb>(createdSupplier)).State = EntityState.Detached;
+            return createdSupplier;
         }
 
-        internal ShipperDb CreateShipper()
+        internal async Task<ShipperDto> CreateShipper()
         {
-            return ShipperService.Create(GetShipper());
+            var shipper = GetShipper();
+            var createdShipper = await ShipperService.Create(shipper);
+            dataContext.Entry(mapper.Map<ShipperDb>(createdShipper)).State = EntityState.Detached;
+            return createdShipper;
         }
 
-        internal RegionDb CreateRegion()
+        internal async Task<RegionDto> CreateRegion()
         {
-            return RegionService.Create(GetRegion());
+            var region = GetRegion();
+            var createdRegion = await RegionService.Create(region);
+            dataContext.Entry(mapper.Map<RegionDb>(createdRegion)).State = EntityState.Detached;
+            return createdRegion;
         }
 
-        internal CustomerDb CreateCustomer()
+        internal async Task<CustomerDto> CreateCustomer()
         {
-            return CustomerService.Create(GetCustomer());
+            var customer = GetCustomer();
+            var createdCustomer = await CustomerService.Create(customer);
+            dataContext.Entry(mapper.Map<CustomerDb>(createdCustomer)).State = EntityState.Detached;
+            return createdCustomer;
         }
 
-        internal OrderDb CreateOrder(string? orderDate = null, string? country = null, ProductDb? product = null, int? quantity = null)
+        internal async Task<OrderDto> CreateOrder(string? orderDate = null, string? country = null, ProductDto? product = null, int? quantity = null)
         {
             var order = GetOrder();
-            var customer = CreateCustomer();
-            var employee = CreateEmployee();
-            var shipper = CreateShipper();
+            var customer = await CreateCustomer();
+            var employee = await CreateEmployee();
+            var shipper = await CreateShipper();
             order.CustomerId = customer.CustomerId;
             order.EmployeeId = employee.EmployeeId;
             order.ShipperId = shipper.ShipperId;
@@ -135,7 +161,7 @@ namespace NorthwindCRUD.Tests
 
             if (country != null)
             {
-                order.ShipAddress = new AddressDb
+                order.ShipAddress = new AddressDto
                 {
                     Country = country,
                     Street = string.Empty,
@@ -145,13 +171,13 @@ namespace NorthwindCRUD.Tests
                 };
             }
 
-            OrderDb result = OrderService.Create(order);
-            OrderDetailDb details = GetOrderDetail();
+            var result = await OrderService.Create(order);
+            var details = GetOrderDetail();
             details.OrderId = result.OrderId;
 
             if (product == null)
             {
-                product = CreateProduct();
+                product = await CreateProduct();
             }
 
             if (quantity != null)
@@ -161,48 +187,48 @@ namespace NorthwindCRUD.Tests
 
             details.ProductId = product.ProductId;
 
-            this.dataContext.Add(details);
+            this.dataContext.Add(mapper.Map<OrderDetailDb>(details));
             this.dataContext.SaveChanges();
 
             return result;
         }
 
-        internal ProductDb CreateProduct(ProductDb? product = null)
+        internal async Task<ProductDto> CreateProduct(ProductDto? product = null)
         {
             if (product == null)
             {
                 product = GetProduct();
             }
 
-            var createdCategory = CategoryService.Create(DataHelper.GetCategory());
+            var createdCategory = await CategoryService.Create(GetCategory());
             product.CategoryId = createdCategory.CategoryId;
 
-            var createdSupplier = SupplierService.Create(DataHelper.GetSupplier());
+            var createdSupplier = await SupplierService.Create(GetSupplier());
             product.SupplierId = createdSupplier.SupplierId;
 
-            return ProductService.Create(product);
+            return await ProductService.Create(product);
         }
 
-        internal EmployeeDb CreateEmployee()
+        internal async Task<EmployeeDto> CreateEmployee()
         {
-            return EmployeeService.Create(GetEmployee());
+            return await EmployeeService.Create(GetEmployee());
         }
 
-        internal TerritoryDb CreateTerritory(TerritoryDb? territory = null)
+        internal async Task<TerritoryDto> CreateTerritory(TerritoryDto? territory = null)
         {
             if (territory == null)
             {
                 territory = GetTerritory();
             }
 
-            RegionDb region = CreateRegion();
+            var region = await CreateRegion();
             territory.RegionId = region.RegionId;
-            return TerritoryService.Create(territory);
+            return await TerritoryService.Create(territory);
         }
 
-        internal EmployeeTerritoryDb CreateEmployeeTerritory(int employeeId, string territoryId)
+        internal EmployeeTerritoryDto CreateEmployeeTerritory(int employeeId, string territoryId)
         {
-            var employeeTerritory = new EmployeeTerritoryDb
+            var employeeTerritory = new EmployeeTerritoryDto
             {
                 EmployeeId = employeeId,
                 TerritoryId = territoryId,

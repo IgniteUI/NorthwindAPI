@@ -4,10 +4,10 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class TerritoryDb : ITerritory
+    public class TerritoryDb : IBaseDb, ITerritory
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string TerritoryId { get; set; }
 
         public int? RegionId { get; set; }
