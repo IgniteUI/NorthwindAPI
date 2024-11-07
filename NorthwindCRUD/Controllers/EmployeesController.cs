@@ -44,6 +44,22 @@
             }
         }
 
+        [HttpGet("GetAllAuthorized")]
+        [Authorize]
+        public ActionResult<OrderDto[]> GetAllAuthorized()
+        {
+            try
+            {
+                var employees = this.employeeService.GetAll();
+                return Ok(this.mapper.Map<EmployeeDb[], EmployeeDto[]>(employees));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         /// <summary>
         /// Fetches all employees or a page of employees based on the provided parameters.
         /// </summary>
@@ -110,6 +126,26 @@
         /// <returns>Total count of employees as an integer.</returns>
         [HttpGet("GetEmployeesCount")]
         public ActionResult<CountResultDto> GetEmployeesCount()
+        {
+            try
+            {
+                var count = employeeService.GetAllAsQueryable().Count();
+                return new CountResultDto() { Count = count };
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the total number of employees.
+        /// </summary>
+        /// <returns>Total count of employees as an integer.</returns>
+        [HttpGet("GetEmployeesCountAuthorized")]
+        [Authorize]
+        public ActionResult<CountResultDto> GetEmployeesCountAuthorized()
         {
             try
             {
