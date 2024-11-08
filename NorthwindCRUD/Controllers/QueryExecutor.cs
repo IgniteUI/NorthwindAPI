@@ -97,31 +97,26 @@ public class QueryFilterCondition : IQueryFilterCondition
     public string IconName { get; set; }
 }
 
-public class QueryConverter : JsonConverter
+public abstract class InterfaceToConcreteClassConverter<TI, TC> : JsonConverter
 {
-    public override bool CanConvert(Type objectType) => objectType == typeof(IQuery);
+    public override bool CanConvert(Type objectType) => objectType == typeof(TI);
 
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => serializer.Deserialize<Query>(reader);
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => serializer.Deserialize<TC>(reader);
 
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => serializer.Serialize(writer, value);
+
 }
 
-public class QueryFilterConverter : JsonConverter
+public class QueryConverter : InterfaceToConcreteClassConverter<IQuery, Query>
 {
-    public override bool CanConvert(Type objectType) => objectType == typeof(IQueryFilter);
-
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => serializer.Deserialize<QueryFilter>(reader);
-
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => serializer.Serialize(writer, value);
 }
 
-public class QueryFilterConditionConverter : JsonConverter
+public class QueryFilterConverter : InterfaceToConcreteClassConverter<IQueryFilter, QueryFilter>
 {
-    public override bool CanConvert(Type objectType) => objectType == typeof(IQueryFilterCondition);
+}
 
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer) => serializer.Deserialize<QueryFilterCondition>(reader);
-
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => serializer.Serialize(writer, value);
+public class QueryFilterConditionConverter : InterfaceToConcreteClassConverter<IQueryFilterCondition, QueryFilterCondition>
+{
 }
 
 /// <summary>
