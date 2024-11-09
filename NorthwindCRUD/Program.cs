@@ -43,9 +43,6 @@ namespace NorthwindCRUD
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                options.SerializerSettings.Converters.Add(new QueryConverter());
-                options.SerializerSettings.Converters.Add(new QueryFilterConverter());
-                options.SerializerSettings.Converters.Add(new QueryFilterConditionConverter());
             });
 
             builder.Services.AddEndpointsApiExplorer();
