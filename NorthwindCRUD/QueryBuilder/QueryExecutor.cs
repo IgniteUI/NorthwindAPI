@@ -126,40 +126,30 @@ public static class QueryExecutor
 
     private static Expression BuildInExpression(DataContext db, Query? query, MemberExpression field)
     {
-        if (field.Type == typeof(string))
+        return field.Type switch
         {
-            var d = RunSubquery(db, query).Select(x => (string)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
-            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(string) }, Expression.Constant(d), field);
-        }
-        else if (field.Type == typeof(bool) || field.Type == typeof(bool?))
-        {
-            var d = RunSubquery(db, query).Select(x => (bool?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
-            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(bool?) }, Expression.Constant(d), field);
-        }
-        else if (field.Type == typeof(int) || field.Type == typeof(int?))
-        {
-            var d = RunSubquery(db, query).Select(x => (int?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
-            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(int?) }, Expression.Constant(d), field);
-        }
-        else if (field.Type == typeof(decimal) || field.Type == typeof(decimal?))
-        {
-            var d = RunSubquery(db, query).Select(x => (decimal?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
-            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(decimal?) }, Expression.Constant(d), field);
-        }
-        else if (field.Type == typeof(float) || field.Type == typeof(float?))
-        {
-            var d = RunSubquery(db, query).Select(x => (float?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
-            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(float?) }, Expression.Constant(d), field);
-        }
-        else if (field.Type == typeof(DateTime) || field.Type == typeof(DateTime?))
-        {
-            var d = RunSubquery(db, query).Select(x => (DateTime?)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
-            return Expression.Call(typeof(Enumerable), "Contains", new[] { typeof(DateTime) }, Expression.Constant(d), field);
-        }
-        else
-        {
-            throw new InvalidOperationException($"Type '{field.Type}' not supported for 'IN' operation");
-        }
+            { } t when t == typeof(string)      => BuildInExpression<string>(db, query, field),
+            { } t when t == typeof(bool)        => BuildInExpression<bool>(db, query, field),
+            { } t when t == typeof(bool?)       => BuildInExpression<bool?>(db, query, field),
+            { } t when t == typeof(int)         => BuildInExpression<int>(db, query, field),
+            { } t when t == typeof(int?)        => BuildInExpression<int?>(db, query, field),
+            { } t when t == typeof(decimal)     => BuildInExpression<decimal>(db, query, field),
+            { } t when t == typeof(decimal?)    => BuildInExpression<decimal?>(db, query, field),
+            { } t when t == typeof(float)       => BuildInExpression<float>(db, query, field),
+            { } t when t == typeof(float?)      => BuildInExpression<float?>(db, query, field),
+            { } t when t == typeof(DateTime)    => BuildInExpression<DateTime>(db, query, field),
+            { } t when t == typeof(DateTime?)   => BuildInExpression<DateTime?>(db, query, field),
+            _ => throw new InvalidOperationException($"Type '{field.Type}' not supported for 'IN' operation"),
+        };
+    }
+
+    private static Expression BuildInExpression<T>(DataContext db, Query? query, MemberExpression field)
+    {
+        var d = RunSubquery(db, query).Select(x => (T)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
+        var m = typeof(Enumerable).GetMethods()
+            .FirstOrDefault(method => method.Name == nameof(Enumerable.Contains) && method.GetParameters().Length == 2)
+            ?.MakeGenericMethod(typeof(T)) ?? throw new InvalidOperationException("Missing method");
+        return Expression.Call(m, Expression.Constant(d), field);
     }
 
     private static IEnumerable<dynamic> RunSubquery(DataContext db, Query? query)
