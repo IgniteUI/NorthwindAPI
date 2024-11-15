@@ -7,6 +7,9 @@ namespace NorthwindCRUD.Models.Dtos
     {
         public int ProductId { get; set; }
 
+        [StringLength(40, ErrorMessage = "ProductName cannot exceed 40 characters.")]
+        public string ProductName { get; set; }
+
         [Range(1, int.MaxValue, ErrorMessage = "SupplierId must be a valid supplier ID.")]
         public int? SupplierId { get; set; }
 

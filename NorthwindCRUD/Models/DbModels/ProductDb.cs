@@ -10,6 +10,9 @@ namespace NorthwindCRUD.Models.DbModels
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ProductId { get; set; }
 
+        [MaxLength(40)]
+        public string ProductName { get; set; }
+
         public int? SupplierId { get; set; }
 
         public SupplierDb? Supplier { get; set; }
