@@ -4,6 +4,8 @@
     {
         int ProductId { get; set; }
 
+        string ProductName { get; set; }
+
         int? SupplierId { get; set; }
 
         int? CategoryId { get; set; }
