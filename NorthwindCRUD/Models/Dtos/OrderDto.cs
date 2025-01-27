@@ -36,5 +36,7 @@ namespace NorthwindCRUD.Models.Dtos
         public bool Completed { get; set; }
 
         public AddressDto ShipAddress { get; set; }
+
+        public OrderDetailDto[] OrderDetails { get; set; }
     }
 }

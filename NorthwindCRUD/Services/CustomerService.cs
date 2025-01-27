@@ -32,6 +32,14 @@ namespace NorthwindCRUD.Services
                 .FirstOrDefault(c => c.CustomerId == id);
         }
 
+        public CustomerDb[] GetAllCustomerOrders()
+        {
+            return this.dataContext.Customers
+                .Include(c => c.Orders)
+                    .ThenInclude(o => o.OrderDetails)
+                .ToArray();
+        }
+
         public CustomerDb Create(CustomerDb model)
         {
             var id = IdGenerator.CreateLetterId(6);

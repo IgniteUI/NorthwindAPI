@@ -46,5 +46,7 @@ namespace NorthwindCRUD.Models.DbModels
         public bool Completed { get; set; }
 
         public AddressDb? ShipAddress { get; set; }
+
+        public ICollection<OrderDetailDb> OrderDetails { get; set; }
     }
 }

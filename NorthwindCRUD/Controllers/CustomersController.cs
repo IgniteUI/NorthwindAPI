@@ -43,6 +43,26 @@
         }
 
         /// <summary>
+        /// Retrieves all customers along with their associated orders.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="ActionResult{T}"/> containing an array of <see cref="CustomerDto"/> objects.
+        /// </returns>
+        public ActionResult<CustomerDto[]> GetAllCustomersWithOrders()
+        {
+            try
+            {
+                var customers = this.customerService.GetAllCustomerOrders();
+                return Ok(this.mapper.Map<CustomerDb[], CustomerDto[]>(customers));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
         /// Fetches all customers or a page of customers based on the provided parameters.
         /// </summary>
         /// <param name="skip">The number of records to skip before starting to fetch the customers. If this parameter is not provided, fetching starts from the beginning.</param>
