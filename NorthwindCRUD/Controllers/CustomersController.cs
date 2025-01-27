@@ -48,6 +48,7 @@
         /// <returns>
         /// An <see cref="ActionResult{T}"/> containing an array of <see cref="CustomerDto"/> objects.
         /// </returns>
+        [HttpGet("WithOrders")]
         public ActionResult<CustomerDto[]> GetAllCustomersWithOrders()
         {
             try
