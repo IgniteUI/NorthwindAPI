@@ -53,7 +53,7 @@
         {
             try
             {
-                var customers = this.customerService.GetAllCustomerOrders();
+                var customers = this.customerService.GetAllCustomersWithOrders();
                 return Ok(this.mapper.Map<CustomerDb[], CustomerDto[]>(customers));
             }
             catch (Exception error)

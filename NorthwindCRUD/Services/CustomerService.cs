@@ -32,7 +32,7 @@ namespace NorthwindCRUD.Services
                 .FirstOrDefault(c => c.CustomerId == id);
         }
 
-        public CustomerDb[] GetAllCustomerOrders()
+        public CustomerDb[] GetAllCustomersWithOrders()
         {
             return this.dataContext.Customers
                 .Include(c => c.Orders)
