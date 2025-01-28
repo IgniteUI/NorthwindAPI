@@ -6,38 +6,44 @@ namespace NorthwindCRUD.Tests
     public class OrderServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldCreateOrder()
+        public async Task ShouldCreateOrder()
         {
             var order = DataHelper.GetOrder();
-            var customer = DataHelper.CreateCustomer();
-            var employee = DataHelper.CreateEmployee();
-            var shipper = DataHelper.CreateShipper();
+            var customer = await DataHelper.CreateCustomer();
+            var employee = await DataHelper.CreateEmployee();
+            var shipper = await DataHelper.CreateShipper();
             order.CustomerId = customer.CustomerId;
             order.EmployeeId = employee.EmployeeId;
             order.ShipperId = shipper.ShipperId;
 
-            var createdOrder = DataHelper.OrderService.Create(order);
+            var createdOrder = await DataHelper.OrderService.Create(order);
 
             Assert.IsNotNull(createdOrder);
             createdOrder = DataHelper2.OrderService.GetById(createdOrder.OrderId);
             Assert.IsNotNull(createdOrder);
 
-            Assert.AreEqual(order.OrderId, createdOrder.OrderId);
             Assert.AreEqual(order.CustomerId, createdOrder.CustomerId);
             Assert.AreEqual(order.EmployeeId, createdOrder.EmployeeId);
+            Assert.AreEqual(order.ShipperId, createdOrder.ShipperId);
+            Assert.AreEqual(order.OrderDate, createdOrder.OrderDate);
+            Assert.AreEqual(order.RequiredDate, createdOrder.RequiredDate);
+            Assert.AreEqual(order.ShipVia, createdOrder.ShipVia);
+            Assert.AreEqual(order.Freight, createdOrder.Freight);
+            Assert.AreEqual(order.ShipName, createdOrder.ShipName);
+            Assert.AreEqual(order.ShipAddress.City, createdOrder.ShipAddress.City);
         }
 
         [TestMethod]
-        public void ShouldUpdateOrder()
+        public async Task ShouldUpdateOrder()
         {
-            var order = DataHelper.CreateOrder();
+            var order = await DataHelper.CreateOrder();
             string? originalCustomerId = order.CustomerId;
             int? originalEmployeeId = order.EmployeeId;
 
-            order.CustomerId = DataHelper.CreateCustomer().CustomerId;
-            order.EmployeeId = DataHelper.CreateEmployee().EmployeeId;
+            order.CustomerId = (await DataHelper.CreateCustomer()).CustomerId;
+            order.EmployeeId = (await DataHelper.CreateEmployee()).EmployeeId;
 
-            var updatedOrder = DataHelper.OrderService.Update(order);
+            var updatedOrder = await DataHelper.OrderService.Update(order, order.OrderId);
 
             Assert.IsNotNull(updatedOrder);
             updatedOrder = DataHelper2.OrderService.GetById(updatedOrder.OrderId);
@@ -49,9 +55,9 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldDeleteOrder()
+        public async Task ShouldDeleteOrder()
         {
-            var order = DataHelper.CreateOrder();
+            var order = await DataHelper.CreateOrder();
 
             DataHelper.OrderService.Delete(order.OrderId);
             var deletedOrder = DataHelper2.OrderService.GetById(order.OrderId);
@@ -60,10 +66,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetAllOrders()
+        public async Task ShouldGetAllOrders()
         {
-            DataHelper.CreateOrder();
-            DataHelper.CreateOrder();
+            await DataHelper.CreateOrder();
+            await DataHelper.CreateOrder();
 
             var result = DataHelper2.OrderService.GetAll();
 
@@ -72,9 +78,9 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetOrderById()
+        public async Task ShouldGetOrderById()
         {
-            var order = DataHelper.CreateOrder();
+            var order = await DataHelper.CreateOrder();
 
             var result = DataHelper2.OrderService.GetById(order.OrderId);
 

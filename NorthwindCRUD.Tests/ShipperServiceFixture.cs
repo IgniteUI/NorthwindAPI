@@ -6,32 +6,31 @@ namespace NorthwindCRUD.Tests
     public class ShipperServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldCreateShipper()
+        public async Task ShouldCreateShipper()
         {
             var shipper = DataHelper.GetShipper();
 
-            var createdShipper = DataHelper.ShipperService.Create(shipper);
+            var createdShipper = await DataHelper.ShipperService.Create(shipper);
 
             Assert.IsNotNull(createdShipper);
             createdShipper = DataHelper2.ShipperService.GetById(createdShipper.ShipperId);
             Assert.IsNotNull(createdShipper);
-            Assert.AreEqual(shipper.ShipperId, createdShipper.ShipperId);
             Assert.AreEqual(shipper.CompanyName, createdShipper.CompanyName);
             Assert.AreEqual(shipper.Phone, createdShipper.Phone);
         }
 
         [TestMethod]
-        public void ShouldUpdateShipper()
+        public async Task ShouldUpdateShipper()
         {
             var shipper = DataHelper.GetShipper();
             string originalCompanyName = shipper.CompanyName;
             string originalPhone = shipper.Phone;
-            DataHelper.ShipperService.Create(shipper);
+            var insertedShipper = await DataHelper.ShipperService.Create(shipper);
 
             shipper.CompanyName = "Updated shipper company";
             shipper.Phone = "555-555-5555";
 
-            var updatedShipper = DataHelper.ShipperService.Update(shipper);
+            var updatedShipper = await DataHelper.ShipperService.Update(shipper, insertedShipper.ShipperId);
 
             Assert.IsNotNull(updatedShipper);
             updatedShipper = DataHelper2.ShipperService.GetById(updatedShipper.ShipperId);
@@ -43,10 +42,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldDeleteShipper()
+        public async Task ShouldDeleteShipper()
         {
             var shipper = DataHelper.GetShipper();
-            DataHelper.ShipperService.Create(shipper);
+            await DataHelper.ShipperService.Create(shipper);
 
             DataHelper.ShipperService.Delete(shipper.ShipperId);
             var deletedShipper = DataHelper2.ShipperService.GetById(shipper.ShipperId);
@@ -55,10 +54,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetAllShippers()
+        public async Task ShouldGetAllShippers()
         {
-            DataHelper.CreateShipper();
-            DataHelper.CreateShipper();
+            await DataHelper.CreateShipper();
+            await DataHelper.CreateShipper();
 
             var result = DataHelper2.ShipperService.GetAll();
 
@@ -67,15 +66,15 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetShipperById()
+        public async Task ShouldGetShipperById()
         {
             var shipper = DataHelper.GetShipper();
-            DataHelper.ShipperService.Create(shipper);
+            var insertedShipper = await DataHelper.ShipperService.Create(shipper);
 
-            var result = DataHelper2.ShipperService.GetById(shipper.ShipperId);
+            var result = DataHelper2.ShipperService.GetById(insertedShipper.ShipperId);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(shipper.ShipperId, result.ShipperId);
+            Assert.AreEqual(insertedShipper.ShipperId, result.ShipperId);
             Assert.AreEqual(shipper.CompanyName, result.CompanyName);
             Assert.AreEqual(shipper.Phone, result.Phone);
         }

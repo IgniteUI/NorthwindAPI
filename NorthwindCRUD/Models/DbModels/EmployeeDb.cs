@@ -4,10 +4,10 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class EmployeeDb : IEmployee
+    public class EmployeeDb : IBaseDb, IEmployee
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EmployeeId { get; set; }
 
         public string LastName { get; set; }
@@ -21,8 +21,6 @@ namespace NorthwindCRUD.Models.DbModels
         public string BirthDate { get; set; }
 
         public string HireDate { get; set; }
-
-        public string AddressId { get; set; }
 
         public AddressDb Address { get; set; }
 

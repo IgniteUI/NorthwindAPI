@@ -1,7 +1,7 @@
-﻿namespace NorthwindCRUD.Helpers
-{
-    using System.Reflection;
+﻿using System.Reflection;
 
+namespace NorthwindCRUD.Helpers
+{
     public static class PropertyHelper<T>
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "Need generic type here")]

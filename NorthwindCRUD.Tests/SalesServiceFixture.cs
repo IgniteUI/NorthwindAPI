@@ -7,10 +7,10 @@ namespace NorthwindCRUD.Tests
     public class SalesServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldRetrieveSalesDataByYear()
+        public async Task ShouldRetrieveSalesDataByYear()
         {
-            var order1 = DataHelper.CreateOrder("2023-10-10T00:00:00");
-            var order2 = DataHelper.CreateOrder("2023-01-01T00:00:00");
+            var order1 = await DataHelper.CreateOrder("2023-10-10T00:00:00");
+            var order2 = await DataHelper.CreateOrder("2023-01-01T00:00:00");
 
             SalesDto[] salesData = DataHelper2.SalesService.RetrieveSalesDataByYear(2023, 0, 0);
 
@@ -27,10 +27,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldRetrieveSalesDataByCountry()
+        public async Task ShouldRetrieveSalesDataByCountry()
         {
-            var order2 = DataHelper.CreateOrder("2023-01-01T00:00:00", "USA");
-            var order1 = DataHelper.CreateOrder("2023-10-10T00:00:00", "USA");
+            var order2 = await DataHelper.CreateOrder("2023-01-01T00:00:00", "USA");
+            var order1 = await DataHelper.CreateOrder("2023-10-10T00:00:00", "USA");
 
             SalesDto[] salesData = DataHelper.SalesService.RetrieveSalesDataByCountry("2023-01-01", "2023-12-31", "USA");
 
@@ -51,13 +51,18 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldRetrieveSalesDataByProductCategoryAndYear()
+        public async Task ShouldRetrieveSalesDataByProductCategoryAndYear()
         {
-            var product = DataHelper.CreateProduct();
-            var order2 = DataHelper.CreateOrder("2023-01-01T00:00:00", product: product, quantity: 10);
-            var order1 = DataHelper.CreateOrder("2023-10-10T00:00:00", product: product, quantity: 20);
+            var product = await DataHelper.CreateProduct();
+            var order2 = await DataHelper.CreateOrder("2023-01-01T00:00:00", product: product, quantity: 10);
+            var order1 = await DataHelper.CreateOrder("2023-10-10T00:00:00", product: product, quantity: 20);
 
-            SalesDto[] salesData = DataHelper2.SalesService.GetSalesDataByCategoryAndYear(product.Category!.Name, 2023);
+            Assert.IsNotNull(product.CategoryId);
+
+            var category = DataHelper2.CategoryService.GetById((int)product.CategoryId);
+
+            Assert.IsNotNull(category);
+            SalesDto[] salesData = DataHelper2.SalesService.GetSalesDataByCategoryAndYear(category.Name, 2023);
 
             Assert.IsNotNull(salesData);
             Assert.AreEqual(2, salesData.Length);

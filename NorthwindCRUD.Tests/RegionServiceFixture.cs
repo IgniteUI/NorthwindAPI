@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NorthwindCRUD.Models.DbModels;
 
 namespace NorthwindCRUD.Tests
 {
@@ -7,27 +6,26 @@ namespace NorthwindCRUD.Tests
     public class RegionServiceFixture : BaseFixture
     {
         [TestMethod]
-        public void ShouldCreateRegion()
+        public async Task ShouldCreateRegion()
         {
             var region = DataHelper.GetRegion();
 
-            var createdRegion = DataHelper.RegionService.Create(region);
+            var createdRegion = await DataHelper.RegionService.Create(region);
 
             Assert.IsNotNull(createdRegion);
             createdRegion = DataHelper2.RegionService.GetById(createdRegion.RegionId);
             Assert.IsNotNull(createdRegion);
-            Assert.AreEqual(region.RegionId, createdRegion.RegionId);
             Assert.AreEqual(region.RegionDescription, createdRegion.RegionDescription);
         }
 
         [TestMethod]
-        public void ShouldUpdateRegion()
+        public async Task ShouldUpdateRegion()
         {
-            var region = DataHelper.CreateRegion();
+            var region = await DataHelper.CreateRegion();
             string originalRegionDescription = region.RegionDescription;
             region.RegionDescription = "Updated Region";
 
-            var updatedRegion = DataHelper.RegionService.Update(region);
+            var updatedRegion = await DataHelper.RegionService.Update(region, region.RegionId);
 
             Assert.IsNotNull(updatedRegion);
             updatedRegion = DataHelper2.RegionService.GetById(updatedRegion.RegionId);
@@ -37,9 +35,9 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldDeleteRegion()
+        public async Task ShouldDeleteRegion()
         {
-            var region = DataHelper.CreateRegion();
+            var region = await DataHelper.CreateRegion();
 
             DataHelper.RegionService.Delete(region.RegionId);
             var deletedRegion = DataHelper2.RegionService.GetById(region.RegionId);
@@ -48,10 +46,10 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetAllRegions()
+        public async Task ShouldGetAllRegions()
         {
-            DataHelper.CreateRegion();
-            DataHelper.CreateRegion();
+            await DataHelper.CreateRegion();
+            await DataHelper.CreateRegion();
 
             var result = DataHelper2.RegionService.GetAll();
 
@@ -60,9 +58,9 @@ namespace NorthwindCRUD.Tests
         }
 
         [TestMethod]
-        public void ShouldGetByRegionId()
+        public async Task ShouldGetByRegionId()
         {
-            var region = DataHelper.CreateRegion();
+            var region = await DataHelper.CreateRegion();
 
             var result = DataHelper2.RegionService.GetById(region.RegionId);
 

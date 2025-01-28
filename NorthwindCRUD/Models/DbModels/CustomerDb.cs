@@ -4,10 +4,10 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class CustomerDb : ICustomer
+    public class CustomerDb : IBaseDb, ICustomer
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string CustomerId { get; set; }
 
         public string CompanyName { get; set; }
@@ -15,8 +15,6 @@ namespace NorthwindCRUD.Models.DbModels
         public string ContactName { get; set; }
 
         public string ContactTitle { get; set; }
-
-        public string AddressId { get; set; }
 
         public AddressDb Address { get; set; }
 

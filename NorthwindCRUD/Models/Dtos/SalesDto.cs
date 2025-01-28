@@ -2,7 +2,7 @@
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class SalesDto
+    public class SalesDto : IBaseDto
     {
         [Required(ErrorMessage = "ProductId is required.")]
         public int ProductId { get; set; }

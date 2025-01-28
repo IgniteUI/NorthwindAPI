@@ -4,10 +4,10 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class RegionDb : IRegion
+    public class RegionDb : IBaseDb, IRegion
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RegionId { get; set; }
 
         public string RegionDescription { get; set; }

@@ -1,6 +1,4 @@
-﻿using NorthwindCRUD.Models.DbModels;
-
-namespace NorthwindCRUD.Models.Contracts
+﻿namespace NorthwindCRUD.Models.Contracts
 {
     public interface IAddress
     {

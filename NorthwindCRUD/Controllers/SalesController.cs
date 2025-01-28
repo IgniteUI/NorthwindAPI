@@ -25,7 +25,7 @@ namespace NorthwindCRUD.Controllers
 
         [HttpGet("ByCategory")]
         [Authorize]
-        public ActionResult<SalesDto[]> GetSalesByCategoryAndYear([FromQuery] [Required] string categoryName, [FromQuery] int? orderYear = null)
+        public ActionResult<SalesDto[]> GetSalesByCategoryAndYear([FromQuery][Required] string categoryName, [FromQuery] int? orderYear = null)
         {
             try
             {
@@ -42,8 +42,8 @@ namespace NorthwindCRUD.Controllers
         [Authorize]
         public ActionResult<SalesDto[]> GetSalesByCountry(
             string country,
-            [FromQuery] [Required] [DataType(DataType.Date)] [SwaggerParameter("Start date in YYYY-MM-DD format")] string startDate,
-            [FromQuery] [Required] [DataType(DataType.Date)] [SwaggerParameter("End date in YYYY-MM-DD format")] string endDate)
+            [FromQuery][Required][DataType(DataType.Date)][SwaggerParameter("Start date in YYYY-MM-DD format")] string startDate,
+            [FromQuery][Required][DataType(DataType.Date)][SwaggerParameter("End date in YYYY-MM-DD format")] string endDate)
         {
             try
             {

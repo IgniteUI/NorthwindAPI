@@ -3,7 +3,7 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.Dtos
 {
-    public class AddressDto : IAddress
+    public class AddressDto : IBaseDto, IAddress
     {
         [StringLength(100, ErrorMessage = "Street cannot exceed 100 characters.")]
         public string Street { get; set; }

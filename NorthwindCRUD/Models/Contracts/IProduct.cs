@@ -2,7 +2,7 @@
 {
     public interface IProduct
     {
-        int ProductId { get; set; }
+        int ProductId { get; }
 
         int? SupplierId { get; set; }
 

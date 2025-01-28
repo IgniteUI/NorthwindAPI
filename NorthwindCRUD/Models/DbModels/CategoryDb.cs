@@ -4,10 +4,10 @@ using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class CategoryDb : ICategory, ICategoryDetail
+    public class CategoryDb : IBaseDb, ICategory, ICategoryDetail
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
         public int CategoryId { get; set; }
 

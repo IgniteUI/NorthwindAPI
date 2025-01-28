@@ -1,6 +1,6 @@
 ﻿namespace NorthwindCRUD.Models.DbModels
 {
-    public class OrderDetailDb
+    public class OrderDetailDb : IBaseDb
     {
         public int OrderId { get; set; }
 

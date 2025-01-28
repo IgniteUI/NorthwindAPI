@@ -3,14 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NorthwindCRUD.Models.DbModels
 {
-    public class OrderDb
+    public class OrderDb : IBaseDb
     {
-        public OrderDb()
-        {
-        }
-
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
 
         public string? CustomerId { get; set; }
@@ -41,10 +37,13 @@ namespace NorthwindCRUD.Models.DbModels
 
         public float Discount { get; set; }
 
-        public string? ShipAddressId { get; set; }
-
         public bool Completed { get; set; }
 
         public AddressDb? ShipAddress { get; set; }
+
+        public string[] GetIncludes()
+        {
+            return new string[] { "Employee", "Customer", "Shipper" };
+        }
     }
 }

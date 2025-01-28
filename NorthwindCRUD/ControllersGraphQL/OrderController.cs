@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using GraphQL.AspNet.Attributes;
+﻿using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
-using NorthwindCRUD.Models.DbModels;
 using NorthwindCRUD.Models.Dtos;
 using NorthwindCRUD.Services;
 
@@ -11,21 +9,17 @@ namespace NorthwindCRUD.Controllers
     public class OrderGraphController : GraphController
     {
         private readonly OrderService orderService;
-        private readonly IMapper mapper;
-        private readonly ILogger logger;
 
-        public OrderGraphController(OrderService orderService, IMapper mapper, ILogger logger)
+        public OrderGraphController(OrderService orderService)
         {
             this.orderService = orderService;
-            this.mapper = mapper;
-            this.logger = logger;
         }
 
         [Query]
         public OrderDto[] GetAll()
         {
             var orders = this.orderService.GetAll();
-            return this.mapper.Map<OrderDb[], OrderDto[]>(orders);
+            return orders;
         }
 
         [Query]
@@ -35,39 +29,31 @@ namespace NorthwindCRUD.Controllers
 
             if (order != null)
             {
-                return this.mapper.Map<OrderDb, OrderDto>(order);
+                return order;
             }
 
             return null;
         }
 
         [Mutation]
-        public OrderDto Create(OrderDto model)
+        public async Task<OrderDto> Create(OrderDto model)
         {
-            var mappedModel = this.mapper.Map<OrderDto, OrderDb>(model);
-            var order = this.orderService.Create(mappedModel);
-            return this.mapper.Map<OrderDb, OrderDto>(order);
+            var order = await this.orderService.Create(model);
+            return order;
         }
 
         [Mutation]
-        public OrderDto? Update(OrderDto model)
+        public async Task<OrderDto?> Update(OrderDto model)
         {
-            var mappedModel = this.mapper.Map<OrderDto, OrderDb>(model);
-            var order = this.orderService.Update(mappedModel);
-            return order != null ? this.mapper.Map<OrderDb, OrderDto>(order) : null;
+            var order = await orderService.Update(model, model.OrderId);
+            return order;
         }
 
         [Mutation]
         public OrderDto? Delete(int id)
         {
             var order = this.orderService.Delete(id);
-
-            if (order != null)
-            {
-                return this.mapper.Map<OrderDb, OrderDto>(order);
-            }
-
-            return null;
+            return order;
         }
     }
 }
