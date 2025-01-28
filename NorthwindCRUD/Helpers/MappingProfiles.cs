@@ -16,9 +16,11 @@
             CreateMap<ShipperDto, ShipperDb>().ReverseMap();
             CreateMap<SupplierDto, SupplierDb>().ReverseMap();
             CreateMap<TerritoryDto, TerritoryDb>().ReverseMap();
-            CreateMap<CustomerDto, CustomerDb>().ReverseMap()
+            CreateMap<CustomerDto, CustomerDb>().ReverseMap();
+            CreateMap<OrderDto, OrderDb>().ReverseMap();
+            CreateMap<CustomerWithOrdersDto, CustomerDb>().ReverseMap()
                 .ForMember(dest => dest.Orders, opt => opt.MapFrom(src => src.Orders.ToArray()));
-            CreateMap<OrderDto, OrderDb>().ReverseMap()
+            CreateMap<OrderWithDetailsDto, OrderDb>().ReverseMap()
                 .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails.ToArray()));
             CreateMap<OrderDetailDto, OrderDetailDb>().ReverseMap();
             CreateMap<AddressDto, AddressDb>().ReverseMap();

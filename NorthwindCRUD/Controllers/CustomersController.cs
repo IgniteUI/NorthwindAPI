@@ -122,12 +122,12 @@
         }
 
         [HttpGet("WithOrders")]
-        public ActionResult<CustomerDto[]> GetAllCustomersWithOrders()
+        public ActionResult<CustomerWithOrdersDto[]> GetAllCustomersWithOrders()
         {
             try
             {
                 var customers = this.customerService.GetAllCustomersWithOrders();
-                return Ok(this.mapper.Map<CustomerDb[], CustomerDto[]>(customers));
+                return Ok(this.mapper.Map<CustomerDb[], CustomerWithOrdersDto[]>(customers));
             }
             catch (Exception error)
             {
@@ -173,12 +173,12 @@
         }
 
         [HttpGet("{id}/Orders/WithDetails")]
-        public ActionResult<OrderDto[]> GetOrdersAndOrderDetailsByCustomerId(string id)
+        public ActionResult<OrderWithDetailsDto[]> GetOrdersAndOrderDetailsByCustomerId(string id)
         {
             try
             {
                 var orders = this.orderService.GetOrdersWithDetailsByCustomerId(id);
-                return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
+                return Ok(this.mapper.Map<OrderDb[], OrderWithDetailsDto[]>(orders));
             }
             catch (Exception error)
             {

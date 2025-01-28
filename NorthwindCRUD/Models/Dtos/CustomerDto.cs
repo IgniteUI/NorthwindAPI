@@ -18,7 +18,5 @@ namespace NorthwindCRUD.Models.Dtos
         public string ContactTitle { get; set; }
 
         public AddressDto Address { get; set; }
-
-        public OrderDto[] Orders { get; set; }
     }
 }
