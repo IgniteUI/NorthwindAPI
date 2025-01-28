@@ -35,6 +35,7 @@ namespace NorthwindCRUD.Services
         public CustomerDb[] GetAllCustomersWithOrders()
         {
             return this.dataContext.Customers
+                .Include(c => c.Address)
                 .Include(c => c.Orders)
                     .ThenInclude(o => o.OrderDetails)
                 .ToArray();
