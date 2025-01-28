@@ -42,15 +42,19 @@ namespace NorthwindCRUD.Providers
                     var connectionString = this.GetSqlLiteConnectionString(tenantId);
                     connection = new SqliteConnection(connectionString);
                     memoryCache.Set(cacheKey, connection, GetCacheConnectionEntryOptions());
+
+                    // For SQLite in memory to be shared across multiple EF calls, we need to maintain a separate open connection.
+                    // see post https://stackoverflow.com/questions/56319638/entityframeworkcore-sqlite-in-memory-db-tables-are-not-created
+                    connection.Open();
+
+                    options.UseSqlite(connection).EnableSensitiveDataLogging();
+
+                    SeedDb(options);
                 }
-
-                // For SQLite in memory to be shared across multiple EF calls, we need to maintain a separate open connection.
-                // see post https://stackoverflow.com/questions/56319638/entityframeworkcore-sqlite-in-memory-db-tables-are-not-created
-                connection.Open();
-
-                options.UseSqlite(connection).EnableSensitiveDataLogging();
-
-                SeedDb(options);
+                else
+                {
+                    options.UseSqlite(connection).EnableSensitiveDataLogging();
+                }
             }
         }
 

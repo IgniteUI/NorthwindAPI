@@ -58,6 +58,7 @@ namespace NorthwindCRUD.Services
         {
             return GetOrdersWithDetailsQuery()
                 .Where(o => o.CustomerId == id)
+                .AsNoTracking()
                 .ToArray();
         }
 

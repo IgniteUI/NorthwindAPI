@@ -38,6 +38,7 @@ namespace NorthwindCRUD.Services
                 .Include(c => c.Address)
                 .Include(c => c.Orders)
                     .ThenInclude(o => o.OrderDetails)
+                .AsNoTracking()
                 .ToArray();
         }
 
