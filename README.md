@@ -1,6 +1,6 @@
 # Northwind API
 ## Swagger URL
-https://data-northwind.indigo.design/swagger/index.html 
+https://data-northwind.appbuilder.dev/swagger/index.html
 
 ## Highlights
 - Textbook REST example.

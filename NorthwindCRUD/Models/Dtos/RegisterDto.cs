@@ -6,7 +6,6 @@ namespace NorthwindCRUD.Models.Dtos
     public class RegisterDto : IUser
     {
         [Required]
-        [EmailAddress]
         public string Email { get; set; }
 
         [Required]

@@ -5,7 +5,6 @@ namespace NorthwindCRUD.Models.Dtos
 {
     public class CategoryDetailsDto : CategoryDto, ICategoryDetail
     {
-        [RegularExpression(@"^(http[s]?://.*\.(?:jpg|jpeg|png|gif))$", ErrorMessage = "Picture URL must start with http/s and end with .jpg, .jpeg, .png, or .gif.")]
         public string Picture { get; set; }
     }
 }
