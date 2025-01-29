@@ -54,6 +54,14 @@ namespace NorthwindCRUD.Services
                 .ToArray();
         }
 
+        public OrderDb[] GetOrdersWithDetailsByCustomerId(string id)
+        {
+            return GetOrdersWithDetailsQuery()
+                .Where(o => o.CustomerId == id)
+                .AsNoTracking()
+                .ToArray();
+        }
+
         public OrderDb[] GetOrdersByEmployeeId(int id)
         {
             return GetOrdersQuery()
@@ -190,6 +198,13 @@ namespace NorthwindCRUD.Services
         private IQueryable<OrderDb> GetOrdersQuery()
         {
             return this.dataContext.Orders
+                .Include(c => c.ShipAddress);
+        }
+
+        private IQueryable<OrderDb> GetOrdersWithDetailsQuery()
+        {
+            return this.dataContext.Orders
+                .Include(c => c.OrderDetails)
                 .Include(c => c.ShipAddress);
         }
     }

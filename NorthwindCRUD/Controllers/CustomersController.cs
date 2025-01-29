@@ -120,6 +120,21 @@
             }
         }
 
+        [HttpGet("WithOrders")]
+        public ActionResult<CustomerWithOrdersDto[]> GetAllCustomersWithOrders()
+        {
+            try
+            {
+                var customers = this.customerService.GetAllCustomersWithOrders();
+                return Ok(this.mapper.Map<CustomerDb[], CustomerWithOrdersDto[]>(customers));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<CustomerDto> GetById(string id)
         {
@@ -148,6 +163,21 @@
             {
                 var orders = this.orderService.GetOrdersByCustomerId(id);
                 return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("{id}/Orders/WithDetails")]
+        public ActionResult<OrderWithDetailsDto[]> GetOrdersAndOrderDetailsByCustomerId(string id)
+        {
+            try
+            {
+                var orders = this.orderService.GetOrdersWithDetailsByCustomerId(id);
+                return Ok(this.mapper.Map<OrderDb[], OrderWithDetailsDto[]>(orders));
             }
             catch (Exception error)
             {

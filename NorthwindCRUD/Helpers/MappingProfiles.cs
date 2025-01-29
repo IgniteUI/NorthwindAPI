@@ -18,6 +18,8 @@
             CreateMap<TerritoryDto, TerritoryDb>().ReverseMap();
             CreateMap<CustomerDto, CustomerDb>().ReverseMap();
             CreateMap<OrderDto, OrderDb>().ReverseMap();
+            CreateMap<CustomerWithOrdersDto, CustomerDb>().ReverseMap();
+            CreateMap<OrderWithDetailsDto, OrderDb>().ReverseMap();
             CreateMap<OrderDetailDto, OrderDetailDb>().ReverseMap();
             CreateMap<AddressDto, AddressDb>().ReverseMap();
             CreateMap<LoginDto, UserDb>().ReverseMap();

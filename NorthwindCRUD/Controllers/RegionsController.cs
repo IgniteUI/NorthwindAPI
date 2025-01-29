@@ -141,7 +141,7 @@
         }
 
         [HttpGet("{id}/Territories")]
-        public ActionResult<CustomerDto> GetTerritoryByRegionId(int id)
+        public ActionResult<TerritoryDto[]> GetTerritoryByRegionId(int id)
         {
             try
             {

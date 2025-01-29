@@ -253,7 +253,7 @@
   },
   {
     "productId": 22,
-    "productName": "Gustaf's Kn�ckebr�d",
+    "productName": "Gustaf's Knäckebröd",
     "supplierId": 9,
     "categoryId": 5,
     "quantityPerUnit": "24 - 500 g pkgs.",
@@ -265,7 +265,7 @@
   },
   {
     "productId": 23,
-    "productName": "Tunnbr�d",
+    "productName": "Tunnbröd",
     "supplierId": 9,
     "categoryId": 5,
     "quantityPerUnit": "12 - 250 g pkgs.",
@@ -277,7 +277,7 @@
   },
   {
     "productId": 24,
-    "productName": "Guaran� Fant�stica",
+    "productName": "Guaraná Fantástica",
     "supplierId": 10,
     "categoryId": 1,
     "quantityPerUnit": "12 - 355 ml cans",
@@ -289,7 +289,7 @@
   },
   {
     "productId": 25,
-    "productName": "NuNuCa Nu�-Nougat-Creme",
+    "productName": "NuNuCa Nuß-Nougat-Creme",
     "supplierId": 11,
     "categoryId": 3,
     "quantityPerUnit": "20 - 450 g glasses",
@@ -301,7 +301,7 @@
   },
   {
     "productId": 26,
-    "productName": "Gumb�r Gummib�rchen",
+    "productName": "Gumbär Gummibärchen",
     "supplierId": 11,
     "categoryId": 3,
     "quantityPerUnit": "100 - 250 g bags",
@@ -325,7 +325,7 @@
   },
   {
     "productId": 28,
-    "productName": "R�ssle Sauerkraut",
+    "productName": "Rössle Sauerkraut",
     "supplierId": 12,
     "categoryId": 7,
     "quantityPerUnit": "25 - 825 g cans",
@@ -337,7 +337,7 @@
   },
   {
     "productId": 29,
-    "productName": "Th�ringer Rostbratwurst",
+    "productName": "Thüringer Rostbratwurst",
     "supplierId": 12,
     "categoryId": 6,
     "quantityPerUnit": "50 bags x 30 sausgs.",
@@ -445,7 +445,7 @@
   },
   {
     "productId": 38,
-    "productName": "C�te de Blaye",
+    "productName": "Côte de Blaye",
     "supplierId": 18,
     "categoryId": 1,
     "quantityPerUnit": "12 - 75 cl bottles",
@@ -637,7 +637,7 @@
   },
   {
     "productId": 54,
-    "productName": "Tourti�re",
+    "productName": "Tourtière",
     "supplierId": 25,
     "categoryId": 6,
     "quantityPerUnit": "16 pies",
@@ -649,7 +649,7 @@
   },
   {
     "productId": 55,
-    "productName": "P�t� chinois",
+    "productName": "Pâté chinois",
     "supplierId": 25,
     "categoryId": 6,
     "quantityPerUnit": "24 boxes x 2 pies",
@@ -721,7 +721,7 @@
   },
   {
     "productId": 61,
-    "productName": "Sirop d'�rable",
+    "productName": "Sirop d'érable",
     "supplierId": 29,
     "categoryId": 2,
     "quantityPerUnit": "24 - 500 ml bottles",
@@ -757,7 +757,7 @@
   },
   {
     "productId": 64,
-    "productName": "Wimmers gute Semmelkn�del",
+    "productName": "Wimmers gute Semmelknödel",
     "supplierId": 12,
     "categoryId": 5,
     "quantityPerUnit": "20 bags x 4 pieces",
@@ -865,7 +865,7 @@
   },
   {
     "productId": 73,
-    "productName": "R�d Kaviar",
+    "productName": "Röd Kaviar",
     "supplierId": 17,
     "categoryId": 8,
     "quantityPerUnit": "24 - 150 g jars",
@@ -889,7 +889,7 @@
   },
   {
     "productId": 75,
-    "productName": "Rh�nbr�u Klosterbier",
+    "productName": "Rhönbräu Klosterbier",
     "supplierId": 12,
     "categoryId": 1,
     "quantityPerUnit": "24 - 0.5 l bottles",
@@ -901,7 +901,7 @@
   },
   {
     "productId": 76,
-    "productName": "Lakkalik��ri",
+    "productName": "Lakkalikööri",
     "supplierId": 23,
     "categoryId": 1,
     "quantityPerUnit": "500 ml",
@@ -913,7 +913,7 @@
   },
   {
     "productId": 77,
-    "productName": "Original Frankfurter gr�ne So�e",
+    "productName": "Original Frankfurter grüne Soße",
     "supplierId": 12,
     "categoryId": 2,
     "quantityPerUnit": "12 boxes",
