@@ -15,8 +15,10 @@ namespace NorthwindCRUD.Models.Dtos
 
         public int ShipperId { get; set; }
 
+        [DataType(DataType.Date, ErrorMessage = "OrderDate must be a valid date.")]
         public string OrderDate { get; set; }
 
+        [DataType(DataType.Date, ErrorMessage = "RequiredDate must be a valid date.")]
         public string RequiredDate { get; set; }
 
         public Shipping? ShipVia { get; set; }
