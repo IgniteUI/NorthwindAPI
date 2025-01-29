@@ -22,9 +22,11 @@ namespace NorthwindCRUD.Models.Dtos
         [SwaggerSchema("Title used in salutations")]
         public string TitleOfCourtesy { get; set; }
 
+        [DataType(DataType.Date, ErrorMessage = "BirthDate must be a valid date.")]
         [SwaggerSchema("Employee's birth date")]
         public string BirthDate { get; set; }
 
+        [DataType(DataType.Date, ErrorMessage = "HireDate must be a valid date.")]
         [SwaggerSchema("Employee's hire date")]
         public string HireDate { get; set; }
 
