@@ -22,7 +22,8 @@ namespace NorthwindCRUD.Services
 
         public IQueryable<CustomerDb> GetAllAsQueryable()
         {
-            return this.dataContext.Customers;
+            return this.dataContext.Customers
+                .Include(c => c.Address);
         }
 
         public CustomerDb? GetById(string id)
