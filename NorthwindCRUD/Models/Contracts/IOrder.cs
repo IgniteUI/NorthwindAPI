@@ -7,11 +7,11 @@ namespace NorthwindCRUD.Models.Contracts
     {
         int OrderId { get; set; }
 
-        string CustomerId { get; set; }
+        string? CustomerId { get; set; }
 
         int EmployeeId { get; set; }
 
-        int ShipperId { get; set; }
+        int? ShipperId { get; set; }
 
         string OrderDate { get; set; }
 
