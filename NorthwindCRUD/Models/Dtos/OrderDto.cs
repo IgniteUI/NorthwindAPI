@@ -9,11 +9,11 @@ namespace NorthwindCRUD.Models.Dtos
         public int OrderId { get; set; }
 
         [Required(ErrorMessage = "CustomerId is required.")]
-        public string CustomerId { get; set; }
+        public string? CustomerId { get; set; }
 
         public int EmployeeId { get; set; }
 
-        public int ShipperId { get; set; }
+        public int? ShipperId { get; set; }
 
         [DataType(DataType.Date, ErrorMessage = "OrderDate must be a valid date.")]
         public string OrderDate { get; set; }
