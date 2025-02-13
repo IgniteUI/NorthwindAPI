@@ -128,6 +128,7 @@ namespace NorthwindCRUD
             builder.Services.AddTransient<TerritoryService>();
             builder.Services.AddTransient<SalesService>();
             builder.Services.AddTransient<PagingService>();
+            builder.Services.AddTransient<AssetService>();
 
             var app = builder.Build();
 

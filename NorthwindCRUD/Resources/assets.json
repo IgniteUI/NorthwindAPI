@@ -1,0 +1,402 @@
+[
+    {
+      "ticker": "AMD",
+      "holdingName": "Advanced Micro Devices Inc.",
+      "positions": 24,
+      "holdingPeriod": 157,
+      "currentPrice": 130.36,
+      "boughtPrice": 75.54
+    },
+    {
+      "ticker": "ETH",
+      "holdingName": "Ethereum",
+      "positions": 3,
+      "holdingPeriod": 120,
+      "currentPrice": 3568,
+      "boughtPrice": 2543
+    },
+    {
+      "ticker": "ABNB",
+      "holdingName": "Airbnb Inc.",
+      "positions": 23,
+      "holdingPeriod": 540,
+      "currentPrice": 130.66,
+      "boughtPrice": 56.32
+    },
+    {
+      "ticker": "BABA",
+      "holdingName": "Alibaba Group Holding Limited",
+      "positions": 12,
+      "holdingPeriod": 91,
+      "currentPrice": 81.8,
+      "boughtPrice": 107.72
+    },
+    {
+      "ticker": "BTC",
+      "holdingName": "Bitcoin",
+      "positions": 0.2,
+      "holdingPeriod": 323,
+      "currentPrice": 95294,
+      "boughtPrice": 60231
+    },
+    {
+      "ticker": "BKNG",
+      "holdingName": "Booking Holdings Inc",
+      "positions": 0.2,
+      "holdingPeriod": 17,
+      "currentPrice": 4932,
+      "boughtPrice": 4378.21
+    },
+    {
+      "ticker": "COST",
+      "holdingName": "Costco Wholesale Corporation",
+      "positions": 10,
+      "holdingPeriod": 32,
+      "currentPrice": 911.4,
+      "boughtPrice": 890.12
+    },
+    {
+      "ticker": "DPZ",
+      "holdingName": "Dominos Pizza Inc",
+      "positions": 21,
+      "holdingPeriod": 54,
+      "currentPrice": 19.5,
+      "boughtPrice": 24.1
+    },
+    {
+      "ticker": "FDX",
+      "holdingName": "FedEx Corporation",
+      "positions": 2,
+      "holdingPeriod": 72,
+      "currentPrice": 286.95,
+      "boughtPrice": 269.05
+    },
+    {
+      "ticker": "F",
+      "holdingName": "Ford Motor Company",
+      "positions": 5.6,
+      "holdingPeriod": 431,
+      "currentPrice": 10.41,
+      "boughtPrice": 15.21
+    },
+    {
+      "ticker": "GM",
+      "holdingName": "General Motors Company",
+      "positions": 3.1,
+      "holdingPeriod": 652,
+      "currentPrice": 53.25,
+      "boughtPrice": 32.26
+    },
+    {
+      "ticker": "AAPL",
+      "holdingName": "Apple Inc.",
+      "positions": 1.1,
+      "holdingPeriod": 632,
+      "currentPrice": 223.35,
+      "boughtPrice": 154.21
+    },
+    {
+      "ticker": "MSFT",
+      "holdingName": "Microsoft Corp.",
+      "positions": 0.7,
+      "holdingPeriod": 342,
+      "currentPrice": 401.2,
+      "boughtPrice": 430
+    },
+    {
+      "ticker": "GOOGL",
+      "holdingName": "Alphabet Inc.",
+      "positions": 1.3,
+      "holdingPeriod": 376,
+      "currentPrice": 160,
+      "boughtPrice": 174
+    },
+    {
+      "ticker": "AMZN",
+      "holdingName": "Amazon.com Inc.",
+      "positions": 4.3,
+      "holdingPeriod": 352,
+      "currentPrice": 205.86,
+      "boughtPrice": 272.34
+    },
+    {
+      "ticker": "JPM",
+      "holdingName": "JPMorgan Chase and Co",
+      "positions": 0.3,
+      "holdingPeriod": 13,
+      "currentPrice": 238.85,
+      "boughtPrice": 234.11
+    },
+    {
+      "ticker": "TSLA",
+      "holdingName": "Tesla Inc.",
+      "positions": 4.8,
+      "holdingPeriod": 452,
+      "currentPrice": 332.89,
+      "boughtPrice": 300.21
+    },
+    {
+      "ticker": "NVDA",
+      "holdingName": "NVtickerIA Corp.",
+      "positions": 1.2,
+      "holdingPeriod": 237,
+      "currentPrice": 136.92,
+      "boughtPrice": 100
+    },
+    {
+      "ticker": "K",
+      "holdingName": "Kellogg Company",
+      "positions": 0.2,
+      "holdingPeriod": 2,
+      "currentPrice": 76.66,
+      "boughtPrice": 78.23
+    },
+    {
+      "ticker": "V",
+      "holdingName": "Visa Inc.",
+      "positions": 0.08,
+      "holdingPeriod": 365,
+      "currentPrice": 307.9,
+      "boughtPrice": 337.6
+    },
+    {
+      "ticker": "JNJ",
+      "holdingName": "Johnson & Johnson",
+      "positions": 2.1,
+      "holdingPeriod": 420,
+      "currentPrice": 155.78,
+      "boughtPrice": 171.68
+    },
+    {
+      "ticker": "PG",
+      "holdingName": "Procter & Gamble Co.",
+      "positions": 0.9,
+      "holdingPeriod": 150,
+      "currentPrice": 156.89,
+      "boughtPrice": 166.9
+    },
+    {
+      "ticker": "WMT",
+      "holdingName": "Walmart Inc.",
+      "positions": 0.36,
+      "holdingPeriod": 250,
+      "currentPrice": 145.67,
+      "boughtPrice": 120
+    },
+    {
+      "ticker": "HD",
+      "holdingName": "The Home Depot Inc.",
+      "positions": 0.34,
+      "holdingPeriod": 290,
+      "currentPrice": 428.67,
+      "boughtPrice": 451.31
+    },
+    {
+      "ticker": "KO",
+      "holdingName": "Coca-Cola Co.",
+      "positions": 0.4,
+      "holdingPeriod": 180,
+      "currentPrice": 56.79,
+      "boughtPrice": 86.46
+    },
+    {
+      "ticker": "PEP",
+      "holdingName": "PepsiCo Inc.",
+      "positions": 0.2,
+      "holdingPeriod": 430,
+      "currentPrice": 184.39,
+      "boughtPrice": 190.15
+    },
+    {
+      "ticker": "DIS",
+      "holdingName": "Walt Disney Co.",
+      "positions": 0.19,
+      "holdingPeriod": 380,
+      "currentPrice": 177.99,
+      "boughtPrice": 222.56
+    },
+    {
+      "ticker": "PFE",
+      "holdingName": "Pfizer Inc.",
+      "positions": 0.1,
+      "holdingPeriod": 180,
+      "currentPrice": 39.81,
+      "boughtPrice": 41.32
+    },
+    {
+      "ticker": "XOM",
+      "holdingName": "Exxon Mobil Corp.",
+      "positions": 3.4,
+      "holdingPeriod": 400,
+      "currentPrice": 114.36,
+      "boughtPrice": 143.81
+    },
+    {
+      "ticker": "CVX",
+      "holdingName": "Chevron Corp.",
+      "positions": 0.4,
+      "holdingPeriod": 320,
+      "currentPrice": 179.63,
+      "boughtPrice": 151.82
+    },
+    {
+      "ticker": "MCD",
+      "holdingName": "McDonalds Corporation",
+      "positions": 0.31,
+      "holdingPeriod": 589,
+      "currentPrice": 281.25,
+      "boughtPrice": 121.21
+    },
+    {
+      "ticker": "INTC",
+      "holdingName": "Intel Corp.",
+      "positions": 0.27,
+      "holdingPeriod": 342,
+      "currentPrice": 23.65,
+      "boughtPrice": 85
+    },
+    {
+      "ticker": "NFLX",
+      "holdingName": "Netflix Inc.",
+      "positions": 0.12,
+      "holdingPeriod": 289,
+      "currentPrice": 877.34,
+      "boughtPrice": 45
+    },
+    {
+      "ticker": "ADBE",
+      "holdingName": "Adobe Inc.",
+      "positions": 0.34,
+      "holdingPeriod": 412,
+      "currentPrice": 513.68,
+      "boughtPrice": 78
+    },
+    {
+      "ticker": "CRM",
+      "holdingName": "Salesforce Inc.",
+      "positions": 0.9,
+      "holdingPeriod": 198,
+      "currentPrice": 341.45,
+      "boughtPrice": 56
+    },
+    {
+      "ticker": "BA",
+      "holdingName": "Boeing Co",
+      "positions": 0.47,
+      "holdingPeriod": 276,
+      "currentPrice": 152.4,
+      "boughtPrice": 92
+    },
+    {
+      "ticker": "IBM",
+      "holdingName": "IBM Corp.",
+      "positions": 0.3,
+      "holdingPeriod": 365,
+      "currentPrice": 222.97,
+      "boughtPrice": 45
+    },
+    {
+      "ticker": "MDLZ",
+      "holdingName": "Mondelez International Inc",
+      "positions": 0.95,
+      "holdingPeriod": 2,
+      "currentPrice": 64.4,
+      "boughtPrice": 114.4
+    },
+    {
+      "ticker": "MS",
+      "holdingName": "Morgan Stanley",
+      "positions": 0.67,
+      "holdingPeriod": 13,
+      "currentPrice": 131.2,
+      "boughtPrice": 181.2
+    },
+    {
+      "ticker": "SPOT",
+      "holdingName": "Spotify Technology SA",
+      "positions": 0.35,
+      "holdingPeriod": 41,
+      "currentPrice": 475.87,
+      "boughtPrice": 525.87
+    },
+    {
+      "ticker": "MMM",
+      "holdingName": "3M Co.",
+      "positions": 1.5,
+      "holdingPeriod": 123,
+      "currentPrice": 130.32,
+      "boughtPrice": 150.32
+    },
+    {
+      "ticker": "CSCO",
+      "holdingName": "Cisco Systems Inc.",
+      "positions": 0.48,
+      "holdingPeriod": 456,
+      "currentPrice": 58.74,
+      "boughtPrice": 98.74
+    },
+    {
+      "ticker": "SBUX",
+      "holdingName": "Starbucks Corp.",
+      "positions": 0.22,
+      "holdingPeriod": 234,
+      "currentPrice": 101.51,
+      "boughtPrice": 141.51
+    },
+    {
+      "ticker": "AXP",
+      "holdingName": "American Express Co.",
+      "positions": 0.33,
+      "holdingPeriod": 389,
+      "currentPrice": 304.28,
+      "boughtPrice": 344.28
+    },
+    {
+      "ticker": "GE",
+      "holdingName": "General Electric Co.",
+      "positions": 0.7,
+      "holdingPeriod": 178,
+      "currentPrice": 181.15,
+      "boughtPrice": 221.15
+    },
+    {
+      "ticker": "UBER",
+      "holdingName": "Uber Technologies Inc",
+      "positions": 0.23,
+      "holdingPeriod": 487,
+      "currentPrice": 71.51,
+      "boughtPrice": 56.51
+    },
+    {
+      "ticker": "ZM",
+      "holdingName": "Zoom Vtickereo Communications Inc",
+      "positions": 0.11,
+      "holdingPeriod": 276,
+      "currentPrice": 89.03,
+      "boughtPrice": 54.03
+    },
+    {
+      "ticker": "CAT",
+      "holdingName": "Caterpillar Inc.",
+      "positions": 0.19,
+      "holdingPeriod": 87,
+      "currentPrice": 406.35,
+      "boughtPrice": 446.35
+    },
+    {
+      "ticker": "HON",
+      "holdingName": "Honeywell International Inc.",
+      "positions": 0.22,
+      "holdingPeriod": 276,
+      "currentPrice": 229.64,
+      "boughtPrice": 269.64
+    },
+    {
+      "ticker": "PYPL",
+      "holdingName": "PayPal Holdings Inc.",
+      "positions": 0.37,
+      "holdingPeriod": 412,
+      "currentPrice": 86.57,
+      "boughtPrice": 126.57
+    }
+  ]

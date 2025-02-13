@@ -25,6 +25,7 @@
                 SeedOrders(dbContext);
                 SeedOrderDetails(dbContext);
                 SeedEmployeesTerritories(dbContext);
+                SeedAssets(dbContext);
 
                 transaction.Commit();
             }
@@ -248,6 +249,21 @@
                 if (parsedCategories != null)
                 {
                     dbContext.Categories.AddRange(parsedCategories);
+                    dbContext.SaveChanges();
+                }
+            }
+        }
+
+        private static void SeedAssets(DataContext dbContext)
+        {
+            if (!dbContext.Assets.Any())
+            {
+                var assetsData = File.ReadAllText("./Resources/assets.json");
+                var parsedAssets = JsonConvert.DeserializeObject<AssetDb[]>(assetsData);
+
+                if (parsedAssets != null)
+                {
+                    dbContext.Assets.AddRange(parsedAssets);
                     dbContext.SaveChanges();
                 }
             }

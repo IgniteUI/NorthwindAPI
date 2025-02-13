@@ -12,6 +12,8 @@
 
         public DbSet<AddressDb> Addresses { get; set; }
 
+        public DbSet<AssetDb> Assets { get; set; }
+
         public DbSet<CategoryDb> Categories { get; set; }
 
         public DbSet<CustomerDb> Customers { get; set; }
