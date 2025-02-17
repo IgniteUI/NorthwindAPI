@@ -26,6 +26,8 @@
                 SeedOrderDetails(dbContext);
                 SeedEmployeesTerritories(dbContext);
                 SeedAssets(dbContext);
+                SeedSales(dbContext);
+                SeedVehicles(dbContext);
 
                 transaction.Commit();
             }
@@ -264,6 +266,49 @@
                 if (parsedAssets != null)
                 {
                     dbContext.Assets.AddRange(parsedAssets);
+                    dbContext.SaveChanges();
+                }
+            }
+        }
+
+        private static void SeedSales(DataContext dbContext)
+        {
+            if (!dbContext.BrandSales.Any())
+            {
+                var salesData = File.ReadAllText("./Resources/brand-sales.json");
+                var parsedSales = JsonConvert.DeserializeObject<BrandSaleDb[]>(salesData);
+
+                if (parsedSales != null)
+                {
+                    dbContext.BrandSales.AddRange(parsedSales);
+                    dbContext.SaveChanges();
+                }
+            }
+        }
+
+        private static void SeedVehicles(DataContext dbContext)
+        {
+            if (!dbContext.Vehicles.Any())
+            {
+                var vehiclesData = File.ReadAllText("./Resources/vehicles.json");
+                var parsedVehicles = JsonConvert.DeserializeObject<VehicleDb[]>(vehiclesData);
+
+                if (parsedVehicles != null)
+                {
+                    foreach (var vehicle in parsedVehicles)
+                    {
+                        var existingVehicle = dbContext.Vehicles.Find(vehicle.VehicleId);
+                        if (existingVehicle == null)
+                        {
+                            if (dbContext.VehicleDetails.FirstOrDefault(vd => vd.Vehicle.VehicleId == vehicle.VehicleId) == null)
+                            {
+                                dbContext.VehicleDetails.Add(vehicle.Details);
+                            }
+
+                            dbContext.Vehicles.Add(vehicle);
+                        }
+                    }
+
                     dbContext.SaveChanges();
                 }
             }

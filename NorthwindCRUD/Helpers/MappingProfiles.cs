@@ -27,6 +27,9 @@
             CreateMap<EmployeeDb, EmployeeDto>().ReverseMap();
             CreateMap<EmployeeTerritoryDto, EmployeeTerritoryDb>().ReverseMap();
             CreateMap<AssetDto, AssetDb>().ReverseMap();
+            CreateMap<BrandSaleDto, BrandSaleDb>().ReverseMap();
+            CreateMap<VehicleDto, VehicleDb>().ReverseMap();
+            CreateMap<VehicleDetailDto, VehicleDetailDb>().ReverseMap();
         }
     }
 }

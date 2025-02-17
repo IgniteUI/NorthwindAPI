@@ -14,6 +14,8 @@
 
         public DbSet<AssetDb> Assets { get; set; }
 
+        public DbSet<BrandSaleDb> BrandSales { get; set; }
+
         public DbSet<CategoryDb> Categories { get; set; }
 
         public DbSet<CustomerDb> Customers { get; set; }
@@ -37,6 +39,10 @@
         public DbSet<TerritoryDb> Territories { get; set; }
 
         public DbSet<EmployeeTerritoryDb> EmployeesTerritories { get; set; }
+
+        public DbSet<VehicleDetailDb> VehicleDetails { get; set; }
+
+        public DbSet<VehicleDb> Vehicles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -98,6 +104,16 @@
             modelBuilder.Entity<EmployeeTerritoryDb>()
                 .HasOne(et => et.Territory)
                 .WithMany(t => t.EmployeesTerritories);
+
+            modelBuilder.Entity<VehicleDetailDb>()
+                .Property(p => p.DetailId)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<VehicleDb>()
+                .HasOne(v => v.Details)
+                .WithOne(vd => vd.Vehicle)
+                .HasForeignKey<VehicleDetailDb>(vd => vd.VehicleId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             //Composite Keys
             modelBuilder.Entity<EmployeeTerritoryDb>()
