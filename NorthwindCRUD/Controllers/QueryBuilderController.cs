@@ -48,7 +48,8 @@ public class QueryBuilderController : ControllerBase
     [Produces("application/json")]
     public ActionResult<QueryBuilderResult> ExecuteQuery(Query query)
     {
-        logger.LogInformation("Executing query for entity: {Entity}", query.Entity);
+        var sanitizedEntity = query.Entity.Replace("\r", "").Replace("\n", "");
+        logger.LogInformation("Executing query for entity: {Entity}", sanitizedEntity);
         var t = query.Entity.ToLower(CultureInfo.InvariantCulture);
         return Ok(new QueryBuilderResult
         {
