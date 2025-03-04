@@ -22,7 +22,8 @@ namespace NorthwindCRUD.Services
 
         public IQueryable<CustomerDb> GetAllAsQueryable()
         {
-            return this.dataContext.Customers;
+            return this.dataContext.Customers
+                .Include(c => c.Address);
         }
 
         public CustomerDb? GetById(string id)
@@ -30,6 +31,16 @@ namespace NorthwindCRUD.Services
             return this.dataContext.Customers
                 .Include(c => c.Address)
                 .FirstOrDefault(c => c.CustomerId == id);
+        }
+
+        public CustomerDb[] GetAllCustomersWithOrders()
+        {
+            return this.dataContext.Customers
+                .Include(c => c.Address)
+                .Include(c => c.Orders)
+                    .ThenInclude(o => o.OrderDetails)
+                .AsNoTracking()
+                .ToArray();
         }
 
         public CustomerDb Create(CustomerDb model)

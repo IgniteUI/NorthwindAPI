@@ -6,7 +6,7 @@ using NorthwindCRUD.Helpers;
 
 namespace NorthwindCRUD.Providers
 {
-    public class DbContextConfigurationProvider
+    public class DbContextConfigurationProvider : IDisposable
     {
         private const string DefaultTenantId = "default-tenant";
         private const string TenantHeaderKey = "X-Tenant-ID";
@@ -15,6 +15,8 @@ namespace NorthwindCRUD.Providers
         private readonly IHttpContextAccessor context;
         private readonly IMemoryCache memoryCache;
         private readonly IConfiguration configuration;
+
+        private SqliteConnection? currentRequestConnection;
 
         public DbContextConfigurationProvider(IHttpContextAccessor context, IMemoryCache memoryCache, IConfiguration configuration)
         {
@@ -34,23 +36,39 @@ namespace NorthwindCRUD.Providers
             else if (dbProvider == "SQLite")
             {
                 var tenantId = GetTenantId();
+                var connectionString = this.GetSqlLiteConnectionString(tenantId);
 
                 var cacheKey = string.Format(CultureInfo.InvariantCulture, DatabaseConnectionCacheKey, tenantId);
 
                 if (!memoryCache.TryGetValue(cacheKey, out SqliteConnection connection))
                 {
-                    var connectionString = this.GetSqlLiteConnectionString(tenantId);
+                    // Create a cached connection to seed the database and keep the data alive
                     connection = new SqliteConnection(connectionString);
                     memoryCache.Set(cacheKey, connection, GetCacheConnectionEntryOptions());
+                    connection.Open();
+
+                    options.UseSqlite(connection).EnableSensitiveDataLogging();
+                    SeedDb(options);
                 }
 
-                // For SQLite in memory to be shared across multiple EF calls, we need to maintain a separate open connection.
-                // see post https://stackoverflow.com/questions/56319638/entityframeworkcore-sqlite-in-memory-db-tables-are-not-created
-                connection.Open();
+                // Create a new connection per request to avoid threading issues
+                currentRequestConnection = new SqliteConnection(connectionString);
+                currentRequestConnection.Open();
+                options.UseSqlite(currentRequestConnection).EnableSensitiveDataLogging();
+            }
+        }
 
-                options.UseSqlite(connection).EnableSensitiveDataLogging();
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-                SeedDb(options);
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                currentRequestConnection?.Close();
             }
         }
 

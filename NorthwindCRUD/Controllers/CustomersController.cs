@@ -1,6 +1,5 @@
 ﻿namespace NorthwindCRUD.Controllers
 {
-    using System.ComponentModel.DataAnnotations;
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -51,8 +50,8 @@
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetCustomersWithSkip")]
         public ActionResult<PagedResultDto<CustomerDto>> GetCustomersWithSkip(
-            [FromQuery][Attributes.SwaggerSkipParameter][Range(0, int.MaxValue)] int? skip,
-            [FromQuery][Attributes.SwaggerTopParameter][Range(0, int.MaxValue)] int? top,
+            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter] int? top,
             [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
@@ -121,6 +120,21 @@
             }
         }
 
+        [HttpGet("WithOrders")]
+        public ActionResult<CustomerWithOrdersDto[]> GetAllCustomersWithOrders()
+        {
+            try
+            {
+                var customers = this.customerService.GetAllCustomersWithOrders();
+                return Ok(this.mapper.Map<CustomerDb[], CustomerWithOrdersDto[]>(customers));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<CustomerDto> GetById(string id)
         {
@@ -149,6 +163,21 @@
             {
                 var orders = this.orderService.GetOrdersByCustomerId(id);
                 return Ok(this.mapper.Map<OrderDb[], OrderDto[]>(orders));
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("{id}/Orders/WithDetails")]
+        public ActionResult<OrderWithDetailsDto[]> GetOrdersAndOrderDetailsByCustomerId(string id)
+        {
+            try
+            {
+                var orders = this.orderService.GetOrdersWithDetailsByCustomerId(id);
+                return Ok(this.mapper.Map<OrderDb[], OrderWithDetailsDto[]>(orders));
             }
             catch (Exception error)
             {

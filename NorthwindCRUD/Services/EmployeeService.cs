@@ -22,7 +22,8 @@
 
         public IQueryable<EmployeeDb> GetAllAsQueryable()
         {
-            return this.dataContext.Employees;
+            return this.dataContext.Employees
+                .Include(c => c.Address);
         }
 
         public EmployeeDb? GetById(int id)
