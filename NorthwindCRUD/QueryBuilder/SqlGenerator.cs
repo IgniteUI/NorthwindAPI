@@ -47,6 +47,7 @@ public static class SqlGenerator
             "notEmpty"             => $"{field} <> ''",
             "equals"               => $"{field} = {value}",
             "doesNotEqual"         => $"{field} <> {value}",
+            "in"                   => $"{field} IN ({value})",
             "inQuery"              => $"{field} IN ({subquery})",
             "notInQuery"           => $"{field} NOT IN ({subquery})",
             "contains"             => $"{field} LIKE '%{filter.SearchVal}%'",
@@ -67,10 +68,14 @@ public static class SqlGenerator
             "thisYear"             => $"{field} LIKE '{DateTime.Now.Date.ToString("yyyy", CultureInfo.InvariantCulture)}%'",
             "lastYear"             => $"{field} LIKE '{DateTime.Now.Date.AddYears(-1).ToString("yyyy", CultureInfo.InvariantCulture)}%'",
             "nextYear"             => $"{field} LIKE '{DateTime.Now.Date.AddYears(1).ToString("yyyy", CultureInfo.InvariantCulture)}%'",
+            "at"                   => $"{field} = {value}",
+            "not_at"               => $"{field} <> {value}",
+            "at_before"            => $"{field} < {value}",
+            "at_after"             => $"{field} > {value}",
             "all"                  => "TRUE",
             "true"                 => $"{field} = TRUE",
             "false"                => $"{field} = FALSE",
-            _                      => throw new NotImplementedException($"Condition '{condition}' is not implemented"),
+            _                      => $"{field} {condition} {value}",
         };
     }
 }
