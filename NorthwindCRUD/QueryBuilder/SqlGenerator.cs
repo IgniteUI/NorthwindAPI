@@ -1,6 +1,7 @@
 ﻿namespace QueryBuilder;
 
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class SqlGenerator
@@ -46,8 +47,8 @@ public static class SqlGenerator
             "notEmpty"             => $"{field} <> ''",
             "equals"               => $"{field} = {value}",
             "doesNotEqual"         => $"{field} <> {value}",
-            "in"                   => $"{field} IN ({subquery})",
-            "notIn"                => $"{field} NOT IN ({subquery})",
+            "inQuery"              => $"{field} IN ({subquery})",
+            "notInQuery"           => $"{field} NOT IN ({subquery})",
             "contains"             => $"{field} LIKE '%{filter.SearchVal}%'",
             "doesNotContain"       => $"{field} NOT LIKE '%{filter.SearchVal}%'",
             "startsWith"           => $"{field} LIKE '{filter.SearchVal}%'",
@@ -56,7 +57,17 @@ public static class SqlGenerator
             "lessThan"             => $"{field} < {value}",
             "greaterThanOrEqualTo" => $"{field} >= {value}",
             "lessThanOrEqualTo"    => $"{field} <= {value}",
-            "all"                  => throw new NotImplementedException("Not implemented"),
+            "before"               => $"{field} < {value}",
+            "after"                => $"{field} > {value}",
+            "today"                => $"{field} LIKE '{DateTime.Now.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}%'",
+            "yesterday"            => $"{field} LIKE '{DateTime.Now.Date.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}%'",
+            "thisMonth"            => $"{field} LIKE '{DateTime.Now.Date.ToString("yyyy-MM", CultureInfo.InvariantCulture)}%'",
+            "lastMonth"            => $"{field} LIKE '{DateTime.Now.Date.AddMonths(-1).ToString("yyyy-MM", CultureInfo.InvariantCulture)}%'",
+            "nextMonth"            => $"{field} LIKE '{DateTime.Now.Date.AddMonths(1).ToString("yyyy-MM", CultureInfo.InvariantCulture)}%'",
+            "thisYear"             => $"{field} LIKE '{DateTime.Now.Date.ToString("yyyy", CultureInfo.InvariantCulture)}%'",
+            "lastYear"             => $"{field} LIKE '{DateTime.Now.Date.AddYears(-1).ToString("yyyy", CultureInfo.InvariantCulture)}%'",
+            "nextYear"             => $"{field} LIKE '{DateTime.Now.Date.AddYears(1).ToString("yyyy", CultureInfo.InvariantCulture)}%'",
+            "all"                  => "TRUE",
             "true"                 => $"{field} = TRUE",
             "false"                => $"{field} = FALSE",
             _                      => throw new NotImplementedException($"Condition '{condition}' is not implemented"),
