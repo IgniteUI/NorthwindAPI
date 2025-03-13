@@ -79,7 +79,7 @@ public static class QueryExecutor
             var targetType = property.PropertyType;
             var searchValue = GetSearchValue(filter.SearchVal, targetType);
             var emptyValue = GetEmptyValue(targetType);
-            var now = DateTime.Now.Date;
+            var today = DateTime.Now.Date;
             Expression condition = filter.Condition.Name switch
             {
                 "null"                  => targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(false),
@@ -100,14 +100,14 @@ public static class QueryExecutor
                 "lessThanOrEqualTo"     => Expression.LessThanOrEqual(field, searchValue),
                 "before"                => Expression.LessThan(CallCompare(field, searchValue), Expression.Constant(0)),
                 "after"                 => Expression.GreaterThan(CallCompare(field, searchValue), Expression.Constant(0)),
-                "today"                 => CallStartsWith(field, now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
-                "yesterday"             => CallStartsWith(field, now.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
-                "thisMonth"             => CallStartsWith(field, now.ToString("yyyy-MM", CultureInfo.InvariantCulture)),
-                "lastMonth"             => CallStartsWith(field, now.AddMonths(-1).ToString("yyyy-MM", CultureInfo.InvariantCulture)),
-                "nextMonth"             => CallStartsWith(field, now.AddMonths(1).ToString("yyyy-MM", CultureInfo.InvariantCulture)),
-                "thisYear"              => CallStartsWith(field, now.ToString("yyyy", CultureInfo.InvariantCulture)),
-                "lastYear"              => CallStartsWith(field, now.AddYears(-1).ToString("yyyy", CultureInfo.InvariantCulture)),
-                "nextYear"              => CallStartsWith(field, now.AddYears(1).ToString("yyyy", CultureInfo.InvariantCulture)),
+                "today"                 => CallStartsWith(field, today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
+                "yesterday"             => CallStartsWith(field, today.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
+                "thisMonth"             => CallStartsWith(field, today.ToString("yyyy-MM", CultureInfo.InvariantCulture)),
+                "lastMonth"             => CallStartsWith(field, today.AddMonths(-1).ToString("yyyy-MM", CultureInfo.InvariantCulture)),
+                "nextMonth"             => CallStartsWith(field, today.AddMonths(1).ToString("yyyy-MM", CultureInfo.InvariantCulture)),
+                "thisYear"              => CallStartsWith(field, today.ToString("yyyy", CultureInfo.InvariantCulture)),
+                "lastYear"              => CallStartsWith(field, today.AddYears(-1).ToString("yyyy", CultureInfo.InvariantCulture)),
+                "nextYear"              => CallStartsWith(field, today.AddYears(1).ToString("yyyy", CultureInfo.InvariantCulture)),
                 "at"                    => Expression.Equal(field, searchValue),
                 "not_at"                => Expression.NotEqual(field, searchValue),
                 "at_before"             => Expression.LessThan(CallCompare(field, searchValue), Expression.Constant(0)),
@@ -150,9 +150,9 @@ public static class QueryExecutor
         return Expression.Call(field, startsWithMethod!, searchValue);
     }
 
-    private static Expression CallStartsWith(Expression field, string dateLiteral)
+    private static Expression CallStartsWith(Expression field, string literal)
     {
-        return CallStartsWith(field, Expression.Constant(dateLiteral));
+        return CallStartsWith(field, Expression.Constant(literal));
     }
 
     private static Expression CallEndsWith(Expression field, Expression searchValue)
@@ -161,9 +161,9 @@ public static class QueryExecutor
         return Expression.Call(field, endsWithMethod!, searchValue);
     }
 
-    private static Expression CallEndsWith(Expression field, string dateLiteral)
+    private static Expression CallEndsWith(Expression field, string literal)
     {
-        return CallEndsWith(field, Expression.Constant(dateLiteral));
+        return CallEndsWith(field, Expression.Constant(literal));
     }
 
     private static Expression CallCompare(Expression field, Expression searchValue)
