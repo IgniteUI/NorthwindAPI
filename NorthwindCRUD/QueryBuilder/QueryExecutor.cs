@@ -113,8 +113,8 @@ public static class QueryExecutor
                 "at_before"             => Expression.LessThan(CallCompare(field, searchValue), Expression.Constant(0)),
                 "at_after"              => Expression.GreaterThan(CallCompare(field, searchValue), Expression.Constant(0)),
                 "all"                   => Expression.Constant(true),
-                "true"                  => Expression.IsTrue(field),
-                "false"                 => Expression.IsFalse(field),
+                "true"                  => Expression.Equal(field, Expression.Constant(true)),
+                "false"                 => Expression.Equal(field, Expression.Constant(false)),
                 _                       => throw new NotImplementedException("Not implemented"),
             };
             if (filter.IgnoreCase.Value && field.Type == typeof(string))
