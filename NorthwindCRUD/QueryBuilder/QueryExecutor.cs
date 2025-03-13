@@ -13,7 +13,6 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 /// <summary>
 /// A generic query executor that can be used to execute queries on IQueryable data sources.
 /// </summary>
-[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1009:Closing parenthesis should be spaced correctly", Justification = "...")]
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class QueryExecutor
 {
@@ -80,6 +79,7 @@ public static class QueryExecutor
             var targetType = property.PropertyType;
             var searchValue = GetSearchValue(filter.SearchVal, targetType);
             var emptyValue = GetEmptyValue(targetType);
+            var now = DateTime.Now.Date;
             Expression condition = filter.Condition.Name switch
             {
                 "null"                  => targetType.IsNullableType() ? Expression.Equal(field, Expression.Constant(targetType.GetDefaultValue())) : Expression.Constant(false),
@@ -90,28 +90,28 @@ public static class QueryExecutor
                 "doesNotEqual"          => Expression.NotEqual(field, searchValue),
                 "inQuery"               => BuildInExpression(db, filter.SearchTree, field),
                 "notInQuery"            => Expression.Not(BuildInExpression(db, filter.SearchTree, field)),
-                "contains"              => Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue),
-                "doesNotContain"        => Expression.Not(Expression.Call(field, typeof(string).GetMethod("Contains", new[] { typeof(string) })!, searchValue)),
-                "startsWith"            => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, searchValue),
-                "endsWith"              => Expression.Call(field, typeof(string).GetMethod("EndsWith", new[] { typeof(string) })!, searchValue),
+                "contains"              => CallContains(field, searchValue),
+                "doesNotContain"        => Expression.Not(CallContains(field, searchValue)),
+                "startsWith"            => CallStartsWith(field, searchValue),
+                "endsWith"              => CallEndsWith(field, searchValue),
                 "greaterThan"           => Expression.GreaterThan(field, searchValue),
                 "lessThan"              => Expression.LessThan(field, searchValue),
                 "greaterThanOrEqualTo"  => Expression.GreaterThanOrEqual(field, searchValue),
                 "lessThanOrEqualTo"     => Expression.LessThanOrEqual(field, searchValue),
-                "before"                => Expression.LessThan(Expression.Call(field, typeof(string).GetMethod("CompareTo", new[] { typeof(string) })!, searchValue), Expression.Constant(0)),
-                "after"                 => Expression.GreaterThan(Expression.Call(field, typeof(string).GetMethod("CompareTo", new[] { typeof(string) })!, searchValue), Expression.Constant(0)),
-                "today"                 => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, Expression.Constant(DateTime.Now.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))),
-                "yesterday"             => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, Expression.Constant(DateTime.Now.Date.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))),
-                "thisMonth"             => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, Expression.Constant(DateTime.Now.Date.ToString("yyyy-MM", CultureInfo.InvariantCulture))),
-                "lastMonth"             => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, Expression.Constant(DateTime.Now.Date.AddMonths(-1).ToString("yyyy-MM", CultureInfo.InvariantCulture))),
-                "nextMonth"             => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, Expression.Constant(DateTime.Now.Date.AddMonths(1).ToString("yyyy-MM", CultureInfo.InvariantCulture))),
-                "thisYear"              => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, Expression.Constant(DateTime.Now.Date.ToString("yyyy", CultureInfo.InvariantCulture))),
-                "lastYear"              => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, Expression.Constant(DateTime.Now.Date.AddYears(-1).ToString("yyyy", CultureInfo.InvariantCulture))),
-                "nextYear"              => Expression.Call(field, typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!, Expression.Constant(DateTime.Now.Date.AddYears(1).ToString("yyyy", CultureInfo.InvariantCulture))),
+                "before"                => Expression.LessThan(CallCompare(field, searchValue), Expression.Constant(0)),
+                "after"                 => Expression.GreaterThan(CallCompare(field, searchValue), Expression.Constant(0)),
+                "today"                 => CallStartsWith(field, now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
+                "yesterday"             => CallStartsWith(field, now.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
+                "thisMonth"             => CallStartsWith(field, now.ToString("yyyy-MM", CultureInfo.InvariantCulture)),
+                "lastMonth"             => CallStartsWith(field, now.AddMonths(-1).ToString("yyyy-MM", CultureInfo.InvariantCulture)),
+                "nextMonth"             => CallStartsWith(field, now.AddMonths(1).ToString("yyyy-MM", CultureInfo.InvariantCulture)),
+                "thisYear"              => CallStartsWith(field, now.ToString("yyyy", CultureInfo.InvariantCulture)),
+                "lastYear"              => CallStartsWith(field, now.AddYears(-1).ToString("yyyy", CultureInfo.InvariantCulture)),
+                "nextYear"              => CallStartsWith(field, now.AddYears(1).ToString("yyyy", CultureInfo.InvariantCulture)),
                 "at"                    => Expression.Equal(field, searchValue),
                 "not_at"                => Expression.NotEqual(field, searchValue),
-                "at_before"             => Expression.LessThan(Expression.Call(field, typeof(string).GetMethod("CompareTo", new[] { typeof(string) })!, searchValue), Expression.Constant(0)),
-                "at_after"              => Expression.GreaterThan(Expression.Call(field, typeof(string).GetMethod("CompareTo", new[] { typeof(string) })!, searchValue), Expression.Constant(0)),
+                "at_before"             => Expression.LessThan(CallCompare(field, searchValue), Expression.Constant(0)),
+                "at_after"              => Expression.GreaterThan(CallCompare(field, searchValue), Expression.Constant(0)),
                 "all"                   => Expression.Constant(true),
                 "true"                  => Expression.IsTrue(field),
                 "false"                 => Expression.IsFalse(field),
@@ -136,6 +136,40 @@ public static class QueryExecutor
                 ? subexpressions.Aggregate(Expression.AndAlso)
                 : subexpressions.Aggregate(Expression.OrElse);
         }
+    }
+
+    private static Expression CallContains(Expression field, Expression searchValue)
+    {
+        var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+        return Expression.Call(field, containsMethod!, searchValue);
+    }
+
+    private static Expression CallStartsWith(Expression field, Expression searchValue)
+    {
+        var startsWithMethod = typeof(string).GetMethod("StartsWith", new[] { typeof(string) });
+        return Expression.Call(field, startsWithMethod!, searchValue);
+    }
+
+    private static Expression CallStartsWith(Expression field, string dateLiteral)
+    {
+        return CallStartsWith(field, Expression.Constant(dateLiteral));
+    }
+
+    private static Expression CallEndsWith(Expression field, Expression searchValue)
+    {
+        var endsWithMethod = typeof(string).GetMethod("EndsWith", new[] { typeof(string) });
+        return Expression.Call(field, endsWithMethod!, searchValue);
+    }
+
+    private static Expression CallEndsWith(Expression field, string dateLiteral)
+    {
+        return CallEndsWith(field, Expression.Constant(dateLiteral));
+    }
+
+    private static Expression CallCompare(Expression field, Expression searchValue)
+    {
+        var compareMethod = typeof(string).GetMethod("Compare", new[] { typeof(string), typeof(string) });
+        return Expression.Call(compareMethod!, field, searchValue);
     }
 
     private static Expression BuildInExpression(DataContext db, Query? query, MemberExpression field)
