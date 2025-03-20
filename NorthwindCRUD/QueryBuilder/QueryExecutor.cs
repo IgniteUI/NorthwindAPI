@@ -42,7 +42,7 @@ public static class QueryExecutor
 
         var filterExpression = BuildExpression(db, source, query.FilteringOperands, query.Operator);
         var filteredQuery = source.Where(filterExpression);
-        if (query.ReturnFields != null && query.ReturnFields.Any())
+        if (query.ReturnFields != null && query.ReturnFields.Any() && !query.ReturnFields.Contains("*"))
         {
             if (mapper is not null)
             {
