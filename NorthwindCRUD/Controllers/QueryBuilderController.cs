@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NorthwindCRUD;
+using NorthwindCRUD.Models.DbModels;
 using NorthwindCRUD.Models.Dtos;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -51,19 +52,26 @@ public class QueryBuilderController : ControllerBase
         var sanitizedEntity = query.Entity.Replace("\r", string.Empty).Replace("\n", string.Empty);
         logger.LogInformation("Executing query for entity: {Entity}", sanitizedEntity);
         var t = query.Entity.ToLower(CultureInfo.InvariantCulture);
-        return Ok(new QueryBuilderResult
+        return Ok(new Dictionary<string, object[]?>
         {
-            Addresses    = t == "addresses"    ? mapper.Map<AddressDto[]>(dataContext.Addresses.Run(query))        : null,
-            Categories   = t == "categories"   ? mapper.Map<CategoryDto[]>(dataContext.Categories.Run(query))      : null,
-            Products     = t == "products"     ? mapper.Map<ProductDto[]>(dataContext.Products.Run(query))         : null,
-            Regions      = t == "regions"      ? mapper.Map<RegionDto[]>(dataContext.Regions.Run(query))           : null,
-            Territories  = t == "territories"  ? mapper.Map<TerritoryDto[]>(dataContext.Territories.Run(query))    : null,
-            Employees    = t == "employees"    ? mapper.Map<EmployeeDto[]>(dataContext.Employees.Run(query))       : null,
-            Customers    = t == "customers"    ? mapper.Map<CustomerDto[]>(dataContext.Customers.Run(query))       : null,
-            Orders       = t == "orders"       ? mapper.Map<OrderDto[]>(dataContext.Orders.Run(query))             : null,
-            OrderDetails = t == "orderdetails" ? mapper.Map<OrderDetailDto[]>(dataContext.OrderDetails.Run(query)) : null,
-            Shippers     = t == "shippers"     ? mapper.Map<ShipperDto[]>(dataContext.Shippers.Run(query))         : null,
-            Suppliers    = t == "suppliers"    ? mapper.Map<SupplierDto[]>(dataContext.Suppliers.Run(query))       : null,
+            {
+                t,
+                t switch
+                {
+                    "addresses" => dataContext.Addresses.Run<AddressDb, AddressDto>(query, mapper),
+                    "categories" => dataContext.Categories.Run<CategoryDb, CategoryDto>(query, mapper),
+                    "products" => dataContext.Products.Run<ProductDb, ProductDto>(query, mapper),
+                    "regions" => dataContext.Regions.Run<RegionDb, RegionDto>(query, mapper),
+                    "territories" => dataContext.Territories.Run<TerritoryDb, TerritoryDto>(query, mapper),
+                    "employees" => dataContext.Employees.Run<EmployeeDb, EmployeeDto>(query, mapper),
+                    "customers" => dataContext.Customers.Run<CustomerDb, CustomerDto>(query, mapper),
+                    "orders" => dataContext.Orders.Run<OrderDb, OrderDto>(query, mapper),
+                    "orderdetails" => dataContext.OrderDetails.Run<OrderDetailDb, OrderDetailDto>(query, mapper),
+                    "shippers" => dataContext.Shippers.Run<ShipperDb, ShipperDto>(query, mapper),
+                    "suppliers" => dataContext.Suppliers.Run<SupplierDb, SupplierDto>(query, mapper),
+                    _ => throw new InvalidOperationException($"Unknown entity ${t}")
+                }
+            },
         });
     }
 }
