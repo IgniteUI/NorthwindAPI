@@ -1,18 +1,17 @@
 namespace QueryBuilder;
 
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NorthwindCRUD;
 using NorthwindCRUD.Models.DbModels;
 using NorthwindCRUD.Models.Dtos;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
 [SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1516:Elements should be separated by blank line", Justification = "...")]
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1134:Attributes should not share line", Justification = "...")]
-[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1011:Closing square brackets should be spaced correctly", Justification = "...")]
 public class QueryBuilderResult
 {
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public AddressDto[]?     Addresses    { get; set; }
@@ -30,7 +29,6 @@ public class QueryBuilderResult
 
 [ApiController]
 [Route("[controller]")]
-[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public class QueryBuilderController : ControllerBase
 {
     private readonly DataContext dataContext;
@@ -69,7 +67,7 @@ public class QueryBuilderController : ControllerBase
                     "orderdetails" => dataContext.OrderDetails.Run<OrderDetailDb, OrderDetailDto>(query, mapper),
                     "shippers" => dataContext.Shippers.Run<ShipperDb, ShipperDto>(query, mapper),
                     "suppliers" => dataContext.Suppliers.Run<SupplierDb, SupplierDto>(query, mapper),
-                    _ => throw new InvalidOperationException($"Unknown entity ${t}")
+                    _ => throw new InvalidOperationException($"Unknown entity ${t}"),
                 }
             },
         });

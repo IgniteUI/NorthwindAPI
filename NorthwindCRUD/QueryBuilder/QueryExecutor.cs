@@ -323,7 +323,7 @@ public static class QueryExecutor
             dynamicAnonymousType.DefineField(field.Name, field.Type, FieldAttributes.Public);
         }
 
-        return dynamicAnonymousType.CreateType() !;
+        return dynamicAnonymousType.CreateType()!;
     }
 }
 
