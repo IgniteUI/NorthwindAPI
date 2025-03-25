@@ -73,7 +73,7 @@ namespace NorthwindCRUD.Services
         public OrderDb[] GetOrdersByShipperId(int id)
         {
             return GetOrdersQuery()
-                .Where(o => o.ShipVia == id)
+                .Where(o => o.ShipperId == id)
                 .ToArray();
         }
 
