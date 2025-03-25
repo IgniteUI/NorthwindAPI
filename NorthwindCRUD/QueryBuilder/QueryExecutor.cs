@@ -258,6 +258,12 @@ public static class QueryExecutor
         }
 
         var nonNullableType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+        if (nonNullableType.IsEnum && value is string)
+        {
+            return Expression.Constant(Enum.Parse(nonNullableType, value));
+        }
+
         var convertedValue = Convert.ChangeType(value, nonNullableType, CultureInfo.InvariantCulture);
         return Expression.Constant(convertedValue, targetType);
     }

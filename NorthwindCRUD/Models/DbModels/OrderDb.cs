@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NorthwindCRUD.Models.Enums;
 
 namespace NorthwindCRUD.Models.DbModels
 {
@@ -29,7 +30,7 @@ namespace NorthwindCRUD.Models.DbModels
 
         public string RequiredDate { get; set; }
 
-        public int ShipVia { get; set; }
+        public Shipping ShipVia { get; set; }
 
         public double Freight { get; set; }
 

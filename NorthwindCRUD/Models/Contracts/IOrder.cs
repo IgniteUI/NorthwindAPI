@@ -1,5 +1,5 @@
 ﻿using NorthwindCRUD.Models.Dtos;
-using static NorthwindCRUD.Helpers.Enums;
+using NorthwindCRUD.Models.Enums;
 
 namespace NorthwindCRUD.Models.Contracts
 {
