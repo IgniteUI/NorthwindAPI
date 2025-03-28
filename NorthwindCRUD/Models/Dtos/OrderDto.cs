@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using NorthwindCRUD.Models.Contracts;
-using static NorthwindCRUD.Helpers.Enums;
+using NorthwindCRUD.Models.Enums;
 
 namespace NorthwindCRUD.Models.Dtos
 {

@@ -222,9 +222,9 @@
             try
             {
                 var order = this.orderService.GetById(id);
-                if (order != null)
+                if (order?.ShipperId != null)
                 {
-                    var shipper = this.shipperService.GetById(order.ShipVia);
+                    var shipper = this.shipperService.GetById(order.ShipperId.Value);
 
                     if (shipper != null)
                     {

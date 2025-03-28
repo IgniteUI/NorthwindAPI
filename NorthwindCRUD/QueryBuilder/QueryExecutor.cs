@@ -4,7 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Reflection.Emit;
+using AutoMapper;
 using AutoMapper.Internal;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using NorthwindCRUD;
@@ -16,16 +19,21 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1025:Code should not contain multiple whitespace in a row", Justification = "...")]
 public static class QueryExecutor
 {
-    public static TEntity[] Run<TEntity>(this IQueryable<TEntity> source, Query? query)
+    public static object[] Run<TEntity>(this IQueryable<TEntity> source, Query? query)
+    {
+        return source.Run<TEntity, TEntity>(query);
+    }
+
+    public static object[] Run<TSource, TTarget>(this IQueryable<TSource> source, Query? query, IMapper? mapper = null)
     {
         var infrastructure = source as IInfrastructure<IServiceProvider>;
         var serviceProvider = infrastructure!.Instance;
         var currentDbContext = serviceProvider.GetService(typeof(ICurrentDbContext)) as ICurrentDbContext;
         var db = currentDbContext!.Context as DataContext;
-        return db is not null ? BuildQuery(db, source, query).ToArray() : Array.Empty<TEntity>();
+        return db is not null ? BuildQuery<TSource, TTarget>(db, source, query, mapper).ToArray() : Array.Empty<object>();
     }
 
-    private static IQueryable<TEntity> BuildQuery<TEntity>(DataContext db, IQueryable<TEntity> source, Query? query)
+    private static IQueryable<object> BuildQuery<TSource, TTarget>(DataContext db, IQueryable<TSource> source, Query? query, IMapper? mapper = null)
     {
         if (query is null)
         {
@@ -34,14 +42,26 @@ public static class QueryExecutor
 
         var filterExpression = BuildExpression(db, source, query.FilteringOperands, query.Operator);
         var filteredQuery = source.Where(filterExpression);
-        if (query.ReturnFields != null && query.ReturnFields.Any())
+        if (query.ReturnFields != null && query.ReturnFields.Any() && !query.ReturnFields.Contains("*"))
         {
-            var projectionExpression = BuildProjectionExpression<TEntity>(query.ReturnFields);
-            return filteredQuery.Select(projectionExpression).Cast<TEntity>();
+            if (mapper is not null)
+            {
+                var projectionExpression = BuildProjectionExpression<TTarget, TTarget>(query.ReturnFields);
+                return filteredQuery.ProjectTo<TTarget>(mapper.ConfigurationProvider).Select(projectionExpression);
+            }
+            else
+            {
+                var projectionExpression = BuildProjectionExpression<TSource, TTarget>(query.ReturnFields);
+                return filteredQuery.Select(projectionExpression);
+            }
+        }
+        else if (mapper is not null)
+        {
+            return (IQueryable<object>)filteredQuery.ProjectTo<TTarget>(mapper.ConfigurationProvider);
         }
         else
         {
-            return filteredQuery;
+            return filteredQuery.Cast<object>();
         }
     }
 
@@ -71,7 +91,7 @@ public static class QueryExecutor
 
     private static Expression BuildConditionExpression<TEntity>(DataContext db, IQueryable<TEntity> source, QueryFilter filter, ParameterExpression parameter)
     {
-        if (filter.FieldName is not null && filter.IgnoreCase is not null && filter.Condition is not null)
+        if (filter.FieldName is not null && filter.Condition is not null)
         {
             var property = source.ElementType.GetProperty(filter.FieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
                                  ?? throw new InvalidOperationException($"Property '{filter.FieldName}' not found on type '{source.ElementType}'");
@@ -117,7 +137,7 @@ public static class QueryExecutor
                 "false"                 => Expression.Equal(field, Expression.Constant(false)),
                 _                       => throw new NotImplementedException("Not implemented"),
             };
-            if (filter.IgnoreCase.Value && field.Type == typeof(string))
+            if (filter.IgnoreCase == true && field.Type == typeof(string))
             {
                 // TODO: Implement case-insensitive comparison
             }
@@ -238,6 +258,12 @@ public static class QueryExecutor
         }
 
         var nonNullableType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+        if (nonNullableType.IsEnum && value is string)
+        {
+            return Expression.Constant(Enum.Parse(nonNullableType, value));
+        }
+
         var convertedValue = Convert.ChangeType(value, nonNullableType, CultureInfo.InvariantCulture);
         return Expression.Constant(convertedValue, targetType);
     }
@@ -247,17 +273,69 @@ public static class QueryExecutor
         return Expression.Constant(targetType == typeof(string) ? string.Empty : targetType.GetDefaultValue());
     }
 
-    private static Expression<Func<TEntity, dynamic>> BuildProjectionExpression<TEntity>(string[] returnFields)
+    private static Expression<Func<TSource, object>> BuildProjectionExpression<TSource, TTarget>(string[] returnFields)
     {
-        var parameter = Expression.Parameter(typeof(TEntity), "entity");
-        var bindings = returnFields.Select(field =>
+        var tagetEntityType = typeof(TTarget);
+        var dbEntityType = typeof(TSource);
+
+        // Create the anonymous projection type
+        var projectionType = CreateProjectionType(tagetEntityType, returnFields);
+
+        var parameter = Expression.Parameter(dbEntityType, "entity");
+
+        var bindings = returnFields.Select(fieldName =>
         {
-            var property = typeof(TEntity).GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{field}' not found on type '{typeof(TEntity)}'");
+            var property = dbEntityType.GetProperty(fieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{fieldName}' not found on type '{dbEntityType}");
+            var field = projectionType.GetField(fieldName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{fieldName}' not found on type '{projectionType}'");
             var propertyAccess = Expression.Property(parameter, property);
-            return Expression.Bind(property, propertyAccess);
+            return Expression.Bind(field, propertyAccess);
         }).ToArray();
 
-        var body = Expression.MemberInit(Expression.New(typeof(TEntity)), bindings);
-        return Expression.Lambda<Func<TEntity, dynamic>>(body, parameter);
+        // Get Microsoft.CSharp assembly where anonymous types are defined
+        var dynamicAssembly = typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly;
+
+        var createExpression = Expression.MemberInit(Expression.New(projectionType), bindings);
+
+        return Expression.Lambda<Func<TSource, object>>(createExpression, parameter);
     }
+
+    private static Type CreateProjectionType(Type input, string[] fields)
+    {
+        var fieldsList = fields.Select(field =>
+        {
+            var property = input.GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
+                    ?? throw new InvalidOperationException($"Property '{field}' not found on type '{input}'");
+            return new Field
+            {
+                Name = property.Name,
+                Type = property.GetMemberType(),
+            };
+        }).ToList();
+
+        var name = input.Name + "Projection";
+        return CreateAnonymousType(name, fieldsList);
+    }
+
+    private static Type CreateAnonymousType(string name, ICollection<Field> fields)
+    {
+        AssemblyName dynamicAssemblyName = new AssemblyName("TempAssembly");
+        AssemblyBuilder dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(dynamicAssemblyName, AssemblyBuilderAccess.Run);
+        ModuleBuilder dynamicModule = dynamicAssembly.DefineDynamicModule("TempAssembly");
+
+        TypeBuilder dynamicAnonymousType = dynamicModule.DefineType(name, TypeAttributes.Public);
+
+        foreach (var field in fields)
+        {
+            dynamicAnonymousType.DefineField(field.Name, field.Type, FieldAttributes.Public);
+        }
+
+        return dynamicAnonymousType.CreateType()!;
+    }
+}
+
+internal class Field
+{
+    public string Name { get; set; }
+
+    public Type Type { get; set; }
 }
