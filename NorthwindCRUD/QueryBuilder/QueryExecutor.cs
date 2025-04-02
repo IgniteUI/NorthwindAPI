@@ -213,7 +213,7 @@ public static class QueryExecutor
 
     private static Expression BuildInExpression<T>(DataContext db, Query? query, MemberExpression field)
     {
-        var d = RunSubquery(db, query).Select(x => (T)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).ToArray();
+        var d = RunSubquery(db, query).Select(x => (T)ProjectField(x, query?.ReturnFields[0] ?? string.Empty)).Distinct();
         var m = typeof(Enumerable).GetMethods()
             .FirstOrDefault(method => method.Name == nameof(Enumerable.Contains) && method.GetParameters().Length == 2)
             ?.MakeGenericMethod(typeof(T)) ?? throw new InvalidOperationException("Missing method");
@@ -244,10 +244,10 @@ public static class QueryExecutor
         };
     }
 
-    private static dynamic? ProjectField(dynamic? obj, string field)
+    private static dynamic? ProjectField(object? obj, string field)
     {
-        var property = obj?.GetType().GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{field}' not found on type '{obj?.GetType()}'");
-        return property?.GetValue(obj);
+        var property = obj?.GetType().GetMember(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)?.FirstOrDefault() ?? throw new InvalidOperationException($"Property '{field}' not found on type '{obj?.GetType()}'");
+        return property.GetMemberValue(obj);
     }
 
     private static Expression GetSearchValue(dynamic? value, Type targetType)
