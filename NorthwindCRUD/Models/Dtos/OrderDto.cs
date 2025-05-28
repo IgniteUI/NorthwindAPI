@@ -15,7 +15,7 @@ namespace NorthwindCRUD.Models.Dtos
         public int EmployeeId { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "ShipperId must be a valid shipper ID.")]
-        public int ShipperId { get; set; }
+        public int? ShipperId { get; set; }
 
         [DataType(DataType.Date, ErrorMessage = "OrderDate must be a valid date.")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
