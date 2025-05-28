@@ -53,7 +53,7 @@ namespace NorthwindCRUD.Controllers
         [HttpGet("GetCategoriesWithSkip")]
         public ActionResult<PagedResultDto<CategoryDto>> GetCategoriesWithSkip(
             [FromQuery][Attributes.SwaggerSkipParameter][Range(0, int.MaxValue)] int? skip,
-            [FromQuery][Attributes.SwaggerTopParameter][Range(0, int.MaxValue)] int? top,
+            [FromQuery][Attributes.SwaggerTopParameter][Range(1, int.MaxValue)] int? top,
             [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
