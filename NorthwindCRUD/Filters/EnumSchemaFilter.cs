@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
+﻿﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -10,11 +10,12 @@ namespace NorthwindCRUD.Filters
         {
             if (context.Type.IsEnum)
             {
-                schema.Type = "string";
-                schema.Enum = context.Type
-                    .GetEnumNames()
-                    .Select(name => new OpenApiString(name))
+                var enumValues = Enum.GetValues(context.Type)
+                    .Cast<object>()
+                    .Select(e => new OpenApiString(e.ToString()))
                     .ToList<IOpenApiAny>();
+
+                schema.Enum = enumValues;
             }
         }
     }

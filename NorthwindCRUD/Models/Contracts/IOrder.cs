@@ -11,13 +11,12 @@ namespace NorthwindCRUD.Models.Contracts
 
         int EmployeeId { get; set; }
 
-        Shipping? ShipperId { get; set; }
+        int? ShipperId { get; set; }
 
         string OrderDate { get; set; }
 
         string RequiredDate { get; set; }
 
-        Shipping? ShipVia { get; set; }
         Shipping? ShipVia { get; set; }
 
         double Freight { get; set; }

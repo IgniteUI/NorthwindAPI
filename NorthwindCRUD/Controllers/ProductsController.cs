@@ -1,5 +1,6 @@
 namespace NorthwindCRUD.Controllers
 {
+    using System.ComponentModel.DataAnnotations;
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

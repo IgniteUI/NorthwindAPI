@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿﻿using System.ComponentModel.DataAnnotations;
 using NorthwindCRUD.Models.Contracts;
 
 namespace NorthwindCRUD.Models.Dtos
