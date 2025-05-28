@@ -1,5 +1,5 @@
-﻿using NorthwindCRUD.Models.Dtos;
-using NorthwindCRUD.Models.Enums;
+﻿﻿using NorthwindCRUD.Models.Dtos;
+using static NorthwindCRUD.Helpers.Enums;
 
 namespace NorthwindCRUD.Models.Contracts
 {
@@ -11,7 +11,7 @@ namespace NorthwindCRUD.Models.Contracts
 
         int EmployeeId { get; set; }
 
-        int? ShipperId { get; set; }
+        Shipping? ShipperId { get; set; }
 
         string OrderDate { get; set; }
 
@@ -23,8 +23,6 @@ namespace NorthwindCRUD.Models.Contracts
         double Freight { get; set; }
 
         string ShipName { get; set; }
-
-        public bool Completed { get; set; }
 
         public bool Completed { get; set; }
 
