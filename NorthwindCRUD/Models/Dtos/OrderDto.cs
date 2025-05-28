@@ -9,7 +9,7 @@ namespace NorthwindCRUD.Models.Dtos
         public int OrderId { get; set; }
 
         [Required(ErrorMessage = "CustomerId is required.")]
-        public string CustomerId { get; set; }
+        public string? CustomerId { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "EmployeeId must be a valid employee ID.")]
         public int EmployeeId { get; set; }

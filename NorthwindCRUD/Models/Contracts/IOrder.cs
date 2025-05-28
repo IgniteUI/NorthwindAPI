@@ -1,7 +1,7 @@
 ﻿﻿using NorthwindCRUD.Models.Dtos;
-using static NorthwindCRUD.Helpers.Enums;
+﻿using static NorthwindCRUD.Helpers.Enums;
 
-namespace NorthwindCRUD.Models.Contracts
+﻿namespace NorthwindCRUD.Models.Contracts
 {
     public interface IOrder
     {

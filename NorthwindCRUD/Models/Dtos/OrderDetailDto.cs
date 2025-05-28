@@ -1,6 +1,6 @@
 ﻿﻿using System.ComponentModel.DataAnnotations;
 
-namespace NorthwindCRUD.Models.Dtos
+﻿namespace NorthwindCRUD.Models.Dtos
 {
     public class OrderDetailDto
     {
