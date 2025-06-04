@@ -1,5 +1,6 @@
 namespace NorthwindCRUD.Controllers
 {
+    using System.ComponentModel.DataAnnotations;
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -267,7 +268,7 @@ namespace NorthwindCRUD.Controllers
             }
             catch (InvalidOperationException exception)
             {
-               return StatusCode(400, exception.Message);
+                return StatusCode(400, exception.Message);
             }
             catch (Exception error)
             {

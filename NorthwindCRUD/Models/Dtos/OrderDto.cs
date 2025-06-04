@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using NorthwindCRUD.Models.Contracts;
-using static NorthwindCRUD.Helpers.Enums;
+using NorthwindCRUD.Models.Enums;
 
 namespace NorthwindCRUD.Models.Dtos
 {
@@ -9,13 +9,13 @@ namespace NorthwindCRUD.Models.Dtos
         public int OrderId { get; set; }
 
         [Required(ErrorMessage = "CustomerId is required.")]
-        public string CustomerId { get; set; }
+        public string? CustomerId { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "EmployeeId must be a valid employee ID.")]
         public int EmployeeId { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "ShipperId must be a valid shipper ID.")]
-        public int ShipperId { get; set; }
+        public int? ShipperId { get; set; }
 
         [DataType(DataType.Date, ErrorMessage = "OrderDate must be a valid date.")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
