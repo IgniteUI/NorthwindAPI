@@ -1,5 +1,6 @@
 namespace NorthwindCRUD.Controllers
 {
+    using System.ComponentModel.DataAnnotations;
     using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -70,8 +71,8 @@ namespace NorthwindCRUD.Controllers
         /// <returns>A PagedResultDto object containing the fetched T and the total record count.</returns>
         [HttpGet("GetPagedProducts")]
         public ActionResult<PagedResultDto<ProductDto>> GetAllProducts(
-            [FromQuery][Attributes.SwaggerSkipParameter] int? skip,
-            [FromQuery][Attributes.SwaggerTopParameter] int? top,
+            [FromQuery][Attributes.SwaggerSkipParameter][Range(0, int.MaxValue)] int? skip,
+            [FromQuery][Attributes.SwaggerTopParameter][Range(0, int.MaxValue)] int? top,
             [FromQuery][Attributes.SwaggerOrderByParameter] string? orderBy)
         {
             try
@@ -267,7 +268,7 @@ namespace NorthwindCRUD.Controllers
             }
             catch (InvalidOperationException exception)
             {
-               return StatusCode(400, exception.Message);
+                return StatusCode(400, exception.Message);
             }
             catch (Exception error)
             {
