@@ -1,8 +1,8 @@
-﻿﻿using Microsoft.OpenApi.Any;
-﻿using Microsoft.OpenApi.Models;
-﻿using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
-﻿namespace NorthwindCRUD.Filters
+namespace NorthwindCRUD.Filters
 {
     public class EnumSchemaFilter : ISchemaFilter
     {
@@ -10,12 +10,11 @@
         {
             if (context.Type.IsEnum)
             {
-                var enumValues = Enum.GetValues(context.Type)
-                    .Cast<object>()
-                    .Select(e => new OpenApiString(e.ToString()))
+                schema.Type = "string";
+                schema.Enum = context.Type
+                    .GetEnumNames()
+                    .Select(name => new OpenApiString(name))
                     .ToList<IOpenApiAny>();
-
-                schema.Enum = enumValues;
             }
         }
     }
