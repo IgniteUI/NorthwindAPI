@@ -9,7 +9,6 @@
         public MappingProfiles()
         {
             CreateMap<CategoryDto, CategoryDb>().ReverseMap();
-            CreateMap<CategoryUpdateDto, CategoryDb>().ReverseMap();
             CreateMap<CategoryDb, CategoryDetailsDto>();
 
             CreateMap<ProductDto, ProductDb>().ReverseMap();

@@ -5,7 +5,7 @@
 {
     public class CategoryDto : ICategory
     {
-        public int CategoryId { get; set; }
+        public int CategoryId { get; private set; }
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
         public string Description { get; set; }
