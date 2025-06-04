@@ -48,9 +48,9 @@
             return categoryEntity.Entity;
         }
 
-        public CategoryDb? Update(CategoryDb model)
+        public CategoryDb? Update(int id, CategoryDb model)
         {
-            var categoryEntity = this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId);
+            var categoryEntity = this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == id);
             if (categoryEntity != null)
             {
                 categoryEntity.Description = model.Description != null ? model.Description : categoryEntity.Description;
