@@ -268,7 +268,7 @@ namespace NorthwindCRUD.Controllers
             }
             catch (InvalidOperationException exception)
             {
-               return StatusCode(400, exception.Message);
+                return StatusCode(400, exception.Message);
             }
             catch (Exception error)
             {

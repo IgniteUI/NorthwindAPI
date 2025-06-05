@@ -7,6 +7,8 @@ namespace NorthwindCRUD.Models.Dtos
     {
         public int ProductId { get; private set; }
 
+        public string ProductName { get; set; }
+
         [Range(1, int.MaxValue, ErrorMessage = "SupplierId must be a valid supplier ID.")]
         public int? SupplierId { get; set; }
 
