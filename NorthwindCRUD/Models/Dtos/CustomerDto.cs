@@ -5,7 +5,7 @@ namespace NorthwindCRUD.Models.Dtos
 {
     public class CustomerDto : ICustomer
     {
-        public string CustomerId { get; set; }
+        public string CustomerId { get; private set; }
 
         [Required(ErrorMessage = "Company Name is required.")]
         [StringLength(100, ErrorMessage = "Company Name cannot exceed 100 characters.")]

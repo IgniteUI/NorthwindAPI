@@ -70,11 +70,11 @@
             return employeeEntity.Entity;
         }
 
-        public EmployeeDb? Update(EmployeeDb model)
+        public EmployeeDb? Update(int id, EmployeeDb model)
         {
             var employeeEntity = this.dataContext.Employees
                 .Include(c => c.Address)
-                .FirstOrDefault(e => e.EmployeeId == model.EmployeeId);
+                .FirstOrDefault(e => e.EmployeeId == id);
 
             if (employeeEntity != null)
             {

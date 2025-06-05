@@ -311,16 +311,16 @@
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
-        public ActionResult<OrderDto> Update(OrderDto model)
+        public ActionResult<OrderDto> Update(int id, OrderDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<OrderDto, OrderDb>(model);
-                    var order = this.orderService.Update(mappedModel);
+                    var order = this.orderService.Update(id, mappedModel);
                     if (order != null)
                     {
                         return Ok(this.mapper.Map<OrderDb, OrderDto>(order));

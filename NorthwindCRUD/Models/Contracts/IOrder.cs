@@ -5,7 +5,7 @@
 {
     public interface IOrder
     {
-        int OrderId { get; set; }
+        int OrderId { get; }
 
         string? CustomerId { get; set; }
 

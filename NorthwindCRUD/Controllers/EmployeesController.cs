@@ -304,16 +304,16 @@
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
-        public ActionResult<EmployeeDto> Update(EmployeeDto model)
+        public ActionResult<EmployeeDto> Update(int id, EmployeeDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<EmployeeDto, EmployeeDb>(model);
-                    var employee = this.employeeService.Update(mappedModel);
+                    var employee = this.employeeService.Update(id, mappedModel);
 
                     if (employee != null)
                     {

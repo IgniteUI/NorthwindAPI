@@ -29,7 +29,7 @@ namespace NorthwindCRUD.Tests
             var createdEmployee = DataHelper.EmployeeService.Create(employee);
 
             createdEmployee.Title = "Director";
-            var updatedEmployee = DataHelper.EmployeeService.Update(createdEmployee);
+            var updatedEmployee = DataHelper.EmployeeService.Update(createdEmployee.EmployeeId, createdEmployee);
 
             Assert.IsNotNull(updatedEmployee);
             updatedEmployee = DataHelper2.EmployeeService.GetById(updatedEmployee.EmployeeId);

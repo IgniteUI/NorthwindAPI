@@ -4,7 +4,7 @@ namespace NorthwindCRUD.Models.Contracts
 {
     public interface ICustomer
     {
-        string CustomerId { get; set; }
+        string CustomerId { get; }
 
         string CompanyName { get; set; }
 

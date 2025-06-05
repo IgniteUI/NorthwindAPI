@@ -47,9 +47,9 @@ namespace NorthwindCRUD.Services
             return regionEntity.Entity;
         }
 
-        public RegionDb? Update(RegionDb model)
+        public RegionDb? Update(int id, RegionDb model)
         {
-            var regionEntity = this.dataContext.Regions.FirstOrDefault(p => p.RegionId == model.RegionId);
+            var regionEntity = this.dataContext.Regions.FirstOrDefault(p => p.RegionId == id);
             if (regionEntity != null)
             {
                 regionEntity.RegionDescription = model.RegionDescription != null ? model.RegionDescription : regionEntity.RegionDescription;

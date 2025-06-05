@@ -37,7 +37,7 @@ namespace NorthwindCRUD.Tests
             order.CustomerId = DataHelper.CreateCustomer().CustomerId;
             order.EmployeeId = DataHelper.CreateEmployee().EmployeeId;
 
-            var updatedOrder = DataHelper.OrderService.Update(order);
+            var updatedOrder = DataHelper.OrderService.Update(order.OrderId, order);
 
             Assert.IsNotNull(updatedOrder);
             updatedOrder = DataHelper2.OrderService.GetById(updatedOrder.OrderId);
