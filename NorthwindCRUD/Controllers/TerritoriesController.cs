@@ -214,16 +214,16 @@
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
-        public ActionResult<TerritoryDto> Update(TerritoryDto model)
+        public ActionResult<TerritoryDto> Update(string id, TerritoryDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<TerritoryDto, TerritoryDb>(model);
-                    var territory = this.territoryService.Update(mappedModel);
+                    var territory = this.territoryService.Update(id, mappedModel);
 
                     if (territory != null)
                     {

@@ -5,7 +5,7 @@ namespace NorthwindCRUD.Models.Dtos
 {
     public class ProductDto : IProduct
     {
-        public int ProductId { get; set; }
+        public int ProductId { get; private set; }
 
         public string ProductName { get; set; }
 

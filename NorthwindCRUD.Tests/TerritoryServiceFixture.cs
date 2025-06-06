@@ -29,7 +29,7 @@ namespace NorthwindCRUD.Tests
 
             createdTerritory.TerritoryDescription = "Updated Territory";
 
-            var updatedTerritory = DataHelper.TerritoryService.Update(createdTerritory);
+            var updatedTerritory = DataHelper.TerritoryService.Update(createdTerritory.TerritoryId, createdTerritory);
 
             Assert.IsNotNull(updatedTerritory);
             updatedTerritory = DataHelper2.TerritoryService.GetById(updatedTerritory.TerritoryId);

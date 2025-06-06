@@ -277,16 +277,16 @@ namespace NorthwindCRUD.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
-        public ActionResult<ProductDto> Update(ProductDto model)
+        public ActionResult<ProductDto> Update(int id, ProductDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<ProductDto, ProductDb>(model);
-                    var product = this.productService.Update(mappedModel);
+                    var product = this.productService.Update(id, mappedModel);
 
                     if (product != null)
                     {

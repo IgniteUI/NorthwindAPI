@@ -7,7 +7,7 @@ namespace NorthwindCRUD.Models.Dtos
     public class EmployeeDto : IEmployee
     {
         [SwaggerSchema("Number automatically assigned to new employee.")]
-        public int EmployeeId { get; set; }
+        public int EmployeeId { get; private set; }
 
         [Required(ErrorMessage = "Last name is required.")]
         [StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters.")]

@@ -128,7 +128,7 @@ namespace NorthwindCRUD.Services
             return orderEntity.Entity;
         }
 
-        public OrderDb? Update(OrderDb model)
+        public OrderDb? Update(int id, OrderDb model)
         {
             if (this.dataContext.Customers.FirstOrDefault(c => c.CustomerId == model.CustomerId) == null)
             {
@@ -147,7 +147,7 @@ namespace NorthwindCRUD.Services
 
             var orderEntity = this.dataContext.Orders
                 .Include(c => c.ShipAddress)
-                .FirstOrDefault(e => e.OrderId == model.OrderId);
+                .FirstOrDefault(e => e.OrderId == id);
 
             if (orderEntity != null)
             {

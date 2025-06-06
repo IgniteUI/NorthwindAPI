@@ -5,7 +5,7 @@ namespace NorthwindCRUD.Models.Dtos
 {
     public class ShipperDto : IShipper
     {
-        public int ShipperId { get; set; }
+        public int ShipperId { get; private set; }
 
         [Required(ErrorMessage = "Company Name is required.")]
         [StringLength(100, ErrorMessage = "Company Name cannot exceed 100 characters.")]

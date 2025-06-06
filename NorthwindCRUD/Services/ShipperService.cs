@@ -47,9 +47,9 @@ namespace NorthwindCRUD.Services
             return shipperEntity.Entity;
         }
 
-        public ShipperDb? Update(ShipperDb model)
+        public ShipperDb? Update(int id, ShipperDb model)
         {
-            var shipperEntity = this.dataContext.Shippers.FirstOrDefault(p => p.ShipperId == model.ShipperId);
+            var shipperEntity = this.dataContext.Shippers.FirstOrDefault(p => p.ShipperId == id);
             if (shipperEntity != null)
             {
                 shipperEntity.Phone = model.Phone != null ? model.Phone : shipperEntity.Phone;

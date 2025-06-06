@@ -209,16 +209,16 @@
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
-        public ActionResult<CustomerDto> Update(CustomerDto model)
+        public ActionResult<CustomerDto> Update(string id, CustomerDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<CustomerDto, CustomerDb>(model);
-                    var customer = this.customerService.Update(mappedModel);
+                    var customer = this.customerService.Update(id, mappedModel);
 
                     if (customer != null)
                     {

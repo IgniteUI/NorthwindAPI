@@ -198,16 +198,16 @@ namespace NorthwindCRUD.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
-        public ActionResult<CategoryDto> Update(CategoryDto model)
+        public ActionResult<CategoryDto> Update(int id, CategoryDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<CategoryDto, CategoryDb>(model);
-                    var category = this.categoryService.Update(mappedModel);
+                    var category = this.categoryService.Update(id, mappedModel);
 
                     if (category != null)
                     {

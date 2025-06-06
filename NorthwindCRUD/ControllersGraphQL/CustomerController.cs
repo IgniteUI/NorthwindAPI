@@ -51,10 +51,10 @@ namespace NorthwindCRUD.Controllers
         }
 
         [Mutation]
-        public CustomerDto? Update(CustomerDto model)
+        public CustomerDto? Update(string id, CustomerDto model)
         {
             var mappedModel = this.mapper.Map<CustomerDto, CustomerDb>(model);
-            var customer = this.customerService.Update(mappedModel);
+            var customer = this.customerService.Update(id, mappedModel);
             return customer != null ? this.mapper.Map<CustomerDb, CustomerDto>(customer) : null;
         }
 

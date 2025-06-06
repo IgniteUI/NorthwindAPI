@@ -76,7 +76,7 @@ namespace NorthwindCRUD.Services
             return productEntity.Entity;
         }
 
-        public ProductDb? Update(ProductDb model)
+        public ProductDb? Update(int id, ProductDb model)
         {
             if (this.dataContext.Categories.FirstOrDefault(c => c.CategoryId == model.CategoryId) == null)
             {
@@ -88,7 +88,7 @@ namespace NorthwindCRUD.Services
                 throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Supplier), model.SupplierId?.ToString(CultureInfo.InvariantCulture)));
             }
 
-            var productEntity = this.dataContext.Products.FirstOrDefault(p => p.ProductId == model.ProductId);
+            var productEntity = this.dataContext.Products.FirstOrDefault(p => p.ProductId == id);
             if (productEntity != null)
             {
                 productEntity.SupplierId = model.SupplierId != null ? model.SupplierId : productEntity.SupplierId;

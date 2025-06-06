@@ -2,7 +2,7 @@
 {
     public interface IShipper
     {
-         int ShipperId { get; set; }
+         int ShipperId { get; }
 
          string CompanyName { get; set; }
 
