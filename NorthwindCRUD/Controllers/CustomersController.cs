@@ -6,7 +6,9 @@
     using Microsoft.AspNetCore.Mvc;
     using NorthwindCRUD.Models.DbModels;
     using NorthwindCRUD.Models.Dtos;
+    using NorthwindCRUD.Models.Errors;
     using NorthwindCRUD.Services;
+    using Swashbuckle.AspNetCore.Annotations;
 
     [ApiController]
     [Route("[controller]")]
@@ -188,7 +190,10 @@
         }
 
         [HttpPost]
-        [Authorize]
+        [SwaggerResponse(400, "Invalid input data!", typeof(Errors), "text/json")]
+        [SwaggerResponse(401, "Unauthorized!", typeof(CustomError), "text/json")]
+
+        // [Authorize]
         public ActionResult<CustomerDto> Create(CustomerDto model)
         {
             try
@@ -238,7 +243,10 @@
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [SwaggerResponse(401, "Unauthorized!", typeof(CustomError), "text/json")]
+        [SwaggerResponse(404, "Customer not found!", typeof(CustomError), "text/json")]
+
+        // [Authorize]
         public ActionResult<CustomerDto> Delete(string id)
         {
             try
