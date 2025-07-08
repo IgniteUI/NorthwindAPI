@@ -40,7 +40,7 @@ namespace NorthwindCRUD.Providers
 
                 var cacheKey = string.Format(CultureInfo.InvariantCulture, DatabaseConnectionCacheKey, tenantId);
 
-                if (!memoryCache.TryGetValue(cacheKey, out SqliteConnection connection))
+                if (!memoryCache.TryGetValue(cacheKey, out SqliteConnection? connection))
                 {
                     // Create a cached connection to seed the database and keep the data alive
                     connection = new SqliteConnection(connectionString);
@@ -92,7 +92,7 @@ namespace NorthwindCRUD.Providers
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(defaultAbsoluteCacheExpirationInHours),
             };
 
-            cacheEntryOptions.RegisterPostEvictionCallback(CloseConnection);
+            cacheEntryOptions.RegisterPostEvictionCallback(CloseConnection!);
 
             return cacheEntryOptions;
         }
@@ -100,7 +100,7 @@ namespace NorthwindCRUD.Providers
         private string GetSqlLiteConnectionString(string tenantId)
         {
             var connectionStringTemplate = configuration.GetConnectionString("SQLiteConnectionString");
-            var unsanitizedConntectionString = string.Format(CultureInfo.InvariantCulture, connectionStringTemplate, tenantId);
+            var unsanitizedConntectionString = string.Format(CultureInfo.InvariantCulture, connectionStringTemplate!, tenantId);
             var connectionStringBuilder = new SqliteConnectionStringBuilder(unsanitizedConntectionString);
             var sanitizedConntectionString = connectionStringBuilder.ToString();
 

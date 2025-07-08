@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using AutoMapper;
 using GraphQL.AspNet.Configuration.Mvc;
+using Infragistics.QueryBuilder.Executor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -9,6 +10,7 @@ using Newtonsoft.Json.Converters;
 using NorthwindCRUD.Filters;
 using NorthwindCRUD.Helpers;
 using NorthwindCRUD.Middlewares;
+using NorthwindCRUD.Models;
 using NorthwindCRUD.Providers;
 using NorthwindCRUD.Services;
 
@@ -80,13 +82,13 @@ namespace NorthwindCRUD
                 configurationProvider.ConfigureOptions(options);
             });
 
-            var config = new MapperConfiguration(cfg =>
+            builder.Services.AddQueryBuilder<DataContext, QueryBuilderResult>();
+
+            var mapperConfig = new MapperConfiguration(static cfg =>
             {
                 cfg.AddProfile(new MappingProfiles());
             });
-
-            var mapper = config.CreateMapper();
-
+            var mapper = mapperConfig.CreateMapper();
             builder.Services.AddSingleton(mapper);
 
             builder.Services.AddAuthentication(options =>
@@ -100,7 +102,7 @@ namespace NorthwindCRUD
                 {
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
                     ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] !)),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = false,
@@ -158,6 +160,8 @@ namespace NorthwindCRUD
             app.UseSeedDB();
 
             app.MapControllers();
+
+            app.UseQueryBuilder<DataContext, QueryBuilderResult>("/QueryBuilder/ExecuteQuery");
 
             app.Run();
         }
