@@ -27,7 +27,7 @@ namespace NorthwindCRUD.Tests
             string originalRegionDescription = region.RegionDescription;
             region.RegionDescription = "Updated Region";
 
-            var updatedRegion = DataHelper.RegionService.Update(region);
+            var updatedRegion = DataHelper.RegionService.Update(region.RegionId, region);
 
             Assert.IsNotNull(updatedRegion);
             updatedRegion = DataHelper2.RegionService.GetById(updatedRegion.RegionId);

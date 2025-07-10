@@ -2,7 +2,7 @@
 {
     public interface ITerritory
     {
-        string TerritoryId { get; set; }
+        string TerritoryId { get; }
 
         string TerritoryDescription { get; set; }
 

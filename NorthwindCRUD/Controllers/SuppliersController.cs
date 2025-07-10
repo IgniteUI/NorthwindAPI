@@ -178,16 +178,16 @@
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
-        public ActionResult<SupplierDto> Update(SupplierDto model)
+        public ActionResult<SupplierDto> Update(int id, SupplierDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<SupplierDto, SupplierDb>(model);
-                    var supplier = this.supplierService.Update(mappedModel);
+                    var supplier = this.supplierService.Update(id, mappedModel);
 
                     if (supplier != null)
                     {

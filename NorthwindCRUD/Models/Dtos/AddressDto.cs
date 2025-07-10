@@ -1,7 +1,7 @@
-﻿﻿using System.ComponentModel.DataAnnotations;
-﻿using NorthwindCRUD.Models.Contracts;
+﻿using System.ComponentModel.DataAnnotations;
+using NorthwindCRUD.Models.Contracts;
 
-﻿namespace NorthwindCRUD.Models.Dtos
+namespace NorthwindCRUD.Models.Dtos
 {
     public class AddressDto : IAddress
     {

@@ -183,16 +183,16 @@
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
-        public ActionResult<RegionDto> Update(RegionDto model)
+        public ActionResult<RegionDto> Update(int id, RegionDto model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var mappedModel = this.mapper.Map<RegionDto, RegionDb>(model);
-                    var region = this.regionService.Update(mappedModel);
+                    var region = this.regionService.Update(id, mappedModel);
 
                     if (region != null)
                     {

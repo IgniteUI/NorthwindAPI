@@ -28,7 +28,7 @@ namespace NorthwindCRUD.Tests
 
             createdCategory.Name = "Updated Category";
             createdCategory.Description = "Updated Description";
-            var updatedCategory = DataHelper.CategoryService.Update(createdCategory);
+            var updatedCategory = DataHelper.CategoryService.Update(createdCategory.CategoryId, createdCategory);
 
             Assert.IsNotNull(updatedCategory);
             updatedCategory = DataHelper2.CategoryService.GetById(updatedCategory.CategoryId);

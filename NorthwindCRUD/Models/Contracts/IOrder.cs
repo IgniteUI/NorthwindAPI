@@ -1,11 +1,11 @@
-﻿﻿using NorthwindCRUD.Models.Dtos;
-﻿using static NorthwindCRUD.Helpers.Enums;
+﻿using NorthwindCRUD.Models.Dtos;
+using NorthwindCRUD.Models.Enums;
 
-﻿namespace NorthwindCRUD.Models.Contracts
+namespace NorthwindCRUD.Models.Contracts
 {
     public interface IOrder
     {
-        int OrderId { get; set; }
+        int OrderId { get; }
 
         string? CustomerId { get; set; }
 
