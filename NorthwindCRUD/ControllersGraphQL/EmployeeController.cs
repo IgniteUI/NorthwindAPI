@@ -51,10 +51,10 @@
         }
 
         [Mutation]
-        public EmployeeDto? Update(EmployeeDto model)
+        public EmployeeDto? Update(int id, EmployeeDto model)
         {
             var mappedModel = this.mapper.Map<EmployeeDto, EmployeeDb>(model);
-            var employee = this.employeeService.Update(mappedModel);
+            var employee = this.employeeService.Update(id, mappedModel);
             return employee != null ? this.mapper.Map<EmployeeDb, EmployeeDto>(employee) : null;
         }
 

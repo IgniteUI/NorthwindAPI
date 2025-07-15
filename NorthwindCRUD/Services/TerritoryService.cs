@@ -59,14 +59,14 @@ namespace NorthwindCRUD.Services
             return territoryEntity.Entity;
         }
 
-        public TerritoryDb? Update(TerritoryDb model)
+        public TerritoryDb? Update(string id, TerritoryDb model)
         {
             if (this.dataContext.Regions.FirstOrDefault(r => r.RegionId == model.RegionId) == null)
             {
                 throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, StringTemplates.InvalidEntityMessage, nameof(model.Region), model.RegionId?.ToString(CultureInfo.InvariantCulture)));
             }
 
-            var territoryEntity = this.dataContext.Territories.FirstOrDefault(p => p.TerritoryId == model.TerritoryId);
+            var territoryEntity = this.dataContext.Territories.FirstOrDefault(p => p.TerritoryId == id);
             if (territoryEntity != null)
             {
                 territoryEntity.TerritoryDescription = model.TerritoryDescription != null ? model.TerritoryDescription : territoryEntity.TerritoryDescription;

@@ -31,7 +31,7 @@ namespace NorthwindCRUD.Tests
             shipper.CompanyName = "Updated shipper company";
             shipper.Phone = "555-555-5555";
 
-            var updatedShipper = DataHelper.ShipperService.Update(shipper);
+            var updatedShipper = DataHelper.ShipperService.Update(shipper.ShipperId, shipper);
 
             Assert.IsNotNull(updatedShipper);
             updatedShipper = DataHelper2.ShipperService.GetById(updatedShipper.ShipperId);

@@ -47,9 +47,9 @@ namespace NorthwindCRUD.Services
             return supplierEntity.Entity;
         }
 
-        public SupplierDb? Update(SupplierDb model)
+        public SupplierDb? Update(int id, SupplierDb model)
         {
-            var supplierEntity = this.dataContext.Suppliers.FirstOrDefault(p => p.SupplierId == model.SupplierId);
+            var supplierEntity = this.dataContext.Suppliers.FirstOrDefault(p => p.SupplierId == id);
             if (supplierEntity != null)
             {
                 supplierEntity.Address = model.Address != null ? model.Address : supplierEntity.Address;

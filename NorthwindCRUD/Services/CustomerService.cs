@@ -73,11 +73,11 @@ namespace NorthwindCRUD.Services
             return customerEntity.Entity;
         }
 
-        public CustomerDb? Update(CustomerDb model)
+        public CustomerDb? Update(string id, CustomerDb model)
         {
             var customerEntity = this.dataContext.Customers
                 .Include(c => c.Address)
-                .FirstOrDefault(c => c.CustomerId == model.CustomerId);
+                .FirstOrDefault(c => c.CustomerId == id);
 
             if (customerEntity != null)
             {

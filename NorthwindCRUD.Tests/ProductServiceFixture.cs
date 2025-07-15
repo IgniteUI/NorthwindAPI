@@ -27,7 +27,7 @@ namespace NorthwindCRUD.Tests
             createdProduct.UnitPrice = 15;
             createdProduct.UnitsInStock = 50;
 
-            var updatedProduct = DataHelper.ProductService.Update(createdProduct);
+            var updatedProduct = DataHelper.ProductService.Update(createdProduct.ProductId, createdProduct);
 
             Assert.IsNotNull(updatedProduct);
             updatedProduct = DataHelper2.ProductService.GetById(updatedProduct.ProductId);

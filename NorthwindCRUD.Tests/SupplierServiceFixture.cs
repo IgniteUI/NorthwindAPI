@@ -34,7 +34,7 @@ namespace NorthwindCRUD.Tests
             supplier.ContactName = "Updated Contact";
             supplier.ContactTitle = "Updated Title";
 
-            var updatedSupplier = DataHelper.SupplierService.Update(supplier);
+            var updatedSupplier = DataHelper.SupplierService.Update(supplier.SupplierId, supplier);
             Assert.IsNotNull(updatedSupplier);
             updatedSupplier = DataHelper2.SupplierService.GetById(updatedSupplier.SupplierId);
             Assert.IsNotNull(updatedSupplier);

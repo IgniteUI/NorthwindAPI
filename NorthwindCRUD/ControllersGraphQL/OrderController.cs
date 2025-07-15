@@ -50,10 +50,10 @@ namespace NorthwindCRUD.Controllers
         }
 
         [Mutation]
-        public OrderDto? Update(OrderDto model)
+        public OrderDto? Update(int id, OrderDto model)
         {
             var mappedModel = this.mapper.Map<OrderDto, OrderDb>(model);
-            var order = this.orderService.Update(mappedModel);
+            var order = this.orderService.Update(id, mappedModel);
             return order != null ? this.mapper.Map<OrderDb, OrderDto>(order) : null;
         }
 
