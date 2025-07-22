@@ -78,7 +78,7 @@ namespace NorthwindCRUD.Providers
             DBSeeder.Seed(dataContext);
         }
 
-        private static void CloseConnection(object key, object value, EvictionReason reason, object state)
+        private static void CloseConnection(object key, object? value, EvictionReason reason, object? state)
         {
             //Used to clear datasource from memory.
             (value as SqliteConnection)?.Close();
@@ -92,15 +92,16 @@ namespace NorthwindCRUD.Providers
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(defaultAbsoluteCacheExpirationInHours),
             };
 
-            cacheEntryOptions.RegisterPostEvictionCallback(CloseConnection!);
+            cacheEntryOptions.RegisterPostEvictionCallback(CloseConnection);
 
             return cacheEntryOptions;
         }
 
         private string GetSqlLiteConnectionString(string tenantId)
         {
-            var connectionStringTemplate = configuration.GetConnectionString("SQLiteConnectionString");
-            var unsanitizedConntectionString = string.Format(CultureInfo.InvariantCulture, connectionStringTemplate!, tenantId);
+            var connectionStringTemplate = configuration.GetConnectionString("SQLiteConnectionString")
+                ?? throw new InvalidOperationException("SQLiteConnectionString not found");
+            var unsanitizedConntectionString = string.Format(CultureInfo.InvariantCulture, connectionStringTemplate, tenantId);
             var connectionStringBuilder = new SqliteConnectionStringBuilder(unsanitizedConntectionString);
             var sanitizedConntectionString = connectionStringBuilder.ToString();
 
