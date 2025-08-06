@@ -68,7 +68,7 @@ namespace NorthwindCRUD.Services
         {
             var issuer = this.configuration["Jwt:Issuer"];
             var audience = this.configuration["Jwt:Audience"];
-            var key = Encoding.ASCII.GetBytes(this.configuration["Jwt:Key"]);
+            var key = Encoding.ASCII.GetBytes(this.configuration["Jwt:Key"] !);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
