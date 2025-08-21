@@ -89,5 +89,71 @@
                 return StatusCode(500);
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost("LoginObject")]
+        public ActionResult<string> LoginObject(LoginDto userModel)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (this.authService.IsAuthenticated(userModel.Email, userModel.Password))
+                    {
+                        var token = this.authService.GenerateJwtToken(userModel.Email);
+
+                        return Ok(new { token });
+                    }
+
+                    return BadRequest("Email or password are not correct!");
+                }
+
+                return BadRequest(ModelState);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("RegisterObject")]
+        public ActionResult<string> RegisterObject(RegisterDto userModel)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (userModel.Password != userModel.ConfirmedPassword)
+                    {
+                        return BadRequest("Passwords does not match!");
+                    }
+
+                    if (this.authService.DoesUserExists(userModel.Email))
+                    {
+                        return BadRequest("User does not exists!");
+                    }
+
+                    var mappedModel = this.mapper.Map<RegisterDto, UserDb>(userModel);
+                    var user = this.authService.RegisterUser(mappedModel);
+
+                    if (user != null)
+                    {
+                        var token = this.authService.GenerateJwtToken(user.Email);
+                        return Ok(new { token });
+                    }
+
+                    return BadRequest("Email or password are not correct!");
+                }
+
+                return BadRequest(ModelState);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error.Message);
+                return StatusCode(500);
+            }
+        }
     }
 }
