@@ -92,7 +92,7 @@
 
         [AllowAnonymous]
         [HttpPost("LoginObject")]
-        public ActionResult<string> LoginObject(LoginDto userModel)
+        public ActionResult<AuthDto> LoginObject(LoginDto userModel)
         {
             try
             {
@@ -102,7 +102,7 @@
                     {
                         var token = this.authService.GenerateJwtToken(userModel.Email);
 
-                        return Ok(new { token });
+                        return Ok(new AuthDto() { Token = token });
                     }
 
                     return BadRequest("Email or password are not correct!");
@@ -119,7 +119,7 @@
 
         [AllowAnonymous]
         [HttpPost("RegisterObject")]
-        public ActionResult<string> RegisterObject(RegisterDto userModel)
+        public ActionResult<AuthDto> RegisterObject(RegisterDto userModel)
         {
             try
             {
@@ -141,7 +141,7 @@
                     if (user != null)
                     {
                         var token = this.authService.GenerateJwtToken(user.Email);
-                        return Ok(new { token });
+                        return Ok(new AuthDto() { Token = token });
                     }
 
                     return BadRequest("Email or password are not correct!");
