@@ -20,7 +20,7 @@ namespace NorthwindCRUD.Models.Dtos
         [StringLength(50, ErrorMessage = "Country cannot exceed 50 characters.")]
         public string? Country { get; set; }
 
-        [RegularExpression(@"^\+?[1-9]\d{1,14}$", ErrorMessage = "Phone number is not valid.")]
+        [RegularExpression(@"^\+?[0-9][0-9\-]{1,14}$", ErrorMessage = "Phone number is not valid.")]
         public string? Phone { get; set; }
     }
 }
