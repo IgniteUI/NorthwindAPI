@@ -2,6 +2,7 @@ namespace QueryBuilder;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -49,11 +50,16 @@ public class QueryBuilderController : ControllerBase
     {
         var sanitizedEntity = query.Entity.Replace("\r", string.Empty).Replace("\n", string.Empty);
         logger.LogInformation("Executing query for entity: {Entity}", sanitizedEntity);
-        var t = query.Entity.ToLower(CultureInfo.InvariantCulture);
+
+        var lookupFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase;
+        var key = typeof(QueryBuilderResult).GetProperty(sanitizedEntity, lookupFlags)?.Name
+            ?? throw new InvalidOperationException($"Unknown entity {sanitizedEntity}");
+        var t = key.ToLower(CultureInfo.InvariantCulture);
+
         return Ok(new Dictionary<string, object[]?>
         {
             {
-                t,
+                ToCamelCase(key),
                 t switch
                 {
                     "addresses" => dataContext.Addresses.Run<AddressDb, AddressDto>(query, mapper),
@@ -72,4 +78,6 @@ public class QueryBuilderController : ControllerBase
             },
         });
     }
+
+    private static string ToCamelCase(string s) => char.ToLowerInvariant(s[0]) + s[1..];
 }
