@@ -59,6 +59,13 @@ namespace NorthwindCRUD
                     Scheme = "bearer",
                 });
 
+                option.UseOneOfForPolymorphism();
+
+                option.SelectSubTypesUsing(baseType =>
+                {
+                    return typeof(QueryFilter).Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
+                });
+
                 option.SchemaFilter<EnumSchemaFilter>();
                 option.OperationFilter<AuthResponsesOperationFilter>();
                 option.EnableAnnotations();
