@@ -66,7 +66,7 @@
 
                     if (this.authService.DoesUserExists(userModel.Email))
                     {
-                        return BadRequest("User does not exists!");
+                        return BadRequest($"User {userModel.Email} already exists!");
                     }
 
                     var mappedModel = this.mapper.Map<RegisterDto, UserDb>(userModel);
@@ -132,7 +132,7 @@
 
                     if (this.authService.DoesUserExists(userModel.Email))
                     {
-                        return BadRequest("User does not exists!");
+                        return BadRequest($"User {userModel.Email} already exists!");
                     }
 
                     var mappedModel = this.mapper.Map<RegisterDto, UserDb>(userModel);
