@@ -23,7 +23,7 @@
         <PackageReference Include="AutoMapper" Version="14.0.0" />
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
         <PackageReference Include="GraphQL.AspNet" Version="0.12.2-beta" />
-        <PackageReference Include="Infragistics.QueryBuilder.Executor" Version="0.1.1-prerelease.2" />
+        <PackageReference Include="Infragistics.QueryBuilder.Executor" Version="0.1.1-prerelease.5" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
