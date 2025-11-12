@@ -71,7 +71,7 @@ namespace NorthwindCRUD.Services
             .ToList();
 
             var filteredData = salesData
-            .Where(od => od.Order.ShipAddress?.Country.ToLower(CultureInfo.InvariantCulture) == normalizedCountry && DateTime.Parse(od.Order.OrderDate, CultureInfo.InvariantCulture) >= parsedStartDate && DateTime.Parse(od.Order.RequiredDate, CultureInfo.InvariantCulture) <= parsedEndDate)
+            .Where(od => od.Order.ShipAddress?.Country?.ToLower(CultureInfo.InvariantCulture) == normalizedCountry && DateTime.Parse(od.Order.OrderDate, CultureInfo.InvariantCulture) >= parsedStartDate && DateTime.Parse(od.Order.RequiredDate, CultureInfo.InvariantCulture) <= parsedEndDate)
             .ToList();
 
             var sales = filteredData.Select(od => new SalesDto
