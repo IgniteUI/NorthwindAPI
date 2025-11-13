@@ -20,6 +20,9 @@ namespace NorthwindCRUD
     {
         public static void Main(string[] args)
         {
+            // Custom provider that allows HMAC-SHA512 keys smaller than 512 bits (to support old keys)
+            CryptoProviderFactory.Default.CustomCryptoProvider = new HmacSha512CryptoProvider();
+
             var builder = WebApplication.CreateBuilder(args);
 
             var allowAnyOriginPolicy = "_allowAnyOrigin";
@@ -107,6 +110,14 @@ namespace NorthwindCRUD
                     ValidateAudience = true,
                     ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
+                    IssuerSigningKeys = new List<SecurityKey>
+                    {
+                        // The old key (to keep existing tokens valid)
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:OldKey"] !)),
+
+                        // The new, secure key (512-bit 32+ characters)
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] !)),
+                    },
                 };
             });
 
